@@ -20,25 +20,104 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0b0e17;
+      --font-body: "Aptos", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      --font-display: "Aptos", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      --size-base: 17px;
+      --size-small: 0.9rem;
+      --size-xs: 0.78rem;
+      --radius-xl: 1.8rem;
+      --radius-lg: 1.4rem;
+      --radius-md: 1rem;
+      --gradient-bg: linear-gradient(135deg, #050b1d 0%, #081b3d 50%, #0c224a 100%);
+      --color-bg: #050b1d;
+      --color-surface: rgba(9, 16, 34, 0.78);
+      --color-surface-alt: rgba(13, 23, 47, 0.68);
+      --color-surface-soft: rgba(12, 21, 45, 0.6);
+      --color-border: rgba(123, 139, 170, 0.2);
+      --color-border-strong: rgba(123, 139, 170, 0.38);
+      --color-text: #eef1fa;
+      --color-subtext: rgba(205, 213, 235, 0.88);
+      --color-muted: rgba(150, 166, 199, 0.85);
+      --color-primary: #8caeff;
+      --color-primary-dark: #6f8df8;
+      --color-accent: #4fd6c8;
+      --color-highlight: rgba(140, 174, 255, 0.22);
+      --color-overlay: rgba(140, 174, 255, 0.15);
+      --shadow-soft: 0 26px 52px rgba(1, 5, 21, 0.55);
+      --shadow-medium: 0 36px 64px rgba(1, 5, 21, 0.6);
+      --shadow-strong: 0 44px 84px rgba(1, 5, 21, 0.65);
+
+      --bg: #050b1d;
       --panel: #141a2a;
       --card: #1d2438;
-      --text: #f2f5ff;
-      --muted: #94a3b8;
+      --text: #eef1fa;
+      --muted: rgba(150, 166, 199, 0.85);
       --accent: #66d9ef;
       --accent-2: #f78c6c;
       --impact: #ffcb6b;
-      --border: #2c3654;
-      --shadow: 0 10px 30px rgba(0,0,0,0.3);
-      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --border: rgba(123, 139, 170, 0.2);
+      --shadow: 0 26px 52px rgba(1, 5, 21, 0.55);
+    }
+    body[data-theme="light"] {
+      --gradient-bg: linear-gradient(135deg, #eef2f8 0%, #e5ecff 50%, #dce4f9 100%);
+      --color-bg: #eef2f8;
+      --color-surface: rgba(255, 255, 255, 0.92);
+      --color-surface-alt: rgba(255, 255, 255, 0.82);
+      --color-surface-soft: rgba(255, 255, 255, 0.7);
+      --color-border: rgba(27, 40, 71, 0.12);
+      --color-border-strong: rgba(27, 40, 71, 0.22);
+      --color-text: #16213b;
+      --color-subtext: #5b6580;
+      --color-muted: #7c89a3;
+      --color-primary: #3155ff;
+      --color-primary-dark: #243cd2;
+      --color-accent: #15b1a1;
+      --color-highlight: rgba(49, 85, 255, 0.12);
+      --color-overlay: rgba(22, 33, 59, 0.08);
+      --shadow-soft: 0 24px 48px rgba(18, 26, 52, 0.12);
+      --shadow-medium: 0 30px 60px rgba(18, 26, 52, 0.16);
+      --shadow-strong: 0 36px 72px rgba(18, 26, 52, 0.2);
+
+      --bg: #eef2f8;
+      --panel: rgba(255, 255, 255, 0.92);
+      --card: rgba(255, 255, 255, 0.82);
+      --text: #16213b;
+      --muted: #7c89a3;
+      --border: rgba(27, 40, 71, 0.12);
+      --shadow: 0 24px 48px rgba(18, 26, 52, 0.12);
+    }
+    * {
+      box-sizing: border-box;
     }
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      line-height: 1.65;
+      letter-spacing: -0.01em;
+      background: transparent;
+      color: var(--color-text);
+      min-height: 100vh;
+      position: relative;
     }
     body::before {
-      display: none;
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: var(--gradient-bg);
+      z-index: -1;
+    }
+    .container {
+      width: 100%;
+      max-width: none;
+      padding-left: 5%;
+      padding-right: 5%;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .container.my-auto {
+      padding-top: 2%;
+      padding-bottom: 5%;
     }
     .shell {
       width: 100%;
@@ -50,58 +129,135 @@
     .page-shell {
       gap: 2rem;
     }
-    .site-nav,
-    .site-footer {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-    }
     .site-nav {
+      background: var(--color-surface-soft);
+      border: 1px solid var(--color-border);
       border-radius: 999px;
-      margin-bottom: 24px;
+      padding: 1.4rem 1.4rem;
+      box-shadow: var(--shadow-soft);
+      transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+      margin-bottom: 1.6rem;
+      backdrop-filter: blur(18px);
+    }
+    .site-nav__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .site-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text) !important;
+      text-decoration: none;
+    }
+    .site-brand__mark {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #26de50, var(--color-accent));
+      box-shadow: 0 0 0 4px rgba(49, 85, 255, 0.16);
+      display: inline-block;
+    }
+    .site-brand__text {
+      color: inherit !important;
+      line-height: 1;
+    }
+    .site-menu {
+      display: flex;
+      gap: 1.4rem;
+      align-items: center;
+    }
+    .site-menu__link {
+      font-size: var(--size-small);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--color-text) !important;
+      transition: color 0.2s ease;
+    }
+    .site-menu__link:hover,
+    .site-menu__link:focus-visible {
+      color: var(--color-primary) !important;
+    }
+    .site-nav__actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .site-menu__toggle {
+      border: 1px solid var(--color-border);
+      background: transparent;
+      color: var(--color-text);
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .site-menu__drawer {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      padding: 1.1rem;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+      margin-top: 12px;
+    }
+    .site-menu__drawer .site-menu__link {
+      color: var(--color-text) !important;
     }
     .site-footer {
-      border-radius: 24px;
-      margin-top: 40px;
-      padding: 32px 24px;
+      margin-top: 2.4rem;
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: clamp(1.6rem, 3vw, 2.6rem);
+      box-shadow: var(--shadow-medium);
+      border: 1px solid var(--color-border);
+      backdrop-filter: blur(16px);
       text-align: center;
     }
+    .site-footer__inner {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      align-items: center;
+    }
+    .site-footer .site-brand {
+      color: var(--color-text) !important;
+    }
+    .site-footer .site-brand__mark {
+      box-shadow: 0 0 0 4px rgba(49, 85, 255, 0.12);
+    }
     .site-footer__copy {
-      color: var(--muted);
-      margin: 12px 0 18px;
+      font-size: var(--size-small);
+      color: var(--color-muted);
+      margin: 0;
+    }
+    .site-footer__copy p {
+      margin: 0;
     }
     .site-footer__nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 1.4rem;
       justify-content: center;
     }
     .site-footer__link {
-      color: var(--muted);
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      font-size: var(--size-small);
+      letter-spacing: 0.05em;
       text-transform: uppercase;
     }
     .site-footer__link:hover {
-      color: var(--accent);
-    }
-    .site-nav .site-brand,
-    .site-nav .site-brand:visited,
-    .site-nav .site-brand:focus,
-    .site-nav .site-menu__link,
-    .site-nav .site-menu__link:visited,
-    .site-menu__drawer .site-menu__link {
-      color: var(--text) !important;
-    }
-    .site-nav .site-brand:hover,
-    .site-nav .site-brand:focus-visible,
-    .site-nav .site-menu__link:hover,
-    .site-nav .site-menu__link:focus-visible,
-    .site-menu__drawer .site-menu__link:hover {
-      color: var(--accent) !important;
-    }
-    .site-nav .site-menu__toggle {
-      color: var(--text);
+      color: var(--color-primary);
     }
     header h1,
     header p {
@@ -329,6 +485,29 @@
       color: var(--muted);
       margin-bottom: 15px;
     }
+    @media (max-width: 991.98px) {
+      .site-nav {
+        border-radius: 24px;
+      }
+    }
+    @media (max-width: 767.98px) {
+      .site-nav {
+        padding: 0.5rem 1rem;
+      }
+      .site-brand {
+        font-size: 0.8rem;
+      }
+      .container.my-auto {
+        margin-top: 2.6rem;
+        margin-bottom: 3.6rem;
+      }
+    }
+    @media (max-width: 575.98px) {
+      .site-menu__toggle {
+        width: 42px;
+        height: 42px;
+      }
+    }
     @media (max-width: 640px) {
       .filters input, .filters select {
         width: 100%;
@@ -391,7 +570,7 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">76</div>
+        <div class="metric-value">79</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
@@ -403,7 +582,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>36</span></div>
+      <div class="analytics-label">Web App <span>37</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -411,9 +590,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>29</span></div>
+      <div class="analytics-label">API <span>31</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:81%"></div>
+        <div class="analytics-bar-fill" style="width:84%"></div>
       </div>
     </div>
     
@@ -421,7 +600,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Network <span>9</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:25%"></div>
+        <div class="analytics-bar-fill" style="width:24%"></div>
       </div>
     </div>
     
@@ -429,7 +608,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>2</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:6%"></div>
+        <div class="analytics-bar-fill" style="width:5%"></div>
       </div>
     </div>
     
@@ -443,9 +622,9 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (76)</option>
-          <option value="Web App">Web App (36)</option>
-<option value="API">API (29)</option>
+          <option value="all">All Categories (79)</option>
+          <option value="Web App">Web App (37)</option>
+<option value="API">API (31)</option>
 <option value="Network">Network (9)</option>
 <option value="Source Code">Source Code (2)</option>
         </select>
@@ -2793,6 +2972,95 @@ EOF</code></pre>
 <p><strong class="section-heading section-impact">Impact:</strong> Denial of service due to application crash, misclassification of HTTP requests (e.g., CONNECT being treated as a different method).</p>
 
 <p><strong class="section-heading section-remediation">Remediation:</strong> Always ensure that strings are null-terminated after being copied into memory. Allocate sufficient memory to accommodate the largest possible string length. Use safe string handling functions to prevent buffer overflows.</p>
+        <div class="card-meta">
+          <span>Added: 2025-12-26</span>
+        </div>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">Cross-Tenant Password Reset</span>
+        <span class="card-meta-mini">
+          <span class="badge">Web App</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to initiate a password reset for any user account, regardless of the tenant they belong to. Successful exploitation can lead to unauthorized access and account takeover, compromising sensitive user data and system functionality. The lack of proper tenant isolation makes this a severe risk.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a password reset request for a user by sending a POST request to the password reset endpoint with the target email address. Use a forged email address that belongs to a different tenant. For example: <code>POST /password/reset?email=&lt;TARGET_EMAIL&gt;</code></li>
+<li>Intercept the password reset token sent to the forged email address.</li>
+<li>Use the intercepted token to reset the password of the original target user.</li>
+<li>Attempt to log in to the application using the newly reset password and the target user&#x27;s credentials.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized account access, data breaches, potential compromise of the entire tenant.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict tenant isolation when handling password reset requests. Validate the tenant association of the user before initiating a password reset. Ensure that password reset tokens are unique and not predictable.</p>
+        <div class="card-meta">
+          <span>Added: 2025-12-26</span>
+        </div>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">CRLF Command Injection in SMTP Mailbox Addresses</span>
+        <span class="card-meta-mini">
+          <span class="badge">API</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary SMTP commands by crafting mailbox addresses containing carriage return and line feed characters. These injected commands can be used to add unauthorized recipients to outgoing emails, potentially exposing sensitive information.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a test environment with a local SMTP server to capture incoming commands.</li>
+<li>Use a tool like <code>curl</code> to send an email with a crafted mailbox address containing CRLF sequences. For example: <code>sender@company.com\r\nRCPT TO:&lt;attacker@evil.com&gt;</code>.</li>
+<li>Observe the SMTP server logs to confirm the injected command is being sent.</li>
+<li>Examine the email delivery to confirm it is being sent to both the intended recipient and the attacker’s address.</li>
+<li>Utilize a script similar to the provided PoC, which injects CRLF into the MAIL FROM and RCPT TO fields: <code>./poc<em>smtp</em>crlf_injection.sh /path/to/curl/src/curl</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Attackers can inject unauthorized recipients into outgoing emails, potentially exposing sensitive information like password reset links, verification codes, or confidential reports.  This can lead to unauthorized access and data breaches.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Sanitize user-supplied mailbox address inputs to remove or escape carriage return (<code>\r</code>) and line feed (<code>\n</code>) characters before using them in SMTP commands. Implement robust input validation to prevent protocol command injection.</p>
+        <div class="card-meta">
+          <span>Added: 2025-12-26</span>
+        </div>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">Stack-Based Buffer Overflow via Unsafe String Copy</span>
+        <span class="card-meta-mini">
+          <span class="badge">API</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The vulnerability lies in an unsafe string copy operation that can lead to denial of service and potentially remote code execution.  It occurs when a server-controlled string is copied into a fixed-size buffer without proper bounds checking, allowing an attacker to overwrite adjacent memory. This can cause a crash or potentially allow execution of malicious code.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a network service to send a string of controlled length.</li>
+<li>Run a client application that receives and processes this string using an unsafe string copy function.</li>
+<li>Send a payload string longer than the destination buffer&#x27;s size.  Example payload: <code>&lt;PAYLOAD&gt;</code> (e.g., &quot;A&quot; * 2000).</li>
+<li>Monitor for crashes, unexpected behavior, or memory corruption errors.</li>
+<li>Use memory debugging tools like ASAN to verify the out-of-bounds write.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Denial of service through application crash or potential for remote code execution by overwriting critical memory regions.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Replace unsafe string copy functions (like <code>strcpy</code>) with safer alternatives that include bounds checking (like <code>strncpy</code>) or use internal library functions designed for memory-safe string operations.  Always validate input string lengths before copying.</p>
         <div class="card-meta">
           <span>Added: 2025-12-26</span>
         </div>
