@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">80</div>
+        <div class="metric-value">81</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2025-12-27</div>
+        <div class="metric-value">2025-12-28</div>
       </div>
     </section>
 
@@ -612,9 +612,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>31</span></div>
+      <div class="analytics-label">Web App <span>32</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:97%"></div>
+        <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
     </div>
     
@@ -652,9 +652,9 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (80)</option>
+          <option value="all">All Categories (81)</option>
           <option value="Network">Network (32)</option>
-<option value="Web App">Web App (31)</option>
+<option value="Web App">Web App (32)</option>
 <option value="API">API (8)</option>
 <option value="Source Code">Source Code (8)</option>
 <option value="Blockchain">Blockchain (1)</option>
@@ -666,6 +666,60 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">HTTP/3 Protocol Smuggling and Header Injection via CRLF in QPACK value conversion</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2025-12-28</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p>After analyzing the bug report, I have determined that this vulnerability is reusable and can be expressed as a general test case applicable to other targets. The report has enough detail to recreate the issue generically (including payloads or steps) and does not depend on one-of-a-kind features.</p>
+
+<p>Here is the Markdown output for the test case:</p>
+
+
+
+<p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject malicious headers into a request, potentially leading to Cache Poisoning, Session Fixation/Hijacking, Security Bypass, and other attacks. The issue arises from the library&#x27;s failure to sanitize cross-protocol data translation.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Build curl with HTTP/3 support (e.g., using ngtcp2).</li>
+<li>Apply a simulation patch to lib/vquic/curl_ngtcp2.c that simulates an attack where the server sends a Server header containing a CRLF injection.</li>
+<li>Recompile curl and run it against any valid HTTP/3 server (e.g., google.com or cloudflare-quic.com). The patch will simulate the malicious payload coming from that server.</li>
+</ol>
+
+<p>Example command: <code>./src/curl --http3 -v -I https://www.google.com/</code></p>
+
+<ol>
+<li>Observe the Critical Output:</li>
+</ol>
+<p>Look at the headers received. You will see:</p>
+
+<p>1 HTTP/3 200</p>
+<p>2 ...</p>
+<p>3 server: gws</p>
+<p>4 Set-Cookie: session=HACKED<em>BY</em>CRLF</p>
+<p>5 ...</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> This vulnerability has a critical impact on the ecosystem of applications using libcurl with HTTP/3, allowing Cache Poisoning, Session Fixation/Hijacking, Security Bypass, and other attacks.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> To prevent this vulnerability:</p>
+
+<ul>
+<li>Sanitize cross-protocol data translation.</li>
+<li>Validate and sanitize header values received from the QUIC stack.</li>
+<li>Use a secure library that sanitizes QPACK headers.</li>
+<li>Implement proper authentication checks to prevent malicious requests.</li>
+</ul>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Source Code">
       <button type="button" class="card-toggle">
         <span class="card-title">
