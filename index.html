@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">81</div>
+        <div class="metric-value">84</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2025-12-28</div>
+        <div class="metric-value">2025-12-29</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>32</span></div>
+      <div class="analytics-label">Network <span>34</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,9 +612,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>32</span></div>
+      <div class="analytics-label">Web App <span>33</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:100%"></div>
+        <div class="analytics-bar-fill" style="width:97%"></div>
       </div>
     </div>
     
@@ -622,7 +622,7 @@
     <div class="analytics-row">
       <div class="analytics-label">API <span>8</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:25%"></div>
+        <div class="analytics-bar-fill" style="width:24%"></div>
       </div>
     </div>
     
@@ -630,7 +630,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>8</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:25%"></div>
+        <div class="analytics-bar-fill" style="width:24%"></div>
       </div>
     </div>
     
@@ -652,9 +652,9 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (81)</option>
-          <option value="Network">Network (32)</option>
-<option value="Web App">Web App (32)</option>
+          <option value="all">All Categories (84)</option>
+          <option value="Network">Network (34)</option>
+<option value="Web App">Web App (33)</option>
 <option value="API">API (8)</option>
 <option value="Source Code">Source Code (8)</option>
 <option value="Blockchain">Blockchain (1)</option>
@@ -666,56 +666,161 @@
 
     <section class="cards" id="cardContainer">
       
-    <article class="card" data-category="Web App">
+    <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
-          <span class="badge badge-inline">Web App</span>
-          <span class="card-title-text">HTTP/3 Protocol Smuggling and Header Injection via CRLF in QPACK value conversion</span>
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Protocol Smuggling via CRLF Injection in IMAP Username</span>
         </span>
         <span class="card-meta-mini">
-          <span class="card-date">Added 2025-12-28</span>
+          <span class="card-date">Added 2025-12-29</span>
           <span class="chevron" aria-hidden="true">▸</span>
         </span>
       </button>
       <div class="card-body">
-        <p>After analyzing the bug report, I have determined that this vulnerability is reusable and can be expressed as a general test case applicable to other targets. The report has enough detail to recreate the issue generically (including payloads or steps) and does not depend on one-of-a-kind features.</p>
-
-<p>Here is the Markdown output for the test case:</p>
-
-
-
-<p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject malicious headers into a request, potentially leading to Cache Poisoning, Session Fixation/Hijacking, Security Bypass, and other attacks. The issue arises from the library&#x27;s failure to sanitize cross-protocol data translation.</p>
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary commands into an IMAP protocol exchange due to improper handling of carriage return and line feed characters within the username field. This enables protocol smuggling, where malicious commands are interpreted as separate instructions by the server, potentially leading to unauthorized actions within the authenticated session.</p>
 
 <p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
 <ol>
-<li>Build curl with HTTP/3 support (e.g., using ngtcp2).</li>
-<li>Apply a simulation patch to lib/vquic/curl_ngtcp2.c that simulates an attack where the server sends a Server header containing a CRLF injection.</li>
-<li>Recompile curl and run it against any valid HTTP/3 server (e.g., google.com or cloudflare-quic.com). The patch will simulate the malicious payload coming from that server.</li>
+<li><strong>Setup a Network Listener:</strong> Open a terminal and use a network listener (e.g., <code>nc</code>) to capture raw network traffic on a specified port (e.g., 143 or any available port): <code>sudo nc -lvp &lt;PORT&gt;</code>.</li>
+<li><strong>Compile a Proof-of-Concept (PoC):</strong> Save the following C code as <code>poc<em>imap.c</code> and compile it against a library that handles IMAP protocol (e.g., <code>gcc poc</em>imap.c -o poc_imap -lcurl</code>).</li>
 </ol>
 
-<p>Example command: <code>./src/curl --http3 -v -I https://www.google.com/</code></p>
+<pre><code>    #include &lt;stdio.h&gt;
+    #include &lt;curl/curl.h&gt;
 
+    int main(void)
+    {
+      CURL *curl;
+      CURLcode res;
+
+      curl_global_init(CURL_GLOBAL_DEFAULT);
+      curl = curl_easy_init();
+      if(curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, &quot;imap://127.0.0.1:&lt;PORT&gt;/&quot;);
+
+        const char *payload = &quot;&lt;USERNAME&gt;\r\n&lt;COMMAND&gt;&quot;;
+
+        curl_easy_setopt(curl, CURLOPT_USERNAME, payload);
+        curl_easy_setopt(curl, CURLOPT_PASSWORD, &quot;password123&quot;);
+
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+      }
+      curl_global_cleanup();
+      return 0;
+    }</code></pre>
 <ol>
-<li>Observe the Critical Output:</li>
+<li><strong>Run the PoC:</strong> Execute the compiled binary: <code>./poc_imap</code>.  Replace <code>&lt;PORT&gt;</code> with the port you&#x27;re listening on.</li>
+<li><strong>Simulate Server Handshake (Manual Interaction):</strong> In the terminal running the network listener, after a connection is established, manually simulate the server greeting.</li>
 </ol>
-<p>Look at the headers received. You will see:</p>
-
-<p>1 HTTP/3 200</p>
-<p>2 ...</p>
-<p>3 server: gws</p>
-<p>4 Set-Cookie: session=HACKED<em>BY</em>CRLF</p>
-<p>5 ...</p>
-
-<p><strong class="section-heading section-impact">Impact:</strong> This vulnerability has a critical impact on the ecosystem of applications using libcurl with HTTP/3, allowing Cache Poisoning, Session Fixation/Hijacking, Security Bypass, and other attacks.</p>
-
-<p><strong class="section-heading section-remediation">Remediation:</strong> To prevent this vulnerability:</p>
-
 <ul>
-<li>Sanitize cross-protocol data translation.</li>
-<li>Validate and sanitize header values received from the QUIC stack.</li>
-<li>Use a secure library that sanitizes QPACK headers.</li>
-<li>Implement proper authentication checks to prevent malicious requests.</li>
+<li>Type: <code>* OK IMAP server ready</code> and press <strong>ENTER</strong>.</li>
+<li>Wait for the client to send a capability request (e.g., <code>A001 CAPABILITY</code>).</li>
+<li>Type: <code>A001 OK Capability completed</code> and press <strong>ENTER</strong>.</li>
 </ul>
+<ol>
+<li><strong>Observe the Injection:</strong> Analyze the output in the network listener terminal. The payload <code>&quot;&lt;USERNAME&gt;\r\n&lt;COMMAND&gt;&quot;</code> should be interpreted as two separate commands.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can execute arbitrary IMAP commands within the authenticated session context, potentially leading to unauthorized access, deletion of data, or account compromise.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and sanitization on all user-supplied data, particularly when dealing with protocol-specific fields.  Ensure that special characters like carriage returns and line feeds are properly quoted or escaped to prevent unintended command separation.  Use parameterized commands whenever possible to prevent injection attacks.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Heap Buffer Over-read in HTTP/2 Header Handling</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2025-12-29</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A heap buffer over-read vulnerability exists in the HTTP/2 header processing logic. Due to improper handling of header names and values when processing PUSH_PROMISE frames, a format string vulnerability leads to reading beyond the allocated buffer boundaries. This can result in a denial of service or potential information leakage.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Compile a client application (e.g., <code>curl</code>) with address sanitization (ASAN) enabled for debugging.</li>
+<li>Set up a malicious HTTP/2 server to send a <code>PUSH_PROMISE</code> frame. The server should be configured to send a header with a long string without a null terminator in the name or value.</li>
+<li>Configure the server to enable HTTP/2 Push and use TLS.</li>
+<li>Connect the client application to the malicious HTTP/2 server. The client application must be configured to process HTTP/2 Push.  If the client disables HTTP/2 push by default, configure it to enable it.</li>
+<li>Observe the client application. The application should either crash with an ASAN report or return an error indicating a failure in the user callback function.</li>
+<li>Example Payload:  The malicious server sends a PUSH_PROMISE frame with a header like <code>x-trigger: A</code> * 5000 to trigger the over-read.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> This vulnerability can lead to a denial of service by crashing the client application or exhausting memory. In certain scenarios, it might also leak sensitive data from the heap.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Ensure that format specifiers are used with precision specifiers, limiting the number of bytes read from memory.  Specifically, the vulnerable <code>curl_maprintf</code> call should be updated to use a precision specifier to read only the allocated buffer size, using something like <code>%.*s</code> with the length provided by the header parsing library (e.g., <code>nghttp2</code>).</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">WebSocket Control Frame Starvation Denial of Service</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2025-12-29</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from a flaw in WebSocket handling where control frames (PING/PONG) are not prioritized when a client is actively sending data. This can lead to a denial-of-service (DoS) condition where the server prematurely closes the connection due to a lack of timely responses to control frames, disrupting legitimate client operations.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a WebSocket server that enforces a short Keep-Alive timeout (e.g., 3 seconds).</li>
+<li>Configure a client to establish a WebSocket connection to the server.</li>
+<li>Initiate a large data transfer from the client to the server, potentially simulating network latency or a busy processing loop.  Use a payload such as <code>buffer[1024]; memset(buffer, &#x27;A&#x27;, sizeof(buffer));</code> for sending the large data stream.</li>
+<li>Observe the server&#x27;s behavior. The server should expect timely PONG responses to PING frames it sends to maintain the connection.</li>
+<li>If the data transfer consumes too much time (exceeding the server&#x27;s Keep-Alive timeout), the server will drop the connection due to the lack of PONG responses. This can be validated by observing the server&#x27;s logs or connection status.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> A malicious client can induce a denial-of-service condition for other legitimate clients by triggering this vulnerability. This disrupts service availability and can potentially lead to data loss or other negative consequences.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> WebSocket implementations should prioritize processing control frames (PING/PONG) even during active data transfers.  Ensure that control frames are sent immediately and not queued behind ongoing data transmission.  Implement proper handling of control frame timeouts and connection state management to prevent premature disconnections. Use the appropriate APIs to correctly handle the state of the websocket connection.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Credential Persistence Across Redirects and Connection Reuse</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2025-12-29</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from a failure to properly reset security state (credentials, keys, authentication tokens) when a client application, using a library like libcurl, performs redirects or reuses connections. This can lead to credentials intended for one origin being inadvertently applied to a different origin or a different part of the application, potentially exposing sensitive information or enabling unauthorized actions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a client application (e.g., using a programming language with HTTP client libraries) to make an initial HTTP request to a target URL, including authentication credentials (e.g., a username and password or API key) in the request headers.</li>
+<li>Configure the target URL to redirect the client to a different URL.</li>
+<li>Observe whether the authentication credentials are included in the redirected request. They should not be, unless a re-authentication process is explicitly triggered.</li>
+<li>Configure the client application to reuse an existing HTTP connection for a subsequent request to a different origin.</li>
+<li>Observe whether the authentication credentials from the previous request are reused in the new request. They should not be, unless explicitly intended.</li>
+<li>Use a tool or modify the client application to track and display the request headers and authentication state at each step of the process. This can help identify if the credentials are persisting unexpectedly.</li>
+<li>Example Payload (for HTTP header): <code>Authorization: Basic &lt;base64 encoded username:password&gt;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Exploitation of this vulnerability can lead to unauthorized access to resources, data exfiltration, account takeover, or privilege escalation. Credentials intended for a specific context can be inadvertently used in another context, allowing an attacker to perform actions they should not be authorized to.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Developers should explicitly reset or invalidate authentication state whenever there&#x27;s a change in origin, scheme, or security context.  Implement robust origin checks before applying any authentication material. Use secure connection management practices, ensuring that credentials are not automatically propagated across reused connections. Implement logging and monitoring to detect unexpected credential usage. Ensure proper handling of redirects, potentially re-authenticating before following a redirect.</p>
       </div>
     </article>
     
@@ -3158,7 +3263,7 @@ int main() {
       <button type="button" class="card-toggle">
         <span class="card-title">
           <span class="badge badge-inline">Network</span>
-          <span class="card-title-text">CRLF Injection in Gopher Protocol</span>
+          <span class="card-title-text">Protocol Smuggling via CRLF Injection in Gopher Protocol</span>
         </span>
         <span class="card-meta-mini">
           <span class="card-date">Added 2025-12-26</span>
@@ -3166,19 +3271,25 @@ int main() {
         </span>
       </button>
       <div class="card-body">
-        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from improper handling of newline characters within the Gopher protocol, allowing attackers to inject arbitrary commands. Exploitation can lead to unauthorized access and control of internal services, potentially resulting in remote code execution or data breaches.</p>
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where the Gopher protocol implementation fails to properly sanitize newline characters, allowing attackers to inject arbitrary TCP commands during a Gopher connection. This protocol smuggling enables attackers to interact with internal services or bypass security controls by crafting malicious Gopher URLs.</p>
 
 <p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
 <ol>
-<li>Set up a listener on a specific port to receive incoming commands: <code>nc -lvnp &lt;PORT&gt;</code></li>
-<li>Construct a Gopher URL containing URL-encoded CRLF characters to inject commands: <code>./curl &quot;gopher://&lt;TARGET<em>URL&gt;:&lt;PORT&gt;/</em>Dummy%0d%0a&lt;PAYLOAD&gt;%0d%0&quot;</code></li>
-<li>Observe the output on the listener. The listener should receive multiple commands instead of a single line. For example, <code><em>Dummy%0d%0aHELLO</em>SERVER%0d%0</code> should appear as three separate lines.</li>
-<li>Verify that the injected <code>&lt;PAYLOAD&gt;</code> is correctly interpreted and executed by the receiving service.</li>
+<li>Set up a listener on a target port (e.g., Redis or SMTP). This simulates a vulnerable internal service.</li>
 </ol>
+<p>$ nc -lvnp &lt;TARGET_PORT&gt;</p>
+<ol>
+<li>Execute a crafted Gopher URL using a tool like curl that includes URL-encoded CRLF characters in the selector path.</li>
+</ol>
+<p>$ curl &quot;gopher://&lt;TARGET<em>IP&gt;:&lt;TARGET</em>PORT&gt;/<em>Dummy%0d%0a&lt;COMMAND</em>TO_EXECUTE&gt;%0d%0&quot;</p>
+<ol>
+<li>Observe the listener&#x27;s output. If the server processes the injected command as distinct lines, the vulnerability is confirmed. For example:</li>
+</ol>
+<p><code><em>Dummy%0d%0aHELLO</em>SERVER%0d%0</code> will result in the listener receiving three separate lines: &quot;Dummy&quot;, &quot;HELLO_SERVER&quot;, and &quot;QUIT&quot;.</p>
 
-<p><strong class="section-heading section-impact">Impact:</strong> Allows attackers to interact with internal text-based protocols, potentially enabling remote code execution, SMTP injection, or bypassing security controls.</p>
+<p><strong class="section-heading section-impact">Impact:</strong> This protocol smuggling vulnerability enables attackers to interact with internal text-based protocols, potentially leading to Remote Code Execution (RCE), data breaches, or the bypassing of SSRF protections. Attackers can inject commands to interact with services like Redis, Memcached, or SMTP.</p>
 
-<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and sanitization for all incoming data within the Gopher protocol handler, ensuring that newline characters are properly handled and cannot be exploited to inject arbitrary commands.</p>
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and sanitization when parsing the Gopher protocol selector path. Ensure that newline characters are properly handled and do not allow arbitrary command injection. Use a secure and well-vetted Gopher protocol implementation that correctly handles protocol boundary definitions.</p>
       </div>
     </article>
     
