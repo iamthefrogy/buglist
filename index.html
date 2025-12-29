@@ -592,7 +592,7 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">84</div>
+        <div class="metric-value">86</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>34</span></div>
+      <div class="analytics-label">Network <span>35</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -614,15 +614,15 @@
     <div class="analytics-row">
       <div class="analytics-label">Web App <span>33</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:97%"></div>
+        <div class="analytics-bar-fill" style="width:94%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>8</span></div>
+      <div class="analytics-label">API <span>9</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:24%"></div>
+        <div class="analytics-bar-fill" style="width:26%"></div>
       </div>
     </div>
     
@@ -630,7 +630,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>8</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:24%"></div>
+        <div class="analytics-bar-fill" style="width:23%"></div>
       </div>
     </div>
     
@@ -652,10 +652,10 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (84)</option>
-          <option value="Network">Network (34)</option>
+          <option value="all">All Categories (86)</option>
+          <option value="Network">Network (35)</option>
 <option value="Web App">Web App (33)</option>
-<option value="API">API (8)</option>
+<option value="API">API (9)</option>
 <option value="Source Code">Source Code (8)</option>
 <option value="Blockchain">Blockchain (1)</option>
         </select>
@@ -666,6 +666,75 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Out-of-Bounds Read via Telnet Suboption Processing</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2025-12-29</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A buffer pointer underflow vulnerability exists in the handling of telnet suboptions, leading to an out-of-bounds read. When processing telnet data, a buffer pointer is decremented unconditionally, even when the buffer is full, resulting in a memory read past the allocated buffer. This can lead to information disclosure or denial of service.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start a malicious telnet server using a provided proof-of-concept script.</li>
+<li>Connect to the telnet server using a tool like <code>curl</code> in verbose mode (<code>-v</code>).</li>
+<li>Send carefully crafted telnet suboption data to fill the buffer and trigger the underflow.</li>
+<li>Observe the output for anomalous suboption data or non-printable characters, potentially indicating a memory leak.</li>
+<li>For debugging, compile the target application with address sanitizers (e.g., <code>-fsanitize=address</code>) to detect out-of-bounds memory accesses.</li>
+</ol>
+
+<p>Example Payload: Malicious telnet suboption data designed to fill the buffer, followed by <code>IAC</code> and another byte to trigger the underflow. (Specific payload will depend on the PoC script).</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Potential for information disclosure (leaking heap pointers or other sensitive data) and denial of service due to crashes.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that pointer decrements are conditional based on buffer boundaries and that the buffer is not overflowing. Use safe memory access techniques and perform rigorous bounds checking on all array accesses. For Telnet protocol implementation, consider disabling it entirely or implementing strict input validation and data sanitization.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">SMTP Command Smuggling via CRLF Injection</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2025-12-29</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where improperly validated user input in an SMTP client allows an attacker to inject CRLF sequences, resulting in command smuggling and protocol desynchronization. This enables attackers to bypass security controls, forge email addresses, and inject arbitrary commands into the SMTP stream, potentially leading to unauthorized data transmission or system compromise.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initiate an SMTP connection using a tool like <code>curl</code> to a target SMTP server.</li>
+<li>Craft a specially designed <code>--mail-from</code> parameter including a smuggled <code>RCPT TO</code> and <code>DATA</code> block.</li>
+<li>Execute the following command:</li>
+</ol>
+
+<pre><code>curl -v smtp://&lt;TARGET_URL&gt; \
+  --mail-from $&#x27;&lt;attacker@example.com&gt;\r\nRCPT TO:&lt;victim@internal.trust&gt;\r\nDATA\r\nSubject: Smuggled!\r\n\r\nThis email bypasses legitimate recipient lists!\r\n.\r\n&#x27; \
+  --mail-rcpt &quot;legit@example.com&quot; \
+  --upload-file /dev/null</code></pre>
+<ol>
+<li>Observe the server-side logs to confirm the reception of multiple commands interpreted as a single request.  Specifically, look for log entries indicating execution of the smuggled <code>RCPT TO</code> and <code>DATA</code> commands.</li>
+<li>Monitor the client-side <code>curl</code> output to confirm successful transmission while the server is processing smuggled commands.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation could lead to email fraud/spoofing, unauthorized email distribution to internal recipients, and the ability to act as a proxy to tunnel commands via SMTP relays, potentially allowing for server-side request forgery (SSRF) attacks.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation on user-supplied data, particularly email addresses, to reject control characters.  Implement a mechanism to prevent protocol desynchronization by validating response overflows in the SMTP state machine – ensure that each command is matched with a corresponding response.  Use <code>REJECT_CTRL</code> to avoid injection of control characters like <code>\r</code> and <code>\n</code>.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
