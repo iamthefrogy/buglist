@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">86</div>
+        <div class="metric-value">88</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2025-12-29</div>
+        <div class="metric-value">2025-12-30</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>35</span></div>
+      <div class="analytics-label">Network <span>36</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,7 +612,7 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>33</span></div>
+      <div class="analytics-label">Web App <span>34</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:94%"></div>
       </div>
@@ -622,7 +622,7 @@
     <div class="analytics-row">
       <div class="analytics-label">API <span>9</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:26%"></div>
+        <div class="analytics-bar-fill" style="width:25%"></div>
       </div>
     </div>
     
@@ -630,7 +630,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>8</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:23%"></div>
+        <div class="analytics-bar-fill" style="width:22%"></div>
       </div>
     </div>
     
@@ -652,9 +652,9 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (86)</option>
-          <option value="Network">Network (35)</option>
-<option value="Web App">Web App (33)</option>
+          <option value="all">All Categories (88)</option>
+          <option value="Network">Network (36)</option>
+<option value="Web App">Web App (34)</option>
 <option value="API">API (9)</option>
 <option value="Source Code">Source Code (8)</option>
 <option value="Blockchain">Blockchain (1)</option>
@@ -666,6 +666,78 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Proxy-Authorization Header Leak After Redirect</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2025-12-30</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability occurs when a client attempts to connect through a proxy server, and a redirect transitions the connection from proxied to direct. The <code>Proxy-Authorization</code> header, intended for hop-by-hop proxy communication, is inadvertently leaked to the origin server, exposing proxy credentials. This compromises the intended isolation of proxy authentication.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start a listening service (e.g., <code>nc</code>) to act as the origin server, listening on a specific port (e.g., 8080).</li>
+<li>Start another listening service to act as a proxy, configured to redirect requests to the origin server.</li>
+<li>Use a command-line tool like <code>curl</code> to initiate a request through the proxy, including the <code>Proxy-Authorization</code> header. Include <code>--noproxy</code> or a similar option to bypass the proxy after redirection.</li>
+<li>Observe the request received by the origin server using the listening service, verifying the presence of the <code>Proxy-Authorization</code> header.</li>
+</ol>
+
+<pre><code>curl -v -L \
+  -x http://&lt;PROXY_ADDRESS&gt; \
+  -H &quot;Proxy-Authorization: Basic &lt;PROXY_CREDENTIALS&gt;&quot; \
+  --noproxy &lt;TARGET_HOST&gt; \
+  &lt;TARGET_URL&gt;</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker who controls the origin server can potentially steal proxy credentials, leading to unauthorized access to proxied resources or further malicious activity through the compromised proxy. This violates the intended security boundary of the proxy.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict control over redirects, ensuring that proxied connections remain proxied throughout the entire request lifecycle.  Specifically, proxies should strip or remove hop-by-hop headers like <code>Proxy-Authorization</code> before forwarding requests directly to origin servers. Verify proxy configuration to prevent unintended bypasses.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">HTTP Header Injection via Malformed Response</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2025-12-30</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary headers into HTTP responses. This occurs because the application processes HTTP headers received from a server without proper sanitization, leading to the inclusion of malicious header data in subsequent responses. This can have significant security implications, including the ability to manipulate client behavior or steal sensitive information.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a client to connect to a &lt;TARGET_URL&gt; using HTTP/2 or HTTP/3.</li>
+<li>Configure a malicious server to send an HTTP/2 or HTTP/3 response containing crafted headers.</li>
+<li>The malicious server&#x27;s response should include a header with a name and value containing newline characters (<code>\r\n</code>) or null bytes (<code>\0</code>). For example:</li>
+</ol>
+<pre><code>   Header Name: &quot;X-Injected\r\nSet-Cookie: session=evil&quot;
+   Header Value: &quot;foo&quot;</code></pre>
+<p>Or:</p>
+<pre><code>   Header Name: &quot;X-Normal&quot;
+   Header Value: &quot;foo\r\nX-Injected-Header: malicious-value&quot;</code></pre>
+<ol>
+<li>Observe the HTTP/1-style headers generated by the client.  These headers should include the injected header data.</li>
+<li>Verify that the application processing the response is affected by the injected headers. This could include observing changes in cookies, security headers, or other response behavior.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  An attacker can exploit this vulnerability to inject arbitrary headers into HTTP responses, potentially leading to cookie injection, cache poisoning, security header bypass, response splitting, and information disclosure. This can compromise client security and integrity.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict validation of HTTP headers received from the server.  Reject headers containing newline characters (<code>\r\n</code>) or null bytes (<code>\0</code>).  Sanitize and encode header names and values before including them in any subsequent response. Use established libraries and frameworks that provide safe header handling mechanisms.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
