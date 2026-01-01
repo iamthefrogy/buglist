@@ -571,15 +571,15 @@
       </div>
       <div class="collapse site-menu__drawer d-md-none" id="site-menu-drawer">
         <nav class="d-flex flex-column gap-2">
-          <a class="site-menu__link" href="/">Home</a>
-          <a class="site-menu__link" href="/whoami">Whoami</a>
-          <a class="site-menu__link" href="/posts">Blog</a>
-          <a class="site-menu__link" href="/mindmaps">Mindmaps</a>
-          <a class="site-menu__link" href="/threat-actor-db">Threat-Actor DB</a>
-          <a class="site-menu__link" href="/github">GitHub</a>
-          <a class="site-menu__link" href="/checklists">Checklists</a>
-          <a class="site-menu__link" href="/kickstartcareer">Kickstart Career</a>
-          <a class="site-menu__link" href="/disclaimer">Disclaimer</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/">Home</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/whoami/">Whoami</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/posts/">Blog</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/mindmaps/">Mindmaps</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/threat-actor-db/">Threat-Actor DB</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/github/">GitHub</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/checklists/">Checklists</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/kickstartcareer/">Kickstart Career</a>
+        <a class="site-menu__link" href="https://chintangurjar.com/disclaimer/">Disclaimer</a>
         </nav>
       </div>
     </div>
@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">88</div>
+        <div class="metric-value">89</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2025-12-30</div>
+        <div class="metric-value">2026-01-01</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>36</span></div>
+      <div class="analytics-label">Network <span>37</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -614,7 +614,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Web App <span>34</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:94%"></div>
+        <div class="analytics-bar-fill" style="width:92%"></div>
       </div>
     </div>
     
@@ -622,7 +622,7 @@
     <div class="analytics-row">
       <div class="analytics-label">API <span>9</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:25%"></div>
+        <div class="analytics-bar-fill" style="width:24%"></div>
       </div>
     </div>
     
@@ -652,8 +652,8 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (88)</option>
-          <option value="Network">Network (36)</option>
+          <option value="all">All Categories (89)</option>
+          <option value="Network">Network (37)</option>
 <option value="Web App">Web App (34)</option>
 <option value="API">API (9)</option>
 <option value="Source Code">Source Code (8)</option>
@@ -666,6 +666,38 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">MQTT Protocol Desynchronization due to Length Field Processing</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where a client improperly processes the &quot;Remaining Length&quot; field in MQTT packets, violating the specification and potentially leading to protocol desynchronization and denial-of-service conditions. The client&#x27;s decoding logic does not enforce the maximum four-byte limit for the remaining length field, allowing for malformed packets and incorrect parsing.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a malformed MQTT packet containing a &quot;Remaining Length&quot; field that exceeds four bytes. The remaining length should be significantly larger than typical values.</li>
+<li>Send the crafted MQTT packet to the target.</li>
+<li>Observe the client&#x27;s behavior. It should ideally reject the packet or provide a well-defined error.</li>
+<li>If the client attempts to process the malformed packet, monitor for protocol desynchronization or unexpected errors.</li>
+<li>On 32-bit architectures, construct an MQTT packet with a &quot;Remaining Length&quot; field that, when decoded, results in an integer overflow in the <code>mult</code> variable during the decoding process.  Specifically, the length should be designed such that repeated multiplication by 128 causes <code>mult</code> to wrap around to zero.</li>
+<li>Observe if the subsequent interpretation of the data stream is affected by the overflowed value of <code>mult</code>.</li>
+<li>Example Payload (Malformed Remaining Length - first 4 bytes): <code>0x80 0x80 0x80 0x80 &lt;PAYLOAD_DATA&gt;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The protocol desynchronization resulting from incorrect length handling can lead to denial of service. The client might become unable to process subsequent packets correctly, causing a disruption in MQTT communication.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure the client&#x27;s MQTT decoding logic strictly enforces the MQTT specification limit of four bytes for the &quot;Remaining Length&quot; field. Implement input validation to reject packets with excessively long length fields, preventing protocol desynchronization and mitigating denial-of-service risks. Use parameterized or validated input where possible.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
