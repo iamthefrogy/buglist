@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">89</div>
+        <div class="metric-value">92</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-01</div>
+        <div class="metric-value">2026-01-03</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>37</span></div>
+      <div class="analytics-label">Network <span>40</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -614,7 +614,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Web App <span>34</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:92%"></div>
+        <div class="analytics-bar-fill" style="width:85%"></div>
       </div>
     </div>
     
@@ -622,7 +622,7 @@
     <div class="analytics-row">
       <div class="analytics-label">API <span>9</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:24%"></div>
+        <div class="analytics-bar-fill" style="width:22%"></div>
       </div>
     </div>
     
@@ -630,7 +630,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>8</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:22%"></div>
+        <div class="analytics-bar-fill" style="width:20%"></div>
       </div>
     </div>
     
@@ -638,7 +638,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Blockchain <span>1</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:3%"></div>
+        <div class="analytics-bar-fill" style="width:2%"></div>
       </div>
     </div>
     
@@ -652,8 +652,8 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (89)</option>
-          <option value="Network">Network (37)</option>
+          <option value="all">All Categories (92)</option>
+          <option value="Network">Network (40)</option>
 <option value="Web App">Web App (34)</option>
 <option value="API">API (9)</option>
 <option value="Source Code">Source Code (8)</option>
@@ -666,6 +666,104 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">CRLF Injection in Gopher Protocol</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-03</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a CRLF (carriage return line feed) injection flaw within a Gopher protocol implementation.  Insufficient filtering of encoded characters allows an attacker to inject arbitrary commands or data into the Gopher request, potentially leading to unintended consequences or unauthorized access to downstream systems. The core issue is the improper handling of control characters during URL decoding.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a listener script to capture raw bytes and detect CRLF injection. The script should listen for incoming Gopher requests and print the received data to standard output.</li>
+<li>Construct a malicious Gopher URL containing a percent-encoded CRLF sequence. The sequence should be inserted into the path segment of the URL. For example: <code>gopher://&lt;TARGET<em>HOST&gt;:&lt;TARGET</em>PORT&gt;/x%0D%0AINJECTED_COMMAND</code>.</li>
+<li>Execute the crafted Gopher URL using a tool like <code>curl</code>.</li>
+<li>Examine the output of the listener script. If the <code>INJECTED_COMMAND</code> is printed on a new line, it confirms the CRLF injection.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can exploit this vulnerability to inject commands or data into downstream systems processing the Gopher request. This can lead to unauthorized access to internal services, such as Redis, Memcached, or email components, potentially resulting in data compromise or denial of service.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement robust input validation and filtering to reject or sanitize control characters (specifically CRLF sequences) during URL decoding. Use more restrictive flags like <code>REJECT<em>CTRL</code> instead of less restrictive flags like <code>REJECT</em>ZERO</code> to ensure complete suppression of control characters. Always sanitize user-supplied data before using it in network protocols.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">HTTP Request Smuggling via CRLF Injection</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-03</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists due to insufficient sanitization of carriage return and line feed (CRLF) characters within custom HTTP headers. This allows an attacker to inject arbitrary headers, leading to HTTP request smuggling, which can be leveraged to bypass security boundaries and potentially perform Server-Side Request Forgery (SSRF). The impact stems from the lack of validation allowing for manipulation of subsequent requests.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start a listener to capture raw HTTP traffic: <code>nc -l -p 8080 &gt; raw_http.txt</code>.</li>
+<li>Execute a <code>libcurl</code>-based application or command-line tool with a custom HTTP header containing CRLF sequences: <code>curl -H &quot;X-Injected: Value\r\nInjected-Header: Malicious&quot; &lt;TARGET_URL&gt;</code>.</li>
+<li>Inspect the captured HTTP traffic using a hex editor: <code>hexdump -C raw_http.txt</code>.</li>
+<li>Observe the presence of CRLF bytes (<code>0d 0a</code>) in the transmitted HTTP headers, confirming the header splitting. This indicates that the injected string is being interpreted as a subsequent HTTP header.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> HTTP request smuggling can lead to SSRF, cache poisoning, and the ability to bypass security controls by manipulating the order of request processing on the server. This can enable an attacker to access sensitive resources or perform actions on behalf of the server.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict CRLF validation within header parsing functions. Reject any input containing CRLF sequences to prevent request splitting. Utilize safe string handling functions and consider using established HTTP parsing libraries that have built-in protections against CRLF injection vulnerabilities.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Persistent UDP Amplification via Alt-Svc Cache Poisoning</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-03</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A flaw in the Alt-Svc header parsing logic allows malicious actors to manipulate the caching behavior of clients. This enables a persistent UDP amplification attack, where clients are coerced into sending UDP packets to a target address, effectively turning them into unwitting participants in a denial-of-service attack. The vulnerability also poses a privacy risk by enabling long-term tracking of users across network changes.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li><strong>Setup Malicious Server</strong>: Host an HTTP server that returns the following header:</li>
+</ol>
+<p><code>Alt-Svc: h3=&quot;&lt;VICTIM_IP&gt;:12345&quot;, h2=&quot;:443&quot;; ma=2592000; persist=1</code></p>
+<ol>
+<li><strong>Trigger (Client Side)</strong>: Execute a client application with the <code>--alt-svc cache.txt</code> option and specify a target URL: <code>curl --alt-svc cache.txt https://&lt;ATTACKER_HOST&gt;</code></li>
+</ol>
+<ul>
+<li><em>Logic Flaw</em>:  The client application incorrectly applies the <code>persist=1</code> attribute to a <code>h3</code> service definition due to scope leakage in the Alt-Svc header parser.</li>
+</ul>
+<ol>
+<li><strong>Verify Persistence</strong>: Inspect the client&#x27;s Alt-Svc cache file (<code>cache.txt</code>). The <code>h3</code> entry for <code>&lt;VICTIM_IP&gt;</code> should be present and have a persistence flag set with a long expiry duration (e.g., 30 days).</li>
+<li><strong>Verify Attack</strong>:  Terminate the malicious server and client application. Subsequently, run the client application again without the malicious server. The client should immediately send a UDP QUIC Initial packet (approximately 1200 bytes) to <code>&lt;VICTIM_IP&gt;:12345</code>.</li>
+</ol>
+<ul>
+<li>Example Payload: <code>Alt-Svc: h3=&quot;&lt;VICTIM_IP&gt;:12345&quot;, h2=&quot;:443&quot;; ma=2592000; persist=1</code></li>
+</ul>
+
+<p><strong class="section-heading section-impact">Impact:</strong> This vulnerability allows attackers to transform client applications into a persistent botnet for UDP amplification attacks, enabling denial-of-service against arbitrary targets. It also poses a privacy threat through the ability to track users across network changes via persistent server-side cookies.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict validation and sanitization of Alt-Svc header attributes to prevent scope leakage and ensure that persistence flags are applied correctly to their intended service definitions. Ensure proper access control checks and restrictions on the propagation of attributes between service definitions. Regularly update client libraries to incorporate security patches and mitigations.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
