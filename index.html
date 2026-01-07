@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">92</div>
+        <div class="metric-value">106</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-03</div>
+        <div class="metric-value">2026-01-07</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>40</span></div>
+      <div class="analytics-label">Network <span>45</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,23 +612,23 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>34</span></div>
+      <div class="analytics-label">Web App <span>39</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:85%"></div>
+        <div class="analytics-bar-fill" style="width:87%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>9</span></div>
+      <div class="analytics-label">API <span>11</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:22%"></div>
+        <div class="analytics-bar-fill" style="width:24%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>8</span></div>
+      <div class="analytics-label">Source Code <span>9</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:20%"></div>
       </div>
@@ -637,6 +637,14 @@
 
     <div class="analytics-row">
       <div class="analytics-label">Blockchain <span>1</span></div>
+      <div class="analytics-bar">
+        <div class="analytics-bar-fill" style="width:2%"></div>
+      </div>
+    </div>
+    
+
+    <div class="analytics-row">
+      <div class="analytics-label">Desktop App <span>1</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:2%"></div>
       </div>
@@ -652,12 +660,13 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (92)</option>
-          <option value="Network">Network (40)</option>
-<option value="Web App">Web App (34)</option>
-<option value="API">API (9)</option>
-<option value="Source Code">Source Code (8)</option>
+          <option value="all">All Categories (106)</option>
+          <option value="Network">Network (45)</option>
+<option value="Web App">Web App (39)</option>
+<option value="API">API (11)</option>
+<option value="Source Code">Source Code (9)</option>
 <option value="Blockchain">Blockchain (1)</option>
+<option value="Desktop App">Desktop App (1)</option>
         </select>
       </div>
     </section>
@@ -666,6 +675,442 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via Organisation and Title Field</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a stored cross-site scripting (XSS) flaw where user-supplied data is not properly sanitized before being stored and later displayed. Attackers can inject malicious scripts that execute in the context of other users&#x27; browsers when they view the affected content, potentially leading to session hijacking or defacement.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the contacts application as an authenticated user.</li>
+<li>Navigate to the organization creation or editing form.</li>
+<li>In the &quot;Organization Name&quot; field, enter the following payload: <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>.</li>
+<li>In the &quot;Organization Title&quot; field, enter the following payload: <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>.</li>
+<li>Submit the form to create or update the organization.</li>
+<li>As another authenticated user, view the newly created or updated organization details page.</li>
+<li>Observe if the injected script executes within the browser context.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can inject arbitrary JavaScript code into the page, potentially stealing cookies, redirecting users to malicious websites, or defacing the application.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding to sanitize user-supplied data before storing it in the database and displaying it in the user interface. Use a context-aware escaping library to properly encode data based on the rendering context.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Desktop App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Desktop App</span>
+          <span class="card-title-text">Information Disclosure in Desktop Client During File Locking</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves unintended information disclosure within a desktop client application when attempting to lock a file within an end-to-end encrypted directory. The client exposes internal details, such as file paths or IDs, that should not be visible to the user, potentially revealing information about the directory structure or file metadata.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create an end-to-end encrypted directory within the application.</li>
+<li>Attempt to lock a file within the encrypted directory using the desktop client.</li>
+<li>Observe the client&#x27;s interface or logs for any displayed messages or error details.</li>
+<li>Examine the displayed information for any inadvertently disclosed file paths, IDs, or other internal details. For example, an error message might reveal parts of the file path like <code>&lt;FILE<em>PATH&gt;/&lt;FILE</em>ID&gt;</code>.</li>
+<li>Repeat steps 2-4 with different files and directory structures to confirm the behavior&#x27;s consistency.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized disclosure of file paths or IDs could enable attackers to infer information about the directory structure or file metadata, potentially aiding in further attacks or unauthorized access. While this might be minor, it does have the potential to leak sensitive information.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict information masking and error handling to prevent the exposure of internal details during client operations. Ensure that any error messages or diagnostic output displayed to the user do not contain sensitive information such as file paths or IDs. Employ secure logging practices and regularly audit client-side code for potential information disclosure vulnerabilities.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">File Extension Spoofing via RTLO Characters</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to manipulate the displayed file extension of uploaded files by inserting Right-to-Left Override (RTLO) characters. While the actual file extension remains unchanged on the server, the user interface displays a misleading extension, potentially tricking users into downloading malicious files disguised as safe ones. This can lead to unintended execution of harmful code or compromise user security.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the file upload functionality on the target web application.</li>
+<li>Construct a filename containing RTLO characters (U+202E) to manipulate the displayed file extension. For example, <code>test&lt;U+202E&gt;pdf.txt</code>.</li>
+<li>Upload the crafted filename.</li>
+<li>Observe the file extension displayed in the user interface. It should show &quot;pdf&quot; instead of &quot;txt&quot; due to the RTLO character.</li>
+<li>Attempt to download the file and verify the actual file extension on the server (e.g., by examining the HTTP headers or file metadata) which should be &quot;txt&quot;.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Users may be tricked into downloading and executing malicious files due to the spoofed file extension, potentially leading to malware infection, data compromise, or other security incidents.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust filename sanitization and validation on upload, ensuring that RTLO characters and other Unicode characters that can manipulate text direction are removed or properly handled. Display the actual file extension based on server-side analysis rather than relying solely on the user-provided filename.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Insecure Tag Modification</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An attacker can modify tags associated with files they do not own. This allows an attacker to potentially manipulate file metadata, create confusion, or potentially facilitate further malicious actions depending on how the tags are used within the application. The core issue is a lack of proper authorization checks when modifying tags.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Log in as User A.</li>
+<li>Upload a file and assign it a specific tag (e.g., &quot;Project Alpha&quot;).</li>
+<li>Log out and log in as User B.</li>
+<li>Identify a file uploaded by User A (e.g., by browsing their files).</li>
+<li>Attempt to modify the tag of the identified file to a different value (e.g., &quot;Project Beta&quot;).</li>
+<li>Verify that the tag modification is successful, indicating that User B can modify a file tag they do not own.</li>
+<li>Confirm that the file&#x27;s original owner (User A) is not notified of the change.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized modification of file metadata can lead to confusion, data manipulation, or potentially be leveraged for further malicious actions. This could also lead to a denial of service if tags are used in a way that impacts search or file access.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control checks to ensure that users can only modify tags associated with files they own. Enforce proper authentication and authorization mechanisms to prevent unauthorized tag modifications and consider implementing auditing to track tag changes.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Predictable Proposal Participant Tokens</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The application generates participant tokens for proposals, which are predictable and sequential. This allows an attacker to enumerate valid tokens and potentially impersonate or influence a participant’s voting behavior, leading to unauthorized access and manipulation of proposal outcomes. The lack of proper token generation and validation poses a significant risk to the integrity of the proposal process.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Observe the pattern of participant tokens generated during the creation of a proposal. The tokens appear to be sequential numbers.</li>
+<li>Based on the observed sequence, predict the next available participant token.</li>
+<li>Attempt to access a proposal functionality as a participant using the predicted token, bypassing the intended authentication or authorization.</li>
+<li>If successful, submit a vote or manipulate proposal data using the compromised token, demonstrating unauthorized influence over the proposal&#x27;s outcome.</li>
+<li>The tokens are generated using a predictable seed, allowing an attacker to generate valid tokens within a short timeframe. <code>1234567890</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially manipulate proposal outcomes, impersonate legitimate participants, or gain unauthorized access to proposal-related data. This could lead to biased decision-making and compromise the fairness and integrity of the proposal process.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement a more robust and unpredictable token generation scheme that utilizes cryptographically secure random number generators. Ensure tokens are properly validated against a secure list or database to prevent unauthorized access and manipulation. Consider adding additional security measures such as rate limiting and account lockout mechanisms to further mitigate the risk.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Credential Leak via Alt-Svc Header Remapping</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An Alt-Svc header allows a server to advertise alternative connection addresses, including different ports. A vulnerability exists where a client, when following an Alt-Svc header, doesn&#x27;t properly scrub sensitive authentication headers (Authorization, Cookies) before forwarding them to the remapped connection. This bypasses intended security measures, potentially leaking credentials to a malicious server.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a listener on port 8443 (Production) and port 9443 (Attacker).</li>
+<li>Initiate a request to <code>&lt;TARGET<em>URL&gt;:8443/</code> with authentication credentials (e.g., username/password or a valid session cookie) and a crafted <code>Alt-Svc</code> header. The <code>Alt-Svc</code> header should point to <code>&lt;TARGET</em>URL&gt;:9443</code>. Example: <code>Alt-Svc: h3=&quot;:9443&quot;</code></li>
+<li>Make a subsequent request to <code>&lt;TARGET_URL&gt;:8443/</code> leveraging the Alt-Svc cache.</li>
+<li>Observe the network traffic on port 9443. Verify the authentication headers (Authorization or Cookies) are present in the requests.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can steal sensitive authentication information like Authorization headers or Cookies, potentially leading to account takeover or other malicious actions. This bypasses existing security measures intended to protect user credentials.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that when following Alt-Svc remappings, authentication headers are properly validated and scrubbed before being sent to the remapped connection. Implement checks to use the effective host and port of the Alt-Svc mapping during authentication validation, similar to existing checks in URL resolution. Validate <code>Alt-Svc</code> header behavior during follow requests.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Path Traversal via File Protocol Handler</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where the file protocol handler allows access to files outside the intended directory structure due to insufficient input validation. This allows an attacker to read arbitrary files from the system when processing malicious file URLs.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a malicious file URL using directory traversal sequences (e.g., <code>../</code>).</li>
+<li>Execute the <code>curl</code> command with the malicious URL:</li>
+</ol>
+<pre><code>   curl &quot;file://../../../../path/to/sensitive/file.txt&quot;</code></pre>
+<ol>
+<li>Verify that the contents of the sensitive file are displayed or accessible, indicating unauthorized file access.</li>
+<li>Observe the output. If the file content is successfully displayed, the test confirms the vulnerability.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to arbitrary files, potentially including sensitive system files, configuration data, or user documents, leading to information disclosure and potential for further exploitation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation for file paths within the file protocol handler.  Restrict access to files based on user privileges and implement path canonicalization to prevent traversal sequences. Use secure file access APIs with proper access control checks.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via SVG Upload</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to store malicious JavaScript code within a website through an SVG upload. When other users view the content containing the uploaded SVG, the malicious code is executed in their browsers, potentially leading to session hijacking or defacement. This type of vulnerability poses a significant risk to user security and website integrity.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the chat interface and locate the SVG upload functionality.</li>
+<li>Prepare a malicious SVG payload containing JavaScript code. For example: <code>&lt;svg onload=alert(&#x27;XSS&#x27;)&gt;</code></li>
+<li>Upload the SVG file through the designated upload field.</li>
+<li>Observe if the SVG displays correctly and the malicious JavaScript code executes in the context of the current user’s browser.</li>
+<li>Verify that the SVG is stored and accessible to other users.</li>
+<li>Have another user or a test account view the chat conversation or profile containing the uploaded SVG.</li>
+<li>Confirm that the malicious JavaScript code executes in the viewing user’s browser.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this vulnerability to steal user session cookies, redirect users to malicious websites, deface the website, or execute other arbitrary JavaScript code in the user’s browser, leading to a compromise of user accounts and website reputation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and sanitization on all file uploads, especially for SVG files.  Encode user-supplied data before displaying it in the browser. Consider using a content security policy (CSP) to restrict the execution of inline scripts and limit the impact of XSS vulnerabilities.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">CloudTrail Event Logging Omission of User Information</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> Certain API endpoints fail to properly log user agent and network information in CloudTrail events, instead reporting generic &quot;AWS Internal&quot; details. This allows attackers to potentially mask their identity and evade detection when making API calls through these endpoints, hindering security investigations and incident response.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initially, execute a standard API call via the command-line interface (CLI) or a similar tool.</li>
+<li>Wait for 5-10 minutes for the corresponding CloudTrail event to appear in the logging system.</li>
+<li>Inspect the CloudTrail event log to verify that the User Agent field and network information are populated with specific details.</li>
+<li>Subsequently, execute an API call through a specific endpoint known to exhibit the issue.  For example:</li>
+</ol>
+<pre><code>███████ ████████</code></pre>
+<ol>
+<li>Wait for 5-10 minutes for the CloudTrail event to appear in the logging system.</li>
+<li>Inspect the CloudTrail event log; the User Agent field and network information should be observed to be replaced with a generic &quot;AWS Internal&quot; value, obscuring the attacker&#x27;s identity.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this behavior to evade detection by masking their source IP address and user agent information within CloudTrail logs, making it difficult to trace malicious activity back to the attacker&#x27;s origin.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that all API endpoints correctly populate CloudTrail event logs with accurate user agent and network information. Implement robust logging mechanisms and regularly review API endpoint configurations to prevent similar omissions.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">MQTT: Server-Controlled Long Wait via Excessive Remaining Length</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An MQTT client can be induced into a prolonged wait state by a malicious server advertising an extremely large remaining length in a PUBLISH packet. The client accepts this large value without validation, leading to an indefinite hold while awaiting data that is not delivered. This represents a denial-of-service condition for the client.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure an MQTT server to send a PUBLISH packet with a large remaining length. Specifically, the Remaining Length field should be set to the maximum allowed value (e.g., 0xFF FF FF 7F, which equals 268,435,455 bytes).</li>
+<li>Send a SUBSCRIBE packet to the MQTT broker to initiate a connection.</li>
+<li>Observe the client&#x27;s behavior. The client should wait for a substantial amount of time, seemingly expecting a large data transfer, before timing out or being interrupted.</li>
+<li>Use command-line options (e.g., <code>--max-time</code> or <code>--max-filesize</code>) to mitigate or observe the behavior of the client under these conditions.</li>
+<li>Example payload (illustrative; specific MQTT packet structure needs to be crafted appropriately):  <code>0x01 0x06 0x00 0x03 topic &lt;topic<em>name&gt; 0xFF 0xFF 0xFF 0x7F</code> (where <code>&lt;topic</em>name&gt;</code> is a valid topic).</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> A malicious server can cause the MQTT client to hang indefinitely, preventing it from processing other requests and potentially impacting its functionality.  Although no memory exhaustion or corruption occurs, the client becomes unresponsive.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement a mechanism to validate the remaining length received from the server against a predefined maximum value.  Reject packets with remaining lengths exceeding this limit to prevent the client from entering a prolonged wait state. Specifically, enforce the same maximum message size limit for incoming packets as is applied to outgoing packets.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Unlogged API Endpoint Permission Enumeration</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> Some API endpoints do not log API call activity to auditing services, allowing an attacker with compromised credentials to silently enumerate permissions and assess their level of access. This bypasses standard security monitoring and detection mechanisms, enabling attackers to map out the target&#x27;s infrastructure and potential attack paths without raising immediate alarms.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Obtain valid AWS credentials with sufficient permissions to access an API endpoint.</li>
+<li>Perform an API call against a production endpoint, and verify that it logs to the auditing service (e.g., CloudTrail) after a short delay (5-10 minutes). This establishes a baseline for expected behavior.</li>
+<li>Identify a non-production API endpoint.</li>
+<li>Construct an API call against the identified non-production endpoint using the same credentials.  For example: <code>aws aiops list-investigation-groups --endpoint-url &lt;NON<em>PRODUCTION</em>ENDPOINT_URL&gt;</code>.</li>
+<li>Wait for a reasonable period (5-10 minutes or longer) and verify that the API call <em>does not</em> generate an entry in the auditing service.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Attackers can discreetly enumerate permissions associated with compromised credentials, enabling them to map out the target’s infrastructure and identify potential attack paths without detection. This can facilitate further exploitation and compromise of the system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure all public-facing API endpoints are configured to log activity to an auditing service (e.g., CloudTrail). Implement access control measures to restrict access to non-production endpoints and consider allowing only specific AWS accounts to access such endpoints.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Plaintext Database Credentials in Version Control</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves the accidental inclusion of database credentials, specifically a username and password, directly within a source code repository. This allows an attacker with access to the repository to gain unauthorized access to sensitive data and systems.  The risk is amplified if the repository is publicly accessible or if compromised.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the source code repository at &lt;REPOSITORY_URL&gt;.</li>
+<li>Navigate to a specific commit identified as containing the sensitive information (&lt;COMMIT_HASH&gt;).</li>
+<li>Examine the file contents within the commit to identify plain text credentials for a database, such as a PostgreSQL instance.</li>
+<li>Attempt to connect to the database using the discovered username and password.  The connection string might look something like: <code>host=&lt;DB<em>HOST&gt; port=&lt;DB</em>PORT&gt; dbname=&lt;DB_NAME&gt; user=&lt;USERNAME&gt; password=&lt;PASSWORD&gt;</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially gain unauthorized access to the database, leading to data theft, modification, or deletion, and potentially escalating privileges within the system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Avoid committing sensitive information like passwords or database credentials directly into source code repositories. Use environment variables, secure configuration management tools, or secrets management systems to store and manage such credentials. Implement automated scanning tools that check for the presence of sensitive data in code commits before they are merged into the main codebase.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">SSH Key Authentication Bypass via Incorrect CURLOPT_SSH_AUTH_TYPES Handling</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A flaw exists in an application using a library (libcurl) that interfaces with an SSH library (libssh). When public key authentication is requested, the underlying SSH library incorrectly assumes an agent is available, bypassing the need for a passphrase to unlock the private key. This allows authentication to occur without the expected key passphrase protection.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure and build a network library (e.g., libcurl) with SSH support (e.g., <code>--with-libssh</code>).</li>
+<li>Compile a simple application using the network library with the following options:</li>
+</ol>
+<ul>
+<li>Set the URL to an SSH server (e.g., <code>sftp://&lt;TARGET<em>SSH</em>SERVER&gt;/</code>).</li>
+<li>Specify public key authentication using an authentication type flag (e.g., <code>CURLSSH<em>AUTH</em>PUBLICKEY</code>).</li>
+</ul>
+<ol>
+<li>Ensure the user attempting authentication has a valid account on the target SSH server and their public key is authorized. The user&#x27;s SSH key should also have a passphrase set.</li>
+<li>Start an SSH agent or pageant and add the user&#x27;s SSH key to it.</li>
+<li>Execute the compiled application.</li>
+<li>Verify that the application successfully authenticates to the SSH server without prompting for the SSH key passphrase.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to resources on the SSH server, potentially leading to data theft, system compromise, or other security breaches.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> The network library should correctly handle the <code>CURLOPT<em>SSH</em>AUTH_TYPES</code> flag and explicitly check if an agent is available before attempting agent-based authentication. If an agent is not specified, the key passphrase should always be required for public key authentication. Additionally, developers should validate and sanitize input parameters and options to prevent unexpected behavior.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Bypass of Known Host Verification via Global Known Hosts</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where the application prioritizes a global known hosts file over a user-specified file during SSH authentication. This allows an attacker to potentially bypass host key verification by ensuring that a malicious or unexpected host key is present in the global file, leading to a man-in-the-middle (MITM) attack.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure and compile the application with SSH support using the libssh library.</li>
+<li>Add a valid host entry for <code>&lt;HOST<em>NAME&gt;</code> to the system&#x27;s global known hosts file (typically <code>/etc/ssh/ssh</em>known_hosts</code>).</li>
+<li>Create an empty file named <code>knownhosts</code>.</li>
+<li>Attempt to connect to <code>&lt;HOST<em>NAME&gt;</code> using the application with the <code>knownhosts</code> file specified for SSH known hosts. For example: <code>&lt;APPLICATION&gt; --knownhosts &lt;USER&gt;@&lt;HOST</em>NAME&gt;</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially bypass host key verification, enabling them to intercept and manipulate network traffic without detection, leading to data compromise or unauthorized access.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> The application should ensure that user-specified known hosts files are prioritized over global files. A potential fix involves setting a non-existent or invalid path for the global known hosts file when a user-specified file is provided. This prevents the application from falling back to the global file during host key validation.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
