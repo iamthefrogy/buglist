@@ -592,7 +592,7 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">108</div>
+        <div class="metric-value">109</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
@@ -612,9 +612,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>39</span></div>
+      <div class="analytics-label">Web App <span>40</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:85%"></div>
+        <div class="analytics-bar-fill" style="width:87%"></div>
       </div>
     </div>
     
@@ -660,9 +660,9 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (108)</option>
+          <option value="all">All Categories (109)</option>
           <option value="Network">Network (46)</option>
-<option value="Web App">Web App (39)</option>
+<option value="Web App">Web App (40)</option>
 <option value="API">API (11)</option>
 <option value="Source Code">Source Code (10)</option>
 <option value="Blockchain">Blockchain (1)</option>
@@ -675,6 +675,36 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Authentication Context Sharing in Multiplexed Connections</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where authentication context (e.g., NTLM/Negotiate credentials) is inappropriately shared between multiple, independent requests (Easy Handles) multiplexed over a single HTTP/2 connection. This allows an unauthenticated request to potentially inherit the authentication of a privileged request, bypassing authentication controls and leading to unauthorized access. The root cause is improper isolation of authentication state at the connection level instead of the individual request level.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Establish an HTTP/2 connection using a client library (e.g., libcurl).</li>
+<li>Initiate a first, authenticated request (Admin Stream) on the connection, requiring a valid authentication context (e.g., NTLM/Negotiate).</li>
+<li>While the first request remains active and authenticated (e.g., paused by a read function or due to network backpressure), initiate a second, unauthenticated request (Attacker Stream) on the same connection.</li>
+<li>Observe if the second, unauthenticated request successfully receives a response from a protected resource, indicating that it has inherited the authentication context from the first request.</li>
+<li>Example Payload (for the unauthenticated request): <code>GET /protected-resource HTTP/2</code> (where <code>/protected-resource</code> requires authentication).</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to protected resources, bypassing authentication controls. An attacker can potentially gain access to sensitive data or functionality that they are not authorized to use by leveraging the authentication of another, authenticated user.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement proper state isolation for each Easy Handle. Authentication context should be tied to the individual request, not the connection. If a protocol (e.g., NTLM/Negotiate) is incompatible with HTTP/2 multiplexing, either disable multiplexing for that protocol or dedicate a separate connection for authenticated requests. Ensure that connections are properly terminated and authentication contexts are cleared when requests complete.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
