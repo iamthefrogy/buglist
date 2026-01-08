@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">106</div>
+        <div class="metric-value">108</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-07</div>
+        <div class="metric-value">2026-01-08</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>45</span></div>
+      <div class="analytics-label">Network <span>46</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -614,7 +614,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Web App <span>39</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:87%"></div>
+        <div class="analytics-bar-fill" style="width:85%"></div>
       </div>
     </div>
     
@@ -628,9 +628,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>9</span></div>
+      <div class="analytics-label">Source Code <span>10</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:20%"></div>
+        <div class="analytics-bar-fill" style="width:22%"></div>
       </div>
     </div>
     
@@ -660,11 +660,11 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (106)</option>
-          <option value="Network">Network (45)</option>
+          <option value="all">All Categories (108)</option>
+          <option value="Network">Network (46)</option>
 <option value="Web App">Web App (39)</option>
 <option value="API">API (11)</option>
-<option value="Source Code">Source Code (9)</option>
+<option value="Source Code">Source Code (10)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
         </select>
@@ -675,6 +675,72 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Inconsistent File URL Traversal Handling</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The <code>file://</code> protocol handler exhibits inconsistent path sanitization based on the presence of an authority/host. While relative <code>file://</code> URLs with traversal sequences are typically rejected, including a host (even a localhost) bypasses the check, creating a false sense of security for developers implementing sandbox logic. This inconsistency can lead to unexpected file system access.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a file with sensitive data: <code>echo &quot;SECRET&quot; &gt; /tmp/secret.txt</code></li>
+<li>Attempt to retrieve the file using a relative <code>file://</code> URL: <code>curl file:///tmp/secret.txt</code> -&gt; Verify that the file is retrieved successfully.</li>
+<li>Attempt to access the file using a relative <code>file://</code> URL with a traversal sequence: <code>curl file://../../../../tmp/secret.txt</code> -&gt; Verify that the request is blocked with an error message like &quot;Bad file://URL&quot;.</li>
+<li>Attempt to access the file using a <code>file://</code> URL with a host and a traversal sequence: <code>curl file://localhost/../../../tmp/secret.txt</code> -&gt; Verify that the file is retrieved successfully, bypassing the check in step 3.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An application relying on the &quot;Bad file://URL&quot; error for security may be bypassed, allowing unauthorized access to files on the local file system. This could lead to data exposure or other security breaches.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Thoroughly validate all file URLs, irrespective of the presence of an authority, and implement consistent path sanitization rules to prevent file system traversal. Do not rely on protocol-specific rejection behaviors for security enforcement.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Stack Buffer Overflow in Floating-Point Formatting</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A stack-based buffer overflow vulnerability exists in the floating-point formatting code when using a fallback implementation. The vulnerability arises from an incorrect calculation of the buffer size needed to hold the formatted output, specifically when handling negative numbers. This can lead to crashes or potential memory corruption.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li><strong>Configure Build:</strong> Modify the source code to force the use of a legacy formatting function (e.g., <code>sprintf</code>) instead of a safer alternative (e.g., <code>snprintf</code>).  This can be achieved by commenting out a header include or defining a conditional compilation flag.</li>
+<li><strong>Compile Reproduction Program:</strong> Compile a C program that utilizes the vulnerable formatting function. This program should generate a floating-point number, particularly a negative number with a significant integer portion, and format it using the vulnerable function with a specific precision.</li>
+<li><strong>Run the Program:</strong> Execute the compiled C program.</li>
+<li><strong>Observe:</strong> Monitor the program&#x27;s behavior for signs of a stack buffer overflow, such as a segmentation fault, stack smashing detection, or unexpected application termination.</li>
+<li><strong>Example Payload/Input:</strong> Format a negative floating-point number (e.g., <code>-1.0e100</code>) with a relatively high precision (e.g., <code>%.300f</code>). The integer part (1 followed by 100 zeros) requires a significant number of bytes for formatting.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong></p>
+<p>The vulnerability can lead to a denial-of-service condition due to application crashes. In certain scenarios where formatting input is attacker-controlled, a successful exploitation could result in memory corruption, leading to further security compromises.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong></p>
+<ol>
+<li>Ensure the use of safer, bounds-checking formatting functions (e.g., <code>snprintf</code>) whenever possible.</li>
+<li>If a fallback formatting function is necessary, carefully review the buffer size calculation logic to correctly handle negative numbers and prevent overflows. Ensure the calculation accounts for all necessary characters (sign, integer digits, fractional digits).</li>
+<li>Implement appropriate input validation and sanitization to limit the impact of attacker-controlled input.</li>
+<li>Consider adding compiler-based protections such as stack canaries or address space layout randomization (ASLR).</li>
+</ol>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Web App">
       <button type="button" class="card-toggle">
         <span class="card-title">
