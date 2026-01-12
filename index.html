@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">109</div>
+        <div class="metric-value">111</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-08</div>
+        <div class="metric-value">2026-01-12</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>46</span></div>
+      <div class="analytics-label">Network <span>47</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,7 +612,7 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>40</span></div>
+      <div class="analytics-label">Web App <span>41</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:87%"></div>
       </div>
@@ -622,7 +622,7 @@
     <div class="analytics-row">
       <div class="analytics-label">API <span>11</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:24%"></div>
+        <div class="analytics-bar-fill" style="width:23%"></div>
       </div>
     </div>
     
@@ -630,7 +630,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>10</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:22%"></div>
+        <div class="analytics-bar-fill" style="width:21%"></div>
       </div>
     </div>
     
@@ -660,9 +660,9 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (109)</option>
-          <option value="Network">Network (46)</option>
-<option value="Web App">Web App (40)</option>
+          <option value="all">All Categories (111)</option>
+          <option value="Network">Network (47)</option>
+<option value="Web App">Web App (41)</option>
 <option value="API">API (11)</option>
 <option value="Source Code">Source Code (10)</option>
 <option value="Blockchain">Blockchain (1)</option>
@@ -675,6 +675,74 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">CRLF Injection in HTTP Header Values</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-12</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> Carriage return line feed (CRLF) characters can be injected into HTTP header values, leading to client-side HTTP request splitting. This vulnerability occurs when attacker-controlled data is used in a header value, allowing an attacker to craft malformed HTTP requests with injected headers. The HTTP specification prohibits CRLF characters in header field values, and their presence can cause request smuggling or other issues.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a local HTTP server that checks for specific headers.  The server should be configured to expect a privileged header (e.g., &quot;X-Admin&quot;) and respond differently based on its value.</li>
+<li>Send a normal HTTP POST request to the server. This is expected to fail and result in a 403 Forbidden response.</li>
+<li>Craft a malicious POST request, injecting CRLF sequences (<code>\r\n</code>) within the value of a header (e.g., &quot;Authorization: Bearer&quot;).  Include an attacker-controlled header such as &#x27;X-Admin: 1&#x27; after the CRLF sequence.</li>
+</ol>
+<p>Example:</p>
+<pre><code>   TOKEN=$&#x27;abc\r\nX-Admin: 1\r\n&#x27;
+   curl -v -X POST &lt;TARGET_URL&gt;/&lt;ENDPOINT&gt; \
+     -H &quot;Authorization: Bearer ${TOKEN}&quot; \
+     -d &#x27;&lt;DATA&gt;&#x27;</code></pre>
+<ol>
+<li>Observe the HTTP request sent by <code>curl</code> to verify that the injected header is present.</li>
+<li>Observe the response from the server.  A successful exploit will result in the server responding as if the attacker has the privilege indicated by the injected header.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can inject arbitrary headers into outgoing HTTP requests. This can lead to authorization bypasses, privilege escalation, manipulation of proxy-related headers (e.g., <code>X-Forwarded-*</code>), and potentially request smuggling chains in proxy environments. This vulnerability exists solely on the client-side (curl) and is independent of server-side misconfigurations.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  The <code>curl</code> client should validate and sanitize all user-supplied data used in HTTP header values, rejecting or removing any CRLF sequences to prevent request splitting.  Developers should also be mindful of the data they are passing to <code>curl</code> and ensure that it is properly encoded and validated before inclusion in HTTP headers.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Heap Out-of-Bounds Read via Malformed PUSH_PROMISE Headers</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-12</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A heap-based out-of-bounds read vulnerability exists when processing HTTP/2 PUSH_PROMISE headers.  This occurs because the application incorrectly handles header name and value pointers received from a lower-level HTTP/2 library, leading to a vulnerability when those pointers are used with a formatting function. This can potentially lead to information disclosure or application crashes.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Build an application that processes HTTP/2 connections and uses a header formatting function like <code>curl_maprintf</code>. Ensure debugging tools such as AddressSanitizer (ASAN) are enabled during compilation.</li>
+<li>Set up a server that sends malformed HTTP/2 PUSH_PROMISE headers. The header names and values must not be null-terminated, but must have defined lengths provided by the header library.</li>
+<li>The malicious header name should be crafted as a byte string, for example, <code>b&#x27;x-oob-test&#x27; + b&#x27;A&#x27; <em> 64</code>. The malicious header value should be similar, for example <code>b&#x27;trigger&#x27; + b&#x27;B&#x27; </em> 64</code>.</li>
+<li>Initiate an HTTP/2 connection to the server.</li>
+<li>Trigger the sending of a PUSH_PROMISE header containing the malicious header name and value.</li>
+<li>Observe the application&#x27;s behavior.  With ASAN enabled, an error message indicating a heap buffer overflow or out-of-bounds read should be observed.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Information Disclosure: Attackers can potentially read sensitive data from adjacent heap memory regions. Availability: Application crashes can occur if the out-of-bounds read attempts to access invalid memory.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  When processing header data from a lower-level library, always utilize the explicitly provided lengths for header names and values.  Avoid relying on null termination and always use format specifiers like <code>%.*s</code> which accept length arguments to limit the read operation. Implement thorough input validation to prevent processing of malformed headers.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Web App">
       <button type="button" class="card-toggle">
         <span class="card-title">
