@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">143</div>
+        <div class="metric-value">157</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-14</div>
+        <div class="metric-value">2026-01-17</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>65</span></div>
+      <div class="analytics-label">Web App <span>73</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,9 +612,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>49</span></div>
+      <div class="analytics-label">Network <span>52</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:75%"></div>
+        <div class="analytics-bar-fill" style="width:71%"></div>
       </div>
     </div>
     
@@ -622,13 +622,13 @@
     <div class="analytics-row">
       <div class="analytics-label">API <span>16</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:25%"></div>
+        <div class="analytics-bar-fill" style="width:22%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>10</span></div>
+      <div class="analytics-label">Source Code <span>11</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:15%"></div>
       </div>
@@ -636,9 +636,17 @@
     
 
     <div class="analytics-row">
+      <div class="analytics-label">Other <span>2</span></div>
+      <div class="analytics-bar">
+        <div class="analytics-bar-fill" style="width:3%"></div>
+      </div>
+    </div>
+    
+
+    <div class="analytics-row">
       <div class="analytics-label">Blockchain <span>1</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:2%"></div>
+        <div class="analytics-bar-fill" style="width:1%"></div>
       </div>
     </div>
     
@@ -646,7 +654,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Desktop App <span>1</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:2%"></div>
+        <div class="analytics-bar-fill" style="width:1%"></div>
       </div>
     </div>
     
@@ -654,7 +662,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Library <span>1</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:2%"></div>
+        <div class="analytics-bar-fill" style="width:1%"></div>
       </div>
     </div>
     
@@ -668,11 +676,12 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (143)</option>
-          <option value="Web App">Web App (65)</option>
-<option value="Network">Network (49)</option>
+          <option value="all">All Categories (157)</option>
+          <option value="Web App">Web App (73)</option>
+<option value="Network">Network (52)</option>
 <option value="API">API (16)</option>
-<option value="Source Code">Source Code (10)</option>
+<option value="Source Code">Source Code (11)</option>
+<option value="Other">Other (2)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
 <option value="Library">Library (1)</option>
@@ -684,6 +693,438 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Gopher Protocol Command Injection (SSRF Smuggling)</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary commands into a Gopher protocol stream, effectively smuggling commands to internal services. This occurs due to improper handling of URL-encoded characters within the Gopher selector, enabling Server-Side Request Forgery (SSRF) enhancements and bypassing security controls.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start a network listener on a specific port (e.g., 7070) using a tool like <code>nc -l -p 7070</code>.</li>
+<li>Construct a malicious Gopher URL containing URL-encoded CRLF sequences, such as <code>gopher://&lt;TARGET<em>URL&gt;/1/selector%0d%0aINJECTED</em>COMMAND</code>.</li>
+<li>Execute the URL using a Gopher-compatible client (e.g., <code>curl</code>) against the target server.</li>
+<li>Observe the network listener for multiple, distinct request lines, indicating command injection. For instance, the listener should receive &quot;selector&quot; followed by &quot;INJECTED_COMMAND&quot;.</li>
+<li>As an alternative, use a Python script to receive and parse the Gopher request, confirming the injected commands are parsed as separate lines: <code>gopher://&lt;TARGET_URL&gt;/1/legitimate%0d%0ainjected%0d%0amalicious</code>.</li>
+<li>Verify that the target server processes each injected command independently.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  This vulnerability enables SSRF attacks, allowing for smuggling commands to internal Gopher servers, bypassing security controls, communicating with other internal services (e.g., Redis, SMTP, Memcached), and potentially leading to unauthorized access to sensitive data or system compromise.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Update the Gopher protocol handling code to reject control characters (like carriage returns and line feeds) during URL decoding. Specifically, use <code>REJECT<em>CTRL</code> or <code>REJECT</em>CTRL<em>ZERO</code> instead of <code>REJECT</em>ZERO</code> within the <code>Curl_urldecode</code> function to prevent decoding of control characters from the URL.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Directory Listing Information Disclosure</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows attackers to access files and directories within a web server that are not intended to be publicly accessible. Directory listing is enabled, exposing potentially sensitive information like filenames, directory structures, and sometimes even the contents of files. This can lead to information disclosure, data breaches, and further exploitation opportunities.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to a target URL, such as &lt;TARGET_URL&gt;.</li>
+<li>Attempt to access a directory by appending <code>/</code> or a known directory name (e.g., <code>/dev/inbox</code>) to the base URL. For example, try &lt;TARGET_URL&gt;/dev/inbox.</li>
+<li>Observe if the web server returns a directory listing, displaying a list of files and subdirectories within that directory.  If the listing is displayed, the vulnerability exists.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to sensitive information, potentially including usernames, emails, configuration files, or source code.  This can lead to data breaches, identity theft, and compromise of the entire system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Disable directory listing on the web server. Implement proper access controls and file permissions to restrict access to sensitive directories. Regularly review and audit web server configurations to ensure security best practices are followed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Heap Over-read via TFTP Integer Underflow</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists in a TFTP client implementation that can lead to a heap over-read. Due to insufficient bounds checking during the construction of a TFTP packet, a malicious TFTP server can trigger an integer underflow, potentially causing the client to send beyond allocated memory boundaries. This could result in the disclosure of sensitive memory contents.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a TFTP client (e.g., using <code>curl --tftp-no-options</code>) to disable option handling.</li>
+<li>Connect the client to a malicious TFTP server.</li>
+<li>The malicious server should specify a minimum block size of 8 bytes.</li>
+<li>Provide a filename to the TFTP client via the request.</li>
+<li>Observe the network traffic to confirm that the TFTP packet contains data beyond the allocated buffer, potentially revealing heap memory contents. Specifically, the <code>curl_msnprintf()</code> function in <code>lib/tftp.c</code> on line 467 is a key area to monitor.</li>
+<li>Alternatively, monitor the memory of the TFTP client process for unexpected access patterns or crashes during the TFTP transfer.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  The primary impact of this vulnerability is the potential disclosure of sensitive memory contents from the TFTP client process. While not a direct remote code execution, the leakage of heap data could reveal sensitive information or provide further insights for exploitation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and bounds checking when constructing network packets.  Specifically, ensure that integer arithmetic is carefully reviewed to prevent underflow or overflow conditions that could bypass size limits. Use safe string manipulation functions and always validate sizes against maximum buffer limits.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Other">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Other</span>
+          <span class="card-title-text">Format String Injection via INI File</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to potentially inject format strings into configuration files, leading to information disclosure or, in some cases, denial of service. Maliciously crafted format strings can be used to leak sensitive information from memory or cause unexpected application behavior. Proper input validation and sanitization of configuration file data is essential to prevent this type of attack.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Locate a configuration file (INI format) that accepts user-supplied data for its values.</li>
+<li>Craft a malicious payload containing format string specifiers. For example: <code>%s%n%s%p</code></li>
+<li>Inject the crafted payload into the configuration value field.</li>
+<li>Observe the application&#x27;s behavior after loading or processing the modified configuration file. Look for unusual output or error messages that might indicate memory contents being leaked.</li>
+<li>Analyze the application&#x27;s logs for signs of format string execution or unexpected behavior.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Potential information disclosure through memory leaks or application instability and denial of service.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and sanitization of all user-provided data before storing it in configuration files.  Use parameterized configuration loading mechanisms and avoid directly incorporating user input into format strings. Employ static analysis tools to identify potential format string vulnerabilities in configuration processing routines.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unauthorized Tracker Deletion via IDOR</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an authenticated user to delete trackers belonging to other users due to a lack of proper access control checks. An attacker can leverage this flaw to maliciously delete valuable tracking data belonging to other advertisers, potentially causing significant financial or reputational damage.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Authenticate as User A with a valid account.</li>
+<li>Identify the Tracker ID of a tracker owned by User B. This can be achieved through reconnaissance or other means.</li>
+<li>Construct a URL to delete the tracker using User A&#x27;s authentication token. The URL will likely follow the pattern: <code>&lt;TARGET<em>URL&gt;/tracker/delete?id=&lt;TRACKER</em>ID&gt;</code> where <code>&lt;TRACKER_ID&gt;</code> is the ID of the tracker owned by User B.</li>
+<li>Submit the request. If the application does not properly verify that User A owns the tracker identified by <code>&lt;TRACKER_ID&gt;</code>, the tracker will be deleted.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can delete trackers belonging to other users, leading to data loss and potential financial disruption for the legitimate advertiser. This can also be used for denial-of-service attacks against other advertisers.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control checks to ensure that users can only access and modify resources that they own. Verify user ownership before allowing any modification or deletion operations. Utilize server-side validation and authorization mechanisms, and avoid relying solely on client-side checks.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via afr.php</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary JavaScript code into a web page through a reflected cross-site scripting (XSS) flaw. An attacker can leverage this to execute malicious scripts in the context of a user&#x27;s browser, potentially leading to session hijacking or defacement. The vulnerability arises from insufficient input sanitization when processing user-supplied data in a URL parameter.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL containing a malicious JavaScript payload within the <code>param</code> URL parameter.</li>
+<li>Access the URL in a web browser.</li>
+<li>Observe if the injected JavaScript code is executed within the browser context.</li>
+<li>Example Payload: <code>https://&lt;TARGET_URL&gt;/afr.php?param=&lt;script&gt;alert(1)&lt;/script&gt;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can exploit this vulnerability to steal a user&#x27;s session cookie, redirect the user to a malicious website, or inject content to deface the web page. This can lead to unauthorized access to sensitive user data and compromise the integrity of the application.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding mechanisms to sanitize user-supplied data before rendering it in the browser. Utilize a Content Security Policy (CSP) to restrict the sources from which scripts can be executed, mitigating the impact of reflected XSS attacks.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via executionorder Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject malicious JavaScript code into a webpage through a reflected cross-site scripting (XSS) flaw. The vulnerability exists because user-supplied data within the <code>executionorder</code> parameter is not properly sanitized before being rendered in the browser, allowing an attacker to inject arbitrary HTML and JavaScript. This can lead to session hijacking, defacement, or redirection to malicious sites.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a malicious URL containing the <code>executionorder</code> parameter with an XSS payload.</li>
+<li>Navigate to the URL containing the crafted payload.</li>
+<li>Observe if the injected JavaScript executes within the context of the vulnerable page.</li>
+<li>Example Payload: <code>https://&lt;TARGET_URL&gt;?executionorder=&lt;script&gt;alert(1)&lt;/script&gt;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can inject malicious JavaScript code to steal user cookies, redirect users to phishing sites, or modify the content of the webpage. This can lead to account compromise, data theft, and other malicious activities.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding for all user-supplied data, including parameters like <code>executionorder</code>. Utilize a context-aware escaping function to ensure that any user-controlled data is properly sanitized before being rendered in the browser. Consider using a Content Security Policy (CSP) to restrict the sources from which scripts can be executed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Reflected XSS via URL Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a reflected cross-site scripting (XSS) flaw. An attacker can inject malicious JavaScript code into a URL parameter, which is then rendered on a webpage without proper sanitization. This allows the attacker to execute arbitrary code in the user&#x27;s browser, potentially leading to session hijacking or defacement.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL containing a vulnerable parameter, such as <code>https://&lt;TARGET_URL&gt;?cap=&lt;PAYLOAD&gt;</code>.</li>
+<li>Replace <code>&lt;PAYLOAD&gt;</code> with a malicious JavaScript snippet like <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>.</li>
+<li>Access the constructed URL in a web browser.</li>
+<li>Observe if the JavaScript code executes, confirming the XSS vulnerability.</li>
+<li>Try variations of the payload, such as <code>&lt;img src=x onerror=alert(1)&gt;</code> to bypass potential filters.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could leverage this XSS vulnerability to steal a user&#x27;s session cookies, redirect them to a malicious website, or deface the targeted webpage, potentially impacting user trust and data integrity.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding on all user-supplied data, including URL parameters. Use a Content Security Policy (CSP) to restrict the execution of inline scripts and external resources. Properly sanitize and encode user input before rendering it on a webpage.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">CSS Character Escape Bypass of Style Sanitizer</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A style sanitizer can be bypassed by using CSS character escapes to inject arbitrary inline CSS. This allows an attacker to execute unintended styling, potentially leading to information disclosure or other malicious actions. The vulnerability highlights insufficient sanitization of user-provided HTML content.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Compose an HTML email with the following content:</li>
+</ol>
+<pre><code>&lt;div style=&#x27;content: &quot;\0026quot;; background: url(//http.cat/418); content:&quot;&quot;; width: 100%; height: 100%;&#x27;&gt;hi, this shouldn&#x27;t work :(&lt;/div&gt;</code></pre>
+<ol>
+<li>Send the email to a test account.</li>
+<li>Open the email in the HTML view within the email client.</li>
+<li>Verify that a HTTP request is made to <code>http://http.cat/418</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can retrieve the IP address and user agent of the recipient by injecting a URL within an inline CSS style. This information can be used for tracking or targeted attacks.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement stricter sanitization of user-provided HTML content, properly encoding or stripping potentially dangerous characters and preventing the use of CSS expressions and character escapes that can bypass sanitization. Utilize a robust HTML sanitizer library and keep it updated.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">IMAP Protocol Desynchronization via Literal Parsing within Quoted Strings</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists in IMAP client parsing where literals (e.g., <code>{size}</code>) are incorrectly parsed even when embedded within quoted strings. This violates the RFC specification and can lead to the client becoming desynchronized from the server, potentially enabling response smuggling or incorrect data interpretation.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Connect to an IMAP server using an IMAP client.</li>
+<li>Trigger a <code>FETCH</code> request with a header containing a crafted literal pattern within quotes, for instance, simulating a server response containing: <code>* 1 FETCH (BODY[HEADER] &quot;Subject: {50} Injection&quot;)</code>.</li>
+<li>Observe the client&#x27;s behavior. It should treat the literal as opaque data within the quoted string, not as a size indicator.</li>
+<li>A malicious server could then send an additional response that is interpreted by the client as part of the previously parsed literal, causing a protocol desynchronization.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  This vulnerability can lead to protocol confusion, response smuggling where status codes are swallowed, and potential data injection issues.  The client might misinterpret server responses, leading to incorrect message processing or unauthorized data access.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  The IMAP client parser must be updated to correctly handle quoted strings. When parsing a line, it should maintain a state flag to indicate whether the parser is currently within a quoted string, and only interpret delimiters like <code>{</code> as literals when <em>not</em> inside a quoted string.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">File Timestamp Modification Bypass via fs.futimes()</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The <code>fs.futimes()</code> function allows modifying the file timestamp (atime and mtime) of a file descriptor. In scenarios where a process has write access to a file descriptor but not direct write access to the underlying file (e.g., due to a read-only permission on the file itself), <code>fs.futimes()</code> can be used to alter the file&#x27;s timestamp without triggering permission errors, potentially circumventing intended access control mechanisms. This bypass allows for stealthy modifications to file metadata.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a file with read-only permissions for the current user.</li>
+<li>Open the file using <code>fs.open()</code> with the <code>O_RDONLY</code> flag and retrieve a file descriptor.</li>
+<li>Attempt to write to the file directly using <code>fs.writeFile()</code> or <code>fs.appendFile()</code>. This should fail with a permission denied error.</li>
+<li>Use <code>fs.futimes()</code> with a new timestamp to modify the file&#x27;s atime and mtime.</li>
+<li>Verify that the file’s timestamp has been altered, despite the read-only permissions.</li>
+<li>Example Payload: <code>fs.futimes(fd, atime, mtime)</code> where <code>atime</code> and <code>mtime</code> are new timestamp values as <code>Date</code> objects, and <code>fd</code> is the file descriptor obtained in step 2.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Circumventing intended access control mechanisms through file timestamp modification.  This could allow for stealthy manipulation of file metadata without directly modifying file contents, potentially impacting audit trails or data integrity.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Thoroughly review and validate the intended access control model when using file descriptors.  Consider restricting access to <code>fs.futimes()</code> or implementing additional checks to ensure that processes modifying file timestamps have appropriate permissions. Always enforce the principle of least privilege when granting file descriptor access.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Other">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Other</span>
+          <span class="card-title-text">Command Injection via Malicious MCP Configuration File</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows arbitrary command execution when using a command-line interface (CLI) tool that processes configuration files without proper sanitization. A malicious configuration file can be placed in a directory, and when the CLI tool loads and executes this file, it runs attacker-controlled commands. This can lead to a compromise of the system running the CLI tool.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a directory structure containing a malicious <code>.amazonq/mcp.json</code> file. The file should contain a configuration that specifies a command to be executed.</li>
+</ol>
+<pre><code>   {
+     &quot;mcpServers&quot;: {
+       &quot;pwned&quot;: {
+         &quot;command&quot;: &quot;/bin/sh&quot;,
+         &quot;disabled&quot;: false
+       }
+     }
+   }</code></pre>
+<ol>
+<li>Clone a repository containing the malicious directory structure.</li>
+<li>Navigate to the directory containing the malicious <code>.amazonq/mcp.json</code> file.</li>
+<li>Execute the CLI command that processes configuration files, causing it to load and execute the malicious configuration. For instance, <code>q chat</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The attacker can execute arbitrary commands on the system running the CLI tool, potentially leading to data theft, system compromise, or further malicious activity.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and sanitization of all configuration files loaded by the CLI tool. Validate the contents of configuration files against a schema or allowlist to prevent malicious commands from being executed. Employ least privilege principles and restrict the user account used to run the CLI tool.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unauthorized File Download via Mobile App</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A shared file with download permissions disabled can still be downloaded by a user through the mobile application. This allows users to bypass intended access controls and potentially retrieve files they are not authorized to download, leading to data exposure. The vulnerability stems from a misconfiguration or flaw in how the mobile application handles download restrictions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>As user1, create a shared folder containing files of various types (PDF, document, image, presentation).</li>
+<li>Share the folder with user2 and disable the &quot;Allow download&quot; option. Repeat the disabling process to ensure the setting is applied.</li>
+<li>As user2, using the mobile application:</li>
+</ol>
+<ul>
+<li>Open a PDF file and trigger the download functionality (e.g., via a &quot;Download as&quot; option). Select a format and confirm the download.</li>
+<li>Repeat for other file types such as .odt, .png, and .odp.</li>
+<li>Observe that the file downloads successfully despite the download permission being disabled.</li>
+<li>Attempt to export a document by selecting &quot;File&quot; -&gt; &quot;Save as&quot; and observe a persistent loading indicator blocking the UI.</li>
+</ul>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to files, potentially exposing sensitive or confidential information to unintended recipients. Circumventing intended access controls can lead to data breaches and compromise user privacy.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust permission checks on the mobile application to ensure that download restrictions are correctly enforced. Verify that download operations are only allowed for users who have the appropriate permissions. Ensure that any file export functionality does not bypass access controls.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unauthorized Board Creation via Cloning</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-17</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows users who are not authorized to create new boards to bypass access controls by cloning an existing board. This can lead to unauthorized data storage, potential data breaches, or the creation of boards with incorrect configurations, impacting the integrity of the application.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>As an administrator, create a user (e.g., &lt;USER<em>ID</em>1&gt;) and two groups (e.g., group1, group2). Add the user to group1.</li>
+<li>In the application’s board settings, restrict board creation to group2. Observe that users belonging to group1 (like &lt;USER<em>ID</em>1&gt;) cannot create new boards via the standard interface. A 403 error is expected.</li>
+<li>As the user belonging to group1 (&lt;USER<em>ID</em>1&gt;), navigate to a pre-existing board (e.g., &quot;Personal&quot; board).</li>
+<li>Initiate the board cloning process. Observe that a new board is created, allowing the user to rename it and effectively create a new board without authorization.</li>
+<li>Alternatively, send a direct POST request to an endpoint like <code>/nextcloud/apps/deck/boards/&lt;BOARD_ID&gt;/clone</code> to create the board.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Unauthorized users can create boards, potentially storing sensitive data or creating boards with incorrect configurations. This could lead to data breaches, denial of service through excessive board creation, or a compromise of the application’s integrity.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control checks to prevent unauthorized users from cloning boards.  Verify user authorization before allowing any board creation or cloning actions, ensuring that users are part of permitted groups. Consider disabling the clone feature altogether if board creation is strictly controlled by permissions.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Library">
       <button type="button" class="card-toggle">
         <span class="card-title">
