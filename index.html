@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">157</div>
+        <div class="metric-value">167</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-17</div>
+        <div class="metric-value">2026-01-22</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>73</span></div>
+      <div class="analytics-label">Web App <span>80</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,17 +612,17 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>52</span></div>
+      <div class="analytics-label">Network <span>54</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:71%"></div>
+        <div class="analytics-bar-fill" style="width:68%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>16</span></div>
+      <div class="analytics-label">API <span>17</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:22%"></div>
+        <div class="analytics-bar-fill" style="width:21%"></div>
       </div>
     </div>
     
@@ -630,7 +630,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>11</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:15%"></div>
+        <div class="analytics-bar-fill" style="width:14%"></div>
       </div>
     </div>
     
@@ -638,7 +638,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Other <span>2</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:3%"></div>
+        <div class="analytics-bar-fill" style="width:2%"></div>
       </div>
     </div>
     
@@ -676,10 +676,10 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (157)</option>
-          <option value="Web App">Web App (73)</option>
-<option value="Network">Network (52)</option>
-<option value="API">API (16)</option>
+          <option value="all">All Categories (167)</option>
+          <option value="Web App">Web App (80)</option>
+<option value="Network">Network (54)</option>
+<option value="API">API (17)</option>
 <option value="Source Code">Source Code (11)</option>
 <option value="Other">Other (2)</option>
 <option value="Blockchain">Blockchain (1)</option>
@@ -693,6 +693,321 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">OAuth2 Bearer Token Leak via Cross-Protocol Redirects</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves the leakage of OAuth2 Bearer tokens during redirects to different protocols or hosts. The vulnerability stems from incomplete credential clearing logic within a library, leading to the persistence of Bearer tokens across redirect boundaries and potential exposure to malicious servers. This poses a significant risk of unauthorized access to resources protected by the token.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initiate a request with a valid OAuth2 Bearer token and follow location redirects enabled.</li>
+<li>Configure a server to respond to the initial request with a redirect (301 or 302) to an arbitrary protocol (e.g., IMAP) on a listening port.</li>
+<li>The server listening on the target port should be configured to receive and display the OAuth2 Bearer token sent during authentication, if it is received.  An example payload is: <code>AUTHENTICATE XOAUTH2 &lt;base64 encoded token&gt;</code>.</li>
+<li>Execute the client request.</li>
+<li>Observe the server logs, where the OAuth2 Bearer token should be captured and displayed.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to resources protected by the OAuth2 Bearer token, potential session hijacking, and unauthorized data access.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement robust credential clearing mechanisms to ensure that all authentication tokens, including OAuth2 Bearer tokens, are properly cleared when crossing security boundaries like protocol or host changes. Specifically, ensure that the token is explicitly cleared in conjunction with other authentication credentials during a redirect.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Account Takeover via Clickjacking</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> Clickjacking is a vulnerability where a malicious website tricks a user into clicking something different from what they perceive, potentially leading to unintended actions on another website. This can result in unauthorized account access or manipulation, effectively allowing an attacker to take control of a user&#x27;s account.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the target website and identify an endpoint or feature where user interaction is required (e.g., a form submission, a button click).  In this case, the reported endpoint is &lt;TARGET_URL&gt;.</li>
+<li>Utilize a clickjacking payload, as demonstrated by the provided proof of concept (e.g., a transparent iframe overlaying the target webpage).  Refer to the provided PoC: &lt;CLICKJACKING<em>POC</em>URL&gt;.</li>
+<li>Position a hidden element on the malicious page that, when clicked by the user, triggers the desired action on the target webpage.  The action could be related to login, data deletion, or any other sensitive function.</li>
+<li>Verify that the targeted action on &lt;TARGET_URL&gt; is performed without the user&#x27;s explicit consent or awareness, resulting in a potential account takeover.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can trick a user into performing actions they did not intend to, such as unknowingly logging in, modifying account settings, or deleting data, leading to account compromise and potential data theft.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement clickjacking prevention measures, such as the X-Frame-Options HTTP header (setting it to DENY or SAMEORIGIN), Content Security Policy (CSP) frame-ancestors directive, and carefully auditing all user interactions involving sensitive actions. Also, educate users about the risks of clickjacking and encourage them to be cautious about the websites they visit.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Disclosure of Hidden Comments via Heart Action</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where hidden comments, intended to be visible only to the comment owner or administrators, can be disclosed by manipulating a heart (like) action request. This allows unauthorized users to retrieve and view the content of comments that should otherwise be hidden, potentially exposing sensitive or private information. The vulnerability arises from insufficient access controls within the endpoint responsible for handling like actions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create two user accounts on a platform with media posting and comment functionality.</li>
+<li>Log in to the platform as UserVictim.</li>
+<li>UserVictim posts media and enables comments.</li>
+<li>UserVictim posts a comment on their media and then disables the comments section for that media.</li>
+<li>UserVictim retrieves the comment ID by inspecting the page source and searching for the <code>entityIds</code> string.</li>
+<li>Log in to the platform as UserAttacker.</li>
+<li>Intercept a POST request made to the endpoint responsible for liking a comment (e.g., <code>/api/statuses/&lt;COMMENT_ID&gt;/hearts</code>).</li>
+<li>Modify the intercepted POST request by replacing <code>&lt;COMMENT_ID&gt;</code> with the comment ID obtained in step 5.</li>
+<li>Send the modified POST request using a tool like a proxy or browser extension.</li>
+<li>Observe the response from the server. The response should contain the content of the hidden comment and its associated data, revealing the comment&#x27;s content to the attacker.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can disclose the content of hidden comments, potentially exposing sensitive information or violating user privacy. This could lead to reputational damage, data leaks, and potential misuse of the disclosed content.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access controls to ensure that hidden comments are only accessible to authorized users (e.g., the original poster, administrators). Validate user authentication and authorization before granting access to sensitive data. Ensure that endpoints handling actions related to comments properly enforce access restrictions, preventing unauthorized disclosure.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Cookie Expiration Time Integer Overflow</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from an integer overflow when calculating cookie expiration times. When parsing the <code>Max-Age</code> attribute of a <code>Set-Cookie</code> header, the application fails to properly validate the resulting expiration timestamp, leading to unexpected cookie lifetimes. This can result in cookies persisting longer than intended or expiring immediately, potentially compromising user sessions and impacting application functionality.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send an HTTP response containing a <code>Set-Cookie</code> header with a large <code>Max-Age</code> value to the target application.  The <code>Max-Age</code> value should be close to the maximum representable integer.</li>
+<li>Observe the resulting cookie&#x27;s expiration time. Specifically, check if the application incorrectly calculates the expiration time due to an integer overflow.</li>
+<li>Utilize a tool like <code>curl</code> to capture the response headers and cookie values, inspecting the <code>expires</code> attribute.</li>
+<li>Use the following payload example: <code>Max-Age=&lt;large<em>integer</em>close<em>to</em>max_value&gt;; Path=/</code></li>
+<li>Examine the cookies.txt file to check expiry time.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can exploit this vulnerability to extend user sessions beyond their intended duration, bypass privacy settings, or potentially cause denial-of-service conditions by filling cookie storage with malformed cookies. This can lead to unauthorized access, data exposure, or compromised user privacy.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust overflow checks when calculating cookie expiration times. Utilize libraries or functions that provide safe integer arithmetic and ensure that the expiration time is properly validated before being used. Consider using a well-vetted library for handling cookies, as these typically include built-in overflow protection. Utilize parameterized cookie handling to prevent injection. Always apply proper bounds checking.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Cookie Replacement Use-After-Free Vulnerability</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A use-after-free vulnerability exists in the cookie replacement logic of a library. This occurs when a data structure is modified while being iterated over, leading to a situation where memory is accessed after it has been freed. This can result in memory corruption, potentially allowing an attacker to execute arbitrary code or expose sensitive information.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Build the library with AddressSanitizer enabled. This requires setting appropriate compiler flags to include sanitization checks during compilation.</li>
+<li>Run a proof-of-concept server designed to trigger the vulnerability, which accepts multiple concurrent requests.</li>
+<li>Send a series of requests to the server, manipulating cookie data to create a race condition scenario where a cookie is freed and then accessed. Example cookie data: <code>&lt;cookie_data&gt;</code>.</li>
+<li>Observe the output from AddressSanitizer. A “heap-use-after-free” error indicates that the vulnerability is present. The error message will contain information about the memory address being accessed and the location in the source code where the access occurs.</li>
+<li>Repeat the process with different request patterns and payloads to verify the vulnerability and explore potential variations.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Exploitation of this vulnerability can lead to heap corruption, arbitrary code execution, information disclosure (e.g., exposed session tokens), and application crashes.  An attacker could potentially gain unauthorized access to sensitive data or control of the application.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> To prevent this type of vulnerability, ensure that data structures are not modified while being iterated over. Implement robust memory management practices, including double-checking pointer validity before dereferencing and considering using smart pointers or other memory safety techniques to reduce the risk of use-after-free errors. Implement defensive programming techniques, such as bounds checking and memory integrity checks.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Sensitive Information Leak via Status Endpoint</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An endpoint designed to provide server status information was inadvertently leaking sensitive internal data, including potentially personally identifiable information (PII) and system details. This exposes confidential data to unauthorized parties, posing a risk to data privacy and security.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a GET request to the server status endpoint: <code>&lt;TARGET_URL&gt;/server-status</code>.</li>
+<li>Examine the response body for any unexpected or sensitive information. This may include internal server paths, configuration details, or user data.</li>
+<li>Verify that the endpoint is properly secured and that sensitive data is not exposed in the response.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to internal system details and potentially PII can lead to a variety of negative consequences, including data breaches, privacy violations, and system compromise.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict access controls on sensitive endpoints. Ensure that server status pages and similar diagnostic interfaces only expose necessary information and are not accessible to unauthorized users. Regularly review and audit endpoint responses to identify and remove any inadvertently leaked data.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Silent Ignoring of SSL Certificate Options</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises when a program utilizes a non-native SSL backend (like mbedTLS) without proper feature checking.  Certain SSL configuration options, such as issuer certificate verification and CRL file validation, are silently ignored, leading to a potential bypass of intended security controls and exposing the application to risks like MITM attacks or cryptographic downgrades. The vulnerability&#x27;s silent failure is particularly concerning, as it prevents detection of the underlying security issue.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a custom SSL backend (e.g., mbedTLS) within a test environment or application.</li>
+<li>Attempt to set a custom certificate issuer using the <code>CURLOPT<em>ISSUERCERT</code> option to a fake certificate file: <code>&lt;TARGET</em>URL&gt;?ISSUERCERT=fake_issuer.pem</code>.</li>
+<li>Attempt to set custom elliptic curves using the <code>CURLOPT<em>SSL</em>EC<em>CURVES</code> option with an invalid curve name: <code>&lt;TARGET</em>URL&gt;?SSL<em>EC</em>CURVES=INVALID<em>CURVE</em>NAME</code>.</li>
+<li>Attempt to specify a custom CRL file using the <code>CURLOPT<em>CRLFILE</code> option, pointing to a non-existent or invalid CRL file: <code>&lt;TARGET</em>URL&gt;?CRLFILE=fake_crl.pem</code>.</li>
+<li>Observe the program&#x27;s behavior.  It should proceed without errors, despite the option being ignored.</li>
+<li>Verify that certificate validation is bypassed and connections are established even when the specified issuer doesn&#x27;t match the server certificate.</li>
+<li>Verify that the server can pick weaker elliptic curves as a result of the option being ignored.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability can allow for MITM attacks, where an attacker can intercept and potentially modify communications between a client and server.  It also allows a server (or malicious intermediary) to negotiate weaker cryptographic algorithms, potentially compromising the confidentiality and integrity of data. The silent nature of the vulnerability makes it difficult to detect, increasing the risk of exploitation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Before accepting SSL configuration options, developers should implement checks to ensure that the underlying SSL backend supports the requested feature. If a feature is unsupported, the program should return an appropriate error code (<code>CURLE<em>NOT</em>BUILT_IN</code> is recommended) to inform the user that the option is unavailable, rather than silently ignoring it. This requires a centralized system for backends to declare their supported features.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Cross-Origin Cookie Leak and Injection via Host Header</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises when a custom Host header is used during an HTTP request, and that header&#x27;s value is persisted and used for cookie matching even across cross-origin redirects.  This persistence allows cookies set for the custom Host header to be inadvertently sent to different domains, potentially leading to unauthorized access or cookie injection.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send an HTTP GET request to a target URL using <code>curl</code>.</li>
+<li>Specify a custom Host header using the <code>-H &quot;Host: &lt;CUSTOM_HOSTNAME&gt;&quot;</code> option.</li>
+<li>Use the <code>-L</code> flag to enable following redirects.</li>
+<li>Initiate a redirect sequence to a different domain using <code>-resolve &lt;DOMAIN<em>A&gt;:&lt;PORT</em>A&gt;:&lt;IP<em>ADDRESS&gt;</code> and <code>-resolve &lt;DOMAIN</em>B&gt;:&lt;PORT<em>B&gt;:&lt;IP</em>ADDRESS&gt;</code>. This simulates a redirect flow across different domains.</li>
+<li>Observe the cookies transmitted during the redirect sequence.  Specifically, check if the cookies intended for <code>&lt;CUSTOM_HOSTNAME&gt;</code> are also sent to the redirected domains.</li>
+<li>The cookie <code>ccc=secret</code> can be used to test.</li>
+<li>Use cookies file to persist cookies and examine them.</li>
+<li>Subsequent requests to the redirected domain should contain both <code>ccc=secret</code> and <code>bbb=test</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  An attacker can potentially inject malicious cookies or leverage existing cookies from one domain to gain unauthorized access to resources or functionality in another domain, leading to account compromise or other security breaches.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Ensure that custom Host headers are properly cleared or reset when redirects occur, especially when crossing domain boundaries. Implement rigorous input validation and sanitization to prevent manipulation of Host headers and sanitize cookies based on the expected domain. Consider using more secure alternatives to cookies, such as tokens, where appropriate.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Memory Exhaustion via Malicious Proposal Message</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows a malicious peer to trigger a denial-of-service (DoS) attack on nodes running a specific version of a consensus software by sending a specially crafted message. The vulnerability arises from insufficient validation of input parameters within a consensus protocol message, leading to uncontrolled memory allocation and an out-of-memory (OOM) kill. This can effectively halt network consensus.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a malicious proposal message using a programming language like Go.  The message should include a <code>PartSetHeader</code> where the <code>Total</code> field is set to <code>2^32-1</code> (4,294,967,295). Example (using Go):</li>
+</ol>
+<pre><code>   proposal := types.NewProposal(1, 0, -1, types.BlockID{
+       Hash: make([]byte, 32),
+       PartSetHeader: types.PartSetHeader{
+           Total: math.MaxUint32,  // 2^32-1 = 4,294,967,295
+           Hash:  make([]byte, 32),
+       },
+   }, nil)</code></pre>
+<ol>
+<li>Establish a peer-to-peer (P2P) connection to a target node running the vulnerable software version.</li>
+<li>Send the crafted malicious proposal message to the target node via the P2P connection.</li>
+<li>Observe the target node. It should immediately attempt to allocate a significant amount of memory (approximately 512 MB) and subsequently be terminated by the operating system&#x27;s OOM killer.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> A successful exploit results in a denial-of-service condition for the targeted node.  If a sufficient number of nodes are affected, this can lead to network-wide consensus disruption and potential chain halting.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and bounds checking on all incoming messages within the consensus protocol. Specifically, any parameter controlling memory allocation should be validated to prevent excessive resource consumption.  Upgrade to a patched version of the consensus software (e.g., v0.38.20) that includes the necessary fixes.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unauthorized Cross-Tenant Data Access via Deleted Resource</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-22</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to access data belonging to a different tenant (user account) due to improper handling of deleted resources. Specifically, remnants of a deleted resource can be accessed by manipulating identifiers, leading to unauthorized exposure of sensitive information from another user&#x27;s account. This poses a significant risk of data breach and privacy violation.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create two accounts on the target platform: Account A (attacker) and Account B (victim).</li>
+<li>As Account B, create a resource (e.g., a campaign, template, or project) with a unique identifier. Note this identifier.</li>
+<li>As Account B, delete the resource created in the previous step.</li>
+<li>As Account A, attempt to access the deleted resource using the identifier noted in step 2. The URL might look like: <code>&lt;TARGET<em>URL&gt;/deleted</em>resource/&lt;RESOURCE_IDENTIFIER&gt;</code>.</li>
+<li>If the system does not properly validate that Account A is authorized to access the resource belonging to Account B, the attacker can view or modify the data.  For example, the response might contain data such as <code>&lt;PAYLOAD&gt;</code> that should only be accessible to Account B.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to data belonging to other users can lead to severe consequences, including data breaches, privacy violations, and potential compromise of sensitive information. An attacker could potentially view, modify, or delete data from other users&#x27; accounts.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control checks to ensure that users can only access resources they are authorized to access, especially when dealing with deleted resources.  Thoroughly scrub or anonymize deleted resources to prevent unintended access via identifiers. Use a robust deletion process that ensures all traces of deleted resources are properly removed or inaccessible.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
