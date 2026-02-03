@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">170</div>
+        <div class="metric-value">172</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-01-28</div>
+        <div class="metric-value">2026-02-03</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>81</span></div>
+      <div class="analytics-label">Web App <span>83</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -614,7 +614,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Network <span>55</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:68%"></div>
+        <div class="analytics-bar-fill" style="width:66%"></div>
       </div>
     </div>
     
@@ -622,7 +622,7 @@
     <div class="analytics-row">
       <div class="analytics-label">API <span>17</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:21%"></div>
+        <div class="analytics-bar-fill" style="width:20%"></div>
       </div>
     </div>
     
@@ -630,7 +630,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Source Code <span>12</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:15%"></div>
+        <div class="analytics-bar-fill" style="width:14%"></div>
       </div>
     </div>
     
@@ -676,8 +676,8 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (170)</option>
-          <option value="Web App">Web App (81)</option>
+          <option value="all">All Categories (172)</option>
+          <option value="Web App">Web App (83)</option>
 <option value="Network">Network (55)</option>
 <option value="API">API (17)</option>
 <option value="Source Code">Source Code (12)</option>
@@ -693,6 +693,66 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Improper Access Control - Access to Premium Filter Results</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-03</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves unauthorized access to features or data intended for premium users or a specific user segment. By manipulating request parameters or other identifiers, an attacker can bypass access controls and view or interact with data they are not authorized to see, potentially revealing sensitive information or functionality.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Observe the behavior of the application when accessing a protected resource or feature, such as a premium filter (e.g., &quot;Active Hiring&quot;).</li>
+<li>Identify any request parameters or identifiers that seem to control access to the filtered results. This might involve inspecting network requests using browser developer tools.</li>
+<li>Attempt to modify these parameters or identifiers to gain access to the protected resource without proper authorization. For example, try altering a user ID or a feature flag parameter.</li>
+<li>If the modification bypasses access controls and reveals the filtered results, the vulnerability is confirmed.  Example payload: Change a user parameter in a request to one associated with a premium account to access premium filters.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to premium features or data can lead to unfair advantages for attackers, data exposure, or disruption of service.  Attackers may be able to view or manipulate data that should be restricted, potentially leading to data breaches or other security compromises.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control checks on the server-side to ensure that only authorized users can access protected resources. Use strong authentication and authorization mechanisms to verify user identity and permissions before granting access to sensitive data or functionality. Validate all user-supplied input and avoid relying on client-side controls for access control.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Persistent Commenting Ability After Permission Change</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-03</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A user who previously commented on a post retains the ability to comment even after the post owner disables commenting permissions. This allows unauthorized users to bypass permission restrictions and potentially post inappropriate content or disrupt discussions. The core issue is a lack of proper permission propagation or synchronization.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Log in as User A and create a post.</li>
+<li>Allow User B to comment on the post.</li>
+<li>Log in as User A and disable commenting permissions for the post.</li>
+<li>Log in as User B and attempt to add a comment to the post.</li>
+<li>Verify that User B is able to successfully submit the comment, despite commenting being disabled.</li>
+<li>Example Payload:  <code>Comment text: This is a test comment after permissions are disabled.</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Unauthorized users can bypass permission restrictions, potentially leading to the posting of inappropriate content, disruption of discussions, and erosion of user trust. This could result in reputational damage and potential legal liabilities.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust permission propagation mechanisms to ensure that permission changes are immediately and consistently applied to all users and sessions. Verify permission checks on every request that involves commenting functionality.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Source Code">
       <button type="button" class="card-toggle">
         <span class="card-title">
