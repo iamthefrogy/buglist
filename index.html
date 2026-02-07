@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">172</div>
+        <div class="metric-value">175</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-02-03</div>
+        <div class="metric-value">2026-02-07</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>83</span></div>
+      <div class="analytics-label">Web App <span>84</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,9 +612,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>55</span></div>
+      <div class="analytics-label">Network <span>56</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:66%"></div>
+        <div class="analytics-bar-fill" style="width:67%"></div>
       </div>
     </div>
     
@@ -636,9 +636,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Other <span>2</span></div>
+      <div class="analytics-label">Other <span>3</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:2%"></div>
+        <div class="analytics-bar-fill" style="width:4%"></div>
       </div>
     </div>
     
@@ -676,12 +676,12 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (172)</option>
-          <option value="Web App">Web App (83)</option>
-<option value="Network">Network (55)</option>
+          <option value="all">All Categories (175)</option>
+          <option value="Web App">Web App (84)</option>
+<option value="Network">Network (56)</option>
 <option value="API">API (17)</option>
 <option value="Source Code">Source Code (12)</option>
-<option value="Other">Other (2)</option>
+<option value="Other">Other (3)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
 <option value="Library">Library (1)</option>
@@ -693,6 +693,137 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Other">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Other</span>
+          <span class="card-title-text">Information Disclosure via Configuration File Injection</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A misconfigured application prioritizes external configuration files over internal defaults, allowing an attacker to inject custom configurations and extract sensitive system environment variables through log output. This vulnerability enables information disclosure, potentially exposing credentials or other sensitive data used by the application.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Locate the application&#x27;s agent or worker process installation directory.</li>
+<li>Create a new directory named &quot;config&quot; within the installation directory if it doesn&#x27;t already exist.</li>
+<li>Create a new file named &quot;agent-launcher-logback.xml&quot; (or a similarly named configuration file appropriate for the application&#x27;s logging framework) inside the &quot;config&quot; directory.</li>
+<li>Insert the following malicious configuration into the newly created file:</li>
+</ol>
+
+<pre><code>&lt;configuration&gt;
+  &lt;appender name=&quot;STDOUT&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
+    &lt;encoder&gt;
+      &lt;pattern&gt;%n[!] EXFILTRATION_REPORT [!]%n- Host: ${HOSTNAME}%n- User: ${USERNAME}%n- Version: ${VERSION}%n- WorkDir: ${user.dir}%n[!] END_OF_REPORT [!]%n%msg%n&lt;/pattern&gt;
+    &lt;/encoder&gt;
+  &lt;/appender&gt;
+  &lt;root level=&quot;INFO&quot;&gt;
+    &lt;appender-ref ref=&quot;STDOUT&quot; /&gt;
+  &lt;/root&gt;
+&lt;/configuration&gt;</code></pre>
+<ol>
+<li>Start or restart the application&#x27;s agent or worker process.</li>
+<li>Observe the application&#x27;s log output for a message indicating that it is loading the configuration file from the created &quot;config&quot; directory.</li>
+<li>Confirm that sensitive system environment variables (Hostname, User, Version, Working Directory, etc.) are evaluated and printed in the log output, as defined in the payload.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker who can place a specially crafted configuration file can exfiltrate sensitive environment variables, potentially leading to exposure of credentials, API keys, database connection strings, or other sensitive information crucial for the application&#x27;s operation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict access controls to prevent unauthorized modification of application configuration directories. Prioritize internal configuration files over external ones, or restrict the loading of external configuration files based on trusted sources. Sanitize any environment variables used in log output to prevent unintended disclosure.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">User Enumeration via Timing Attack</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A timing attack vulnerability exists where authentication attempts with non-existent usernames take significantly less time than those with existing usernames. This timing difference can be exploited to enumerate valid usernames, potentially facilitating subsequent attacks like credential stuffing or targeted brute-force attacks. The vulnerability stems from discrepancies in authentication backend processing for existing versus non-existent users.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up an environment with a username authentication backend.</li>
+<li>Execute a script that performs authentication attempts with different usernames.</li>
+<li>Measure the response time for authentication attempts with a known existing username (e.g., &lt;USERNAME_EXISTS&gt;).</li>
+<li>Measure the response time for authentication attempts with a non-existent username (e.g., &lt;USERNAME<em>DOES</em>NOT_EXIST&gt;).</li>
+<li>Compare the response times. A significant difference indicates a potential timing vulnerability.</li>
+</ol>
+<pre><code>import requests
+from requests.auth import HTTPBasicAuth
+
+url = &quot;&lt;TARGET_URL&gt;/secret&quot;
+username_exists = &quot;&lt;USERNAME_EXISTS&gt;&quot;
+password = &quot;&lt;PASSWORD&gt;&quot;
+username_does_not_exist = &quot;&lt;USERNAME_DOES_NOT_EXIST&gt;&quot;
+
+# Warmup
+response = requests.get(url, auth=HTTPBasicAuth(username_exists, password))
+response = requests.get(url, auth=HTTPBasicAuth(username_exists, password))
+
+# Measure existing user time
+response = requests.get(url, auth=HTTPBasicAuth(username_exists, password))
+existing_time = response.elapsed.microseconds
+print(f&quot;Existing User Time: {existing_time}&quot;)
+
+# Measure non-existent user time
+response = requests.get(url, auth=HTTPBasicAuth(username_does_not_exist, password))
+non_existent_time = response.elapsed.microseconds
+print(f&quot;Non-Existent User Time: {non_existent_time}&quot;)
+
+if existing_time &gt; non_existent_time * 1.5:
+    print(&quot;Potential Timing Vulnerability Detected&quot;)</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can enumerate valid usernames on the system, increasing the risk of successful credential stuffing or brute-force attacks targeting known accounts. This can lead to account compromise and unauthorized access to sensitive data.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure consistent processing time for authentication attempts regardless of username validity. Implement a mechanism to artificially inflate the processing time for unsuccessful login attempts with non-existent usernames to prevent timing analysis. One potential fix involves performing a database operation (e.g., <code>UserModel().set_password(password)</code>) before returning <code>None</code> in cases where a user is not found.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">MQTT Packet Injection via Unchecked CONNACK Remaining Length</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-07</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The MQTT protocol implementation allows for an attacker to inject arbitrary MQTT messages by crafting a CONNACK packet with a Remaining Length value exceeding the expected 2 bytes. This occurs because the client (e.g., curl) does not adequately validate the full length of the CONNACK packet and processes the remaining bytes as subsequent MQTT messages.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Craft a malicious MQTT CONNACK packet where the Remaining Length field exceeds 2 bytes. This can be achieved using a network packet crafting tool or a script.</li>
+<li>Send the crafted CONNACK packet to the MQTT broker using a client such as curl.</li>
+<li>Observe if the broker interprets the extra bytes following the initial CONNACK packet as a separate, unauthorized MQTT message.</li>
+<li>The crafted packet should contain a PUBLISH command as payload.</li>
+<li>Example Payload (Illustrative - Adapt for target environment):</li>
+</ol>
+<pre><code>0x00 0x00 0x04 0x01 &lt;PUBLISH_PAYLOAD&gt;</code></pre>
+<p>Where <code>&lt;PUBLISH_PAYLOAD&gt;</code> represents the data of the intended malicious MQTT message. This payload would be embedded after the initial CONNACK packet.</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could potentially inject control packets, manipulate the MQTT broker&#x27;s state, or perform unauthorized actions by injecting malicious MQTT commands via the CONNACK packet.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> The MQTT client implementation should validate the remaining length field in CONNACK packets against the MQTT specification (typically 2 bytes). The client should discard or reject CONNACK packets with lengths exceeding the expected value to prevent arbitrary message injection.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Web App">
       <button type="button" class="card-toggle">
         <span class="card-title">
