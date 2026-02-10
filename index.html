@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">175</div>
+        <div class="metric-value">177</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-02-07</div>
+        <div class="metric-value">2026-02-10</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>84</span></div>
+      <div class="analytics-label">Web App <span>86</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -614,7 +614,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Network <span>56</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:67%"></div>
+        <div class="analytics-bar-fill" style="width:65%"></div>
       </div>
     </div>
     
@@ -638,7 +638,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Other <span>3</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:4%"></div>
+        <div class="analytics-bar-fill" style="width:3%"></div>
       </div>
     </div>
     
@@ -676,8 +676,8 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (175)</option>
-          <option value="Web App">Web App (84)</option>
+          <option value="all">All Categories (177)</option>
+          <option value="Web App">Web App (86)</option>
 <option value="Network">Network (56)</option>
 <option value="API">API (17)</option>
 <option value="Source Code">Source Code (12)</option>
@@ -693,6 +693,65 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">CPU Exhaustion via Repeated Headers in ASGI Request</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A denial-of-service vulnerability exists in the ASGI request processing of a Django application. The vulnerability arises from the way repeated headers are handled during request construction, leading to a quadratic time complexity in CPU usage. An attacker can trigger this vulnerability by sending a single HTTP/2 request with a header repeated a large number of times, potentially exhausting server resources and impacting legitimate users.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send an HTTP/2 GET request to &lt;TARGET_URL&gt;.</li>
+<li>Include a header (e.g., &quot;cookie&quot;) repeated a large number of times in the request headers. For example, repeat the header 8,000–16,000 times, ensuring each header value is less than 128 bytes.  A sample header payload could be: <code>cookie: a=1; cookie: a=1; cookie: a=1; ...</code> (repeated multiple times).</li>
+<li>Monitor the server&#x27;s CPU usage while sending the request. The increased CPU load demonstrates the vulnerability&#x27;s impact.</li>
+<li>Optionally, measure the time taken for the <code>ASGIRequest</code> object to be initialized using a script similar to the proof-of-concept, observing the quadratic growth in processing time as the number of repeated headers increases.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The exploitation of this vulnerability can lead to a denial-of-service condition. By repeatedly sending requests with duplicated headers, an attacker can exhaust server CPU resources, preventing the application from responding to legitimate requests and potentially causing service unavailability.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement a strategy to efficiently handle repeated headers. Instead of concatenating header values repeatedly, collect repeated headers into a list or dictionary and then join them into a single string after processing all headers. Consider enforcing a limit on the maximum repetition count for a header to prevent excessive resource consumption. Use parameterized queries when appropriate.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unlimited Coupon Code Reuse for Free Shipping</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows users to repeatedly apply a coupon code, resulting in free shipping on all orders. The system lacks proper validation to restrict the number of times a coupon code can be used, leading to unintended financial loss for the business and potential abuse.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Obtain a valid, active coupon code for free shipping.</li>
+<li>Place an order on the target website, apply the coupon code during checkout, and confirm the order is placed with free shipping.</li>
+<li>Place subsequent orders without clearing the previously applied coupon code and observe that shipping costs remain zero.</li>
+<li>Repeat step 3 multiple times to confirm that the coupon code can be reused indefinitely.</li>
+<li>Example Coupon Code: <code>███</code> (replace with an actual coupon code)</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Attackers can exploit this vulnerability to obtain free shipping on unlimited orders, leading to direct financial losses for the business. This can also be abused for arbitrage or reselling physical goods, further exacerbating the impact.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement server-side validation to restrict the number of times a coupon code can be used. This can include tracking coupon usage per user, setting redemption limits, or implementing an expiration date. Additionally, ensure proper logging of coupon usage for auditing and investigation purposes.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Other">
       <button type="button" class="card-toggle">
         <span class="card-title">
