@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">177</div>
+        <div class="metric-value">178</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-02-10</div>
+        <div class="metric-value">2026-02-12</div>
       </div>
     </section>
 
@@ -612,9 +612,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>56</span></div>
+      <div class="analytics-label">Network <span>57</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:65%"></div>
+        <div class="analytics-bar-fill" style="width:66%"></div>
       </div>
     </div>
     
@@ -676,9 +676,9 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (177)</option>
+          <option value="all">All Categories (178)</option>
           <option value="Web App">Web App (86)</option>
-<option value="Network">Network (56)</option>
+<option value="Network">Network (57)</option>
 <option value="API">API (17)</option>
 <option value="Source Code">Source Code (12)</option>
 <option value="Other">Other (3)</option>
@@ -693,6 +693,44 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Cache Pollution via Unkeyed GET Parameters</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-12</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The CDN caching mechanism is not properly normalizing or keying URLs based on GET parameters. This allows attackers to populate the cache with multiple, redundant versions of the same page by simply varying the GET parameters. This can lead to resource exhaustion and potential inconsistencies in user experience.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Choose a publicly cacheable page on the target website, for example, &lt;TARGET_URL&gt;.</li>
+<li>Send a request with a unique GET parameter:</li>
+</ol>
+<pre><code>GET &lt;TARGET_URL&gt;?test=123 HTTP/2
+Host: &lt;TARGET_DOMAIN&gt;</code></pre>
+<ol>
+<li>Observe the response headers, confirming that the response is cached (e.g., check for <code>CF-Cache-Status: HIT</code>).</li>
+<li>Send another request with a different GET parameter:</li>
+</ol>
+<pre><code>GET &lt;TARGET_URL&gt;?abc=456 HTTP/2
+Host: &lt;TARGET_DOMAIN&gt;</code></pre>
+<ol>
+<li>Verify that this second request also gets cached independently and receives a new Age value.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can pollute the CDN cache with numerous redundant versions of the same page, potentially leading to resource exhaustion, denial of service for popular pages, or, in the future, malicious content injection if the parameters are ever reflected in the response.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement cache key normalization by ignoring unknown or unimportant GET parameters. Alternatively, whitelist specific parameters to be considered in the cache keys. Use surrogate keys or carefully manage vary headers to control cacheability.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Web App">
       <button type="button" class="card-toggle">
         <span class="card-title">
