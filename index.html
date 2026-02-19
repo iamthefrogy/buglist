@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">178</div>
+        <div class="metric-value">186</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-02-12</div>
+        <div class="metric-value">2026-02-19</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>86</span></div>
+      <div class="analytics-label">Web App <span>88</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,9 +612,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>57</span></div>
+      <div class="analytics-label">Network <span>61</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:66%"></div>
+        <div class="analytics-bar-fill" style="width:69%"></div>
       </div>
     </div>
     
@@ -622,15 +622,15 @@
     <div class="analytics-row">
       <div class="analytics-label">API <span>17</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:20%"></div>
+        <div class="analytics-bar-fill" style="width:19%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>12</span></div>
+      <div class="analytics-label">Source Code <span>14</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:14%"></div>
+        <div class="analytics-bar-fill" style="width:16%"></div>
       </div>
     </div>
     
@@ -676,11 +676,11 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (178)</option>
-          <option value="Web App">Web App (86)</option>
-<option value="Network">Network (57)</option>
+          <option value="all">All Categories (186)</option>
+          <option value="Web App">Web App (88)</option>
+<option value="Network">Network (61)</option>
 <option value="API">API (17)</option>
-<option value="Source Code">Source Code (12)</option>
+<option value="Source Code">Source Code (14)</option>
 <option value="Other">Other (3)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
@@ -693,6 +693,267 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Unauthorized Bluetooth Pairing via BLE Command Injection</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-19</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability allows an attacker to force a Bluetooth device into a pairing state without authentication, potentially enabling unauthorized connections and audio hijacking. This occurs due to improper state validation in the Bluetooth Low Energy (BLE) command service, allowing arbitrary commands to be sent and executed.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Establish a connection between the target Bluetooth device and a victim device and begin playing audio.</li>
+<li>Ensure the target device is not in pairing mode (e.g., LED is not flashing).</li>
+<li>On the attacker’s machine, enable Bluetooth and bring it within BLE range of the target device.</li>
+<li>Execute a script that scans for BLE devices and sends a specific command to the target device. The script connects to the GATT server without pairing and writes a specific byte value (e.g., <code>0x01</code>) to a proprietary characteristic.</li>
+<li><strong>Example Payload:</strong> The script includes the following payload to be written to the characteristic: <code>0x01</code>.</li>
+<li>Observe if the target device begins advertising itself as discoverable, triggering a Bluetooth pairing request on the attacker’s machine, potentially hijacking audio streams.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to audio streams, potential eavesdropping on conversations, and the ability to control the Bluetooth connection without physical possession of the device.  The vulnerability could lead to data theft or denial of service by disrupting audio playback or adding unauthorized devices to the system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict state validation on BLE command services to prevent unauthorized state changes. Ensure proper authentication and authorization mechanisms are enforced before accepting commands that modify device behavior, particularly those related to pairing or connection management. Employ secure coding practices to prevent unauthenticated access to critical functionality.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via Admin Notice</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-19</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject malicious JavaScript code into an admin notice displayed within a web application&#x27;s administrative interface. The attacker can manipulate a configuration option to store the XSS payload, which is then rendered without proper escaping when other users view the affected admin page, leading to code execution.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Modify a configuration option to store a malicious JavaScript payload. Specifically, set the value to <code>a:1:{s:34:&quot;&lt;script&gt;alert(&#x27;test&#x27;)&lt;/script&gt;test&quot;;a:1:{s:7:&quot;expires&quot;;i:1893456000;}}</code> (replace &#x27;test&#x27; with any arbitrary content).</li>
+<li>Navigate to the admin dashboard area of the application (e.g., <code>/wp-admin/plugins.php</code>).</li>
+<li>Observe that the malicious JavaScript payload executes within the admin notice section of the page.</li>
+<li>Confirm that dismissing the notice doesn&#x27;t prevent it from reappearing on subsequent page refreshes.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this vulnerability to execute arbitrary JavaScript code in the context of a user&#x27;s browser. This can lead to session hijacking, defacement of the admin interface, redirection to malicious websites, or other malicious actions, compromising user data and the overall security of the application.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust output escaping mechanisms when rendering user-supplied data in HTML contexts. Specifically, utilize functions like <code>esc_html()</code> or equivalent escaping functions provided by the framework being used to sanitize all user input before it&#x27;s displayed in the admin interface. Consider input validation and sanitization techniques to prevent the injection of malicious code into configuration options.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored HTML Injection via Email Subject</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary HTML into email subjects, potentially leading to cross-site scripting (XSS) or phishing attacks when recipients view the email. The vulnerability arises from insufficient sanitization of user-supplied data when constructing email subject lines.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Access the email composition interface within the application.</li>
+<li>Locate the field for entering the email subject.</li>
+<li>Enter the following payload into the subject field: <code>&lt;img src=&quot;x&quot; onerror=&quot;alert(&#x27;XSS&#x27;)&quot;&gt;</code></li>
+<li>Compose and send the email to a test recipient.</li>
+<li>Observe the email subject in the recipient&#x27;s email client. Confirm that the injected HTML is rendered, triggering the XSS alert.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this vulnerability to inject malicious HTML into email subjects, potentially leading to cross-site scripting attacks, phishing campaigns, or defacement of user interfaces. Successful exploitation can compromise user accounts or expose sensitive information.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding on all user-supplied data used in constructing email subjects. Utilize a secure HTML sanitization library to prevent the execution of malicious HTML tags and attributes. Employ a Content Security Policy (CSP) to restrict the resources that can be loaded by the email client.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Timeout-Based Race Condition in Memory Allocation</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A race condition exists in the memory allocation function, specifically when allocating arrays using <code>Uint8Array</code> or <code>Buffer.alloc</code>. This condition can be triggered if the allocation process is interrupted by a timeout, leading to a non-zero-filled memory region which can be exploited. This presents a security risk as it could potentially expose sensitive information or lead to unexpected program behavior.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initiate a memory allocation request for a <code>Uint8Array</code> or <code>Buffer</code> with a substantial size using <code>Uint8Array.alloc(&lt;SIZE&gt;)</code> or <code>Buffer.alloc(&lt;SIZE&gt;)</code>.</li>
+<li>Introduce an external interruption or timeout during the memory allocation process.  This could be simulated using system-level signals or resource constraints that force a premature termination of the allocation function.</li>
+<li>Observe the contents of the newly allocated memory region. If the interruption occurred before the memory was fully initialized, the memory may contain remnants of previous data or be left in an indeterminate state.</li>
+<li>Verify that subsequent operations utilizing this partially initialized memory do not cause unexpected behavior or reveal sensitive information.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Exploitation of this race condition could lead to the exposure of sensitive data previously stored in memory, unexpected program behavior, or potential denial of service if the corrupted memory region is critical for ongoing operations.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust timeout handling mechanisms within the memory allocation function, ensuring that any interrupted allocation process is properly cleaned up and the memory region is either fully initialized or safely discarded. Consider employing techniques such as mutexes or other synchronization primitives to prevent concurrent access during allocation and initialization.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Memory Leak via TLS Client Certificate Processing</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong>  A vulnerability exists where repeated processing of TLS client certificates can lead to a memory leak. This leak can gradually exhaust available resources on the server, potentially resulting in a denial-of-service condition.  The root cause lies in improper resource management during certificate validation and handling.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a server application to accept TLS client certificates.</li>
+<li>Repeatedly connect to the server using a valid TLS client certificate.</li>
+<li>Observe server memory usage over an extended period (e.g., 1 hour).</li>
+<li>Utilize system monitoring tools to detect a gradual increase in memory consumption.</li>
+<li>The certificate can be any valid certificate (e.g., a self-signed certificate for testing).</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Repeated exploitation of this vulnerability can exhaust server memory, leading to instability, application crashes, and a denial of service.  This can disrupt service availability and potentially impact other services running on the same server.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust memory management practices when processing TLS client certificates, ensuring that all allocated resources are properly released after use.  Employ techniques like object pooling or careful certificate object lifecycle management to mitigate the risk of memory leaks. Regularly profile memory usage during testing to proactively identify and address potential leaks.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Uncatchable Stack Overflow via Async Hooks</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows for a denial of service (DoS) by triggering an uncatchable stack overflow error. The issue arises from a recursive call within asynchronous hooks, leading to a “Maximum call stack size exceeded” error that bypasses typical error handling mechanisms, ultimately causing the process to crash. This can lead to service unavailability and potential disruption of critical operations.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a Node.js script that utilizes the <code>async_hooks</code> module.</li>
+<li>Within the <code>async_hooks</code> callback, initiate a recursive function call that does not terminate under any circumstances. This can be achieved by calling the callback function from itself.</li>
+<li>Ensure that the recursive calls are triggered asynchronously, leveraging features like <code>setImmediate</code> or <code>setTimeout</code>.</li>
+<li>Run the script. Observe whether the Node.js process crashes with a &quot;Maximum call stack size exceeded&quot; error.</li>
+<li>Example Payload:</li>
+</ol>
+
+<pre><code>const async_hooks = require(&#x27;async_hooks&#x27;);
+
+let callStackDepth = 0;
+
+const recursiveFunction = () =&gt; {
+  callStackDepth++;
+  recursiveFunction();
+};
+
+const hook = async_hooks.createHook({
+  init(callback) {
+    setImmediate(() =&gt; {
+      recursiveFunction();
+      callback();
+    });
+  },
+});
+
+hook.enable();</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> This vulnerability can lead to a denial of service. The Node.js process crashes due to an unhandled stack overflow, potentially impacting application availability and potentially interrupting critical services.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust error handling and stack depth limits within asynchronous operations. Thoroughly review and validate all asynchronous callbacks to prevent infinite recursion. Employ techniques like tail-call optimization or iterative solutions to avoid excessive stack usage when dealing with recursive operations. Consider using asynchronous iteration patterns to avoid call stack depth issues.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Node.js UDS Connection Bypass</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows unauthorized access to a Node.js service by bypassing its permission model. The service incorrectly handles Unix Domain Socket (UDS) connections, allowing a malicious actor to connect to the service without proper authentication or authorization. This can lead to sensitive data exposure or remote code execution depending on the functionality exposed through the UDS.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Locate a Node.js service utilizing Unix Domain Sockets (UDS) for inter-process communication.  The service&#x27;s UDS path will be specified in its configuration or logs, typically as a file path (e.g., <code>/tmp/my_service.sock</code>).</li>
+<li>Create a UDS socket using the same path as the vulnerable service&#x27;s socket: <code>mkfifo /tmp/my_service.sock</code>.</li>
+<li>Attempt to connect to the vulnerable service&#x27;s UDS socket using a standard client.  If the service correctly enforces permissions, the connection will be denied.</li>
+<li>If permissions are not properly enforced, a connection is successfully established, and further interaction with the service is possible.</li>
+<li>Verify access to sensitive functionality by sending appropriate requests through the established UDS connection.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Unauthorized access to sensitive data, remote code execution, or denial of service are potential consequences if the vulnerability is exploited. A malicious actor can potentially gain control of the service or compromise the underlying system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control checks for all UDS connections, verifying user identity and permissions before allowing access. Ensure the UDS socket&#x27;s file permissions restrict access to authorized users and processes only.  Consider using more secure communication channels if UDS is not strictly necessary.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">TLS PSK/ALPN Callback Exceptions Bypass Error Handlers, Causing DoS and FD Leak</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from improper error handling within a TLS implementation when using Pre-Shared Keys (PSK) or Application-Layer Protocol Negotiation (ALPN). Specifically, exceptions thrown during callback functions invoked for PSK/ALPN negotiation can bypass intended error handling mechanisms, leading to Denial of Service (DoS) and potential resource leaks (file descriptor leak). This can make the server unstable or expose sensitive information.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a TLS server accepting PSK or ALPN connections.</li>
+<li>Implement a callback function for PSK/ALPN negotiation that deliberately throws an exception during execution, such as when unable to resolve a key or protocol.</li>
+<li>Initiate a TLS handshake with the server, forcing the execution of the malicious callback function.</li>
+<li>Observe server behavior for signs of instability, such as crashes or unexpected shutdowns.</li>
+<li>Monitor resource usage (e.g., open file descriptors) on the server to identify potential leaks.</li>
+<li>Trigger the callback repeatedly to exacerbate any potential DoS or resource leak conditions.</li>
+</ol>
+<p>Example payload:  <code>const crypto = require(&#x27;crypto&#x27;);  // In a callback function: throw new Error(&#x27;Simulated callback error&#x27;);</code></p>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  An attacker can trigger a Denial of Service (DoS) by repeatedly crashing the server or causing it to become unresponsive. Additionally, a resource leak, specifically a file descriptor leak, can degrade server performance and potentially lead to instability or information disclosure.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust error handling within callback functions used for PSK/ALPN negotiation, ensuring that exceptions are caught and handled gracefully.  Use try-catch blocks to prevent exceptions from propagating beyond the callback and potentially crashing the server.  Resource limits should be imposed to prevent resource exhaustion and monitor server resource usage to identify and address potential leaks.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
