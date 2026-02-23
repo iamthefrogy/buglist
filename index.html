@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">186</div>
+        <div class="metric-value">187</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-02-19</div>
+        <div class="metric-value">2026-02-23</div>
       </div>
     </section>
 
@@ -612,9 +612,9 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>61</span></div>
+      <div class="analytics-label">Network <span>62</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:69%"></div>
+        <div class="analytics-bar-fill" style="width:70%"></div>
       </div>
     </div>
     
@@ -676,9 +676,9 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (186)</option>
+          <option value="all">All Categories (187)</option>
           <option value="Web App">Web App (88)</option>
-<option value="Network">Network (61)</option>
+<option value="Network">Network (62)</option>
 <option value="API">API (17)</option>
 <option value="Source Code">Source Code (14)</option>
 <option value="Other">Other (3)</option>
@@ -693,6 +693,35 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Resource Exhaustion via Unbounded Content-Encoding Chain</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-02-23</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The HTTP response Content-Encoding header allows for chained compression algorithms. A server can exploit this by providing a response with a large number of compression links in the chain (e.g., gzip, br), leading to excessive resource consumption (CPU and memory) on the client attempting to decompress the content. This vulnerability can cause denial of service or performance degradation.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a server that serves a small amount of raw data (e.g., 50000 bytes) compressed with a specified encoding algorithm (e.g., Brotli) multiple times (e.g., 5000 layers). The server should expose the compressed content via HTTP.</li>
+<li>Configure a client to request the resource from the server and automatically decompress the response content.</li>
+<li>Monitor the client&#x27;s resource usage (CPU, memory) during the decompression process. Increase the number of compression layers and the size of the raw data to exacerbate the issue.</li>
+<li>Example Payload (Content-Encoding header): <code>Content-Encoding: br, br, br, br, br, br, br, br, br, br</code> (and so on, up to a large number of repetitions)</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Denial of service, excessive CPU usage, memory exhaustion, and performance degradation on the client.  Potentially, resource exhaustion can lead to system instability or crashes.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement a limit on the maximum number of content-encoding layers allowed in an HTTP response. Validate and restrict the number of compression algorithms used in the Content-Encoding header, adhering to a reasonable maximum value (e.g., 5). Implement throttling or resource limits on decompression processes to prevent excessive consumption.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
