@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">199</div>
+        <div class="metric-value">212</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-03-01</div>
+        <div class="metric-value">2026-03-10</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>95</span></div>
+      <div class="analytics-label">Web App <span>102</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,23 +612,23 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>64</span></div>
+      <div class="analytics-label">Network <span>66</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:67%"></div>
+        <div class="analytics-bar-fill" style="width:65%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>19</span></div>
+      <div class="analytics-label">API <span>22</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:20%"></div>
+        <div class="analytics-bar-fill" style="width:22%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>15</span></div>
+      <div class="analytics-label">Source Code <span>16</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:16%"></div>
       </div>
@@ -676,11 +676,11 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (199)</option>
-          <option value="Web App">Web App (95)</option>
-<option value="Network">Network (64)</option>
-<option value="API">API (19)</option>
-<option value="Source Code">Source Code (15)</option>
+          <option value="all">All Categories (212)</option>
+          <option value="Web App">Web App (102)</option>
+<option value="Network">Network (66)</option>
+<option value="API">API (22)</option>
+<option value="Source Code">Source Code (16)</option>
 <option value="Other">Other (3)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
@@ -693,6 +693,405 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Unauthorized Header Forwarding During Redirects</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong>  This vulnerability arises when an application uses a network library (like curl) to follow redirects and includes custom authentication headers. Without proper safeguards, these headers are inadvertently forwarded to unintended redirect destinations, potentially exposing sensitive credentials or API keys. This is not due to a bug in the underlying software but rather a design characteristic that can lead to misconfiguration and insecure behavior if best practices aren&#x27;t followed.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a test environment with two servers: an origin server and an attacker-controlled intermediary server. The origin server redirects requests to the attacker’s server.</li>
+<li>Use a tool or script (similar to <code>poc<em>unrestricted</em>auth.py</code>) to send HTTP requests through curl, enabling redirect following (<code>CURLOPT_FOLLOWLOCATION</code>).</li>
+<li>Include custom authentication headers in the request&#x27;s HTTP header using something similar to  <code>CURLOPT<em>HTTPHEADER</code>, for example: <code>X-API-Key: sk-prod-&lt;random</em>key&gt;</code>, <code>X-Auth-Token: &lt;some_token&gt;</code>.</li>
+<li>Observe the requests received by the attacker server. Verify that the custom authentication headers are present in the request. Specifically, confirm that Authorization and Cookie headers were stripped while all other customized headers go through without protection.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Exposure of sensitive authentication tokens or API keys to unintended third-party servers. This could lead to unauthorized access, data breaches, account compromise, or service abuse if these headers contain credentials for critical systems or resources.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Avoid using <code>CURLOPT_FOLLOWLOCATION</code> when custom authorization headers are present in the request. If redirects must be followed, manually handle redirect URLs, strip custom authentication headers before forwarding to the next destination, and re-issue the request from a known secure state. Document this potential risk within application security reviews and guidance.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Account Takeover via Lack of Rate Limiting on Password Attempts</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The application lacks proper rate limiting on password attempt submissions, which can be exploited in conjunction with an insecure registration flow. An attacker can rapidly iterate through possible passwords during the login process, ultimately leading to account compromise and unauthorized access. This vulnerability poses a significant risk of account takeover.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Register a new user account using the application&#x27;s registration functionality. Note the username or email address used for this account.</li>
+<li>Attempt to log in to the registered account with an incorrect password multiple times (e.g., 20-30 attempts) without any delay between requests.  Use payloads like &quot;wrongpassword1&quot;, &quot;wrongpassword2&quot;, etc.</li>
+<li>Observe whether the application implements rate limiting or lockout mechanisms after a certain number of failed login attempts. If no such mechanism is present, proceed to step 4.</li>
+<li>Continue attempting logins with various incorrect passwords in rapid succession.  A script can be used to automate this process. Example payload: <code>&#x27; OR &#x27;1&#x27;=&#x27;1</code></li>
+<li>Eventually, the attacker should be able to guess or brute-force the correct password and gain unauthorized access to the account.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can successfully compromise user accounts by rapidly attempting various passwords due to the lack of rate limiting on login attempts. This allows for unauthorized data access, impersonation, potentially leading to a complete Account Takeover (ATO).</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust rate limiting mechanisms on password attempt submissions. Introduce account lockout after a configurable number of failed attempts and implement multi-factor authentication (MFA) as an additional layer of security. Consider using CAPTCHA or other bot detection methods during login to prevent automated brute-forcing.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Use After Free in Example Code</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability exists within an example code provided alongside a software library, not the core library itself. The issue occurs when a base event structure is prematurely freed before related cleanup operations are completed, leading to a use-after-free condition when attempting to access it during shutdown processes. While not directly impacting the core functionality of the library, this can result in crashes and potential instability for projects utilizing or adapting the provided example code.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Obtain the source code for a provided example application that utilizes an event base structure for asynchronous operations. This is usually found alongside software libraries.</li>
+<li>Compile the example application with memory safety tools such as AddressSanitizer (ASan) enabled.</li>
+<li>Run the compiled example, ensuring that it performs operations involving the event base and related callbacks or cleanup routines.</li>
+<li>Observe system behavior for potential crashes or errors reported by ASan indicating a use-after-free condition during application shutdown or exit.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> While this vulnerability exists within an example rather than the core software library itself, its impact lies in potential instability and unexpected crashes within projects that integrate or adapt said example code. This could lead to data loss, service interruption, or denial of service conditions for affected users.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> When developing or utilizing example code alongside libraries, ensure proper order of operations during shutdown sequences. Specifically, all necessary cleanup routines involving shared resources (like event bases) must be executed <em>before</em> releasing the memory associated with those resources. Review code paths and dependencies to identify any potential premature resource deallocation.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Server-Side Template Injection (SSTI) leading to Command Execution</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary commands on a target server by manipulating template input. The injected commands are executed with the privileges of the web application process, potentially allowing for remote code execution and subsequent compromise of the system. It is critical to sanitize user-provided data used within templating engines.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a curl command that attempts to inject an operating system command into a URL parameter using server-side template injection (SSTI). The injected commands will be executed on the server as part of generating a response.</li>
+<li>Use backticks to enclose the command you wish to execute, such as <code>system(&quot;sleep 10&quot;)</code> within the curl request to inject it into the OS parmeter. For example: <code>curl -os{system(&quot;sleep 10&quot;)}.read --url &lt;TARGET_URL&gt;</code>.</li>
+<li>Observe if the target server waits for a duration specified in the injected command (e.g., 10 seconds when using <code>sleep 10</code>).  A delayed response indicates successful SSTI and command execution.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Remote code execution can lead to unauthorized access, data theft, system compromise, or denial of service depending on the commands executed.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement strict input validation and sanitization for all user-supplied data used within template engines. Utilize parameterized queries or secure templating practices that prevent arbitrary command injection, ensuring proper escaping and encoding of potentially dangerous characters or code snippets.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unrestricted File Upload via MigrationFile</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to upload files, bypassing intended access controls. The application fails to properly validate or restrict the type of files that can be uploaded through the <code>MigrationFile</code> functionality, potentially leading to arbitrary file execution and complete system compromise.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the MigrationFile upload endpoint at &lt;TARGET_URL&gt;/migrationfile/upload.</li>
+<li>Submit a file with a malicious extension (e.g., <code>.php</code>, <code>.jsp</code>, or similar executable formats) using <code>POST</code> request with Content-Type set to <code>multipart/form-data</code>.  The filename can be anything such as <code>evil.php</code>.</li>
+<li>The file content should contain malicious code, for example: <code>&lt;?php system($_GET[&#x27;cmd&#x27;]); ?&gt;</code>.</li>
+<li>Access the uploaded file through its predictable URL, using a parameter to trigger the command execution (e.g., <code>&lt;TARGET_URL&gt;/uploads/evil.php?cmd=whoami</code>).</li>
+<li>Verify that arbitrary commands can be executed on the server with the privileges of the webserver user.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could upload and execute arbitrary code on the server, leading to complete system compromise, data theft, or denial-of-service conditions. This allows unauthorized access to sensitive information and potential control over the underlying infrastructure.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict file type validation based on content inspection (magic number) rather than relying solely on filename extensions. Employ proper input sanitization and output encoding techniques during file processing. Enforce strong access controls and restrict permissions for uploaded files to prevent unauthorized execution.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">DoS via Unbounded Memory Allocation in Streaming Response</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong>  This vulnerability leads to a denial-of-service condition where the server&#x27;s memory is exhausted due to unbounded buffer allocation when serving streaming responses (e.g., using Web Streams). The issue occurs because backpressure signals from the client are not properly handled, resulting in continuous data buffering even when the client isn’t consuming it. This can cause a server crash or become unresponsive.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a Fastify application (or similar streaming response framework) using version 5.7.0 or later.</li>
+<li>Create an endpoint that returns a large, continuous stream of data as a response (e.g., mimicking file read, generator functions).  This can be done via Web Streams API.</li>
+<li>Initiate a client request to this endpoint and <strong>do not consume the received data</strong>. Ensure no data is read from the response body.</li>
+<li>Monitor server memory usage. The observed memory consumption should continuously increase over time. This may eventually lead to an out-of-memory (OOM) error or system instability.</li>
+<li>Use backticks for illustrating payloads and code examples: <code>controller.enqueue(Buffer.alloc(1024 * 1024, &#x27;a&#x27;))</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> A denial of service can be induced by a single attacker with a basic network connection, potentially impacting the availability of the application for all legitimate users, and possibly triggering additional costs related to server restarts or downtime.  No authentication is required.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure proper handling of backpressure signals from the client when serving streaming responses. Implement mechanisms to pause data production based on the <code>res.write()</code> return value (or similar) and enforce limits on buffer sizes to prevent unbounded memory allocation, possibly with explicit buffering/throttling controls exposed via configuration options. Use of a bounded queue for streamed output is recommended.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Open Redirect via Redirect Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An open redirect vulnerability allows an attacker to manipulate a redirection URL parameter and send users to arbitrary external websites. This can be exploited in phishing campaigns or social engineering attacks, compromising user trust and potentially leading to account takeover if the malicious site mimics a legitimate login page. The core issue is the application&#x27;s failure to properly validate and sanitize the redirect URL.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to &lt;TARGET<em>URL&gt;/auth/post-login?redirect=/\&lt;MALICIOUS</em>URL&gt;. Replace <code>&lt;TARGET<em>URL&gt;</code> with the base domain of the target application, and <code>&lt;MALICIOUS</em>URL&gt;</code> with an arbitrary external URL (e.g., <code>example.com</code>).</li>
+<li>Observe that you are redirected to the specified <code>&lt;MALICIOUS_URL&gt;</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can redirect users from the legitimate website to a malicious site, potentially leading to phishing attacks, data theft, or account compromise by tricking users into providing credentials on the fake domain.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict validation and sanitization of all redirect URLs. Only allow redirects to explicitly whitelisted domains, or prevent redirection altogether if it’s not essential functionality. Use relative URLs instead of absolute URLs for redirection purposes whenever possible.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Insecure Direct Object Reference (IDOR) - Event Attendance Control</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to modify another user&#x27;s event attendance status without proper authorization. By manipulating a predictable identifier, an attacker can force users to attend events they haven’t registered for or remove them from existing registrations, potentially disrupting event logistics and causing confusion.  This represents a risk of unauthorized access and modification of event-related data.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Observe the URL structure used to manage event attendance. The URL contains an identifier representing either the attendee&#x27;s user ID or the event itself. For example: <code>&lt;TARGET<em>URL&gt;/event/attendance/&lt;USER</em>ID&gt;</code>.</li>
+<li>Identify a valid User ID that has already registered for a specific event (e.g., through legitimate means). Note this User ID as &lt;VALID<em>USER</em>ID&gt;.</li>
+<li>Attempt to modify the attendance status of another user by changing their User ID in the URL, e.g., <code>&lt;TARGET<em>URL&gt;/event/attendance/&lt;DIFFERENT</em>USER<em>ID&gt;</code>. If successful, confirm that you can now see or modify the event&#x27;s attendence details of the &lt;DIFFERENT</em>USER_ID&gt;.</li>
+<li>Attempt to add a user (e.g., User ID: &lt;OTHER<em>USER</em>ID&gt;) to an event by using their identifier in the URL. For example: <code>&lt;TARGET<em>URL&gt;/event/attendance/&lt;EVENT</em>ID&gt;/&lt;OTHER<em>USER</em>ID&gt;</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could maliciously manipulate event attendance records, leading to disruptions or unauthorized access and modifications of user data. This can compromise event integrity and potentially cause confusion among attendees.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust authorization checks before allowing any modification to user-related data. Always verify that the current user is authorized to perform the requested action on behalf of another user using secure, indirect references rather than directly exposing internal identifiers in URLs.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Remote Code Execution via Ingress Path Parameter Injection</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to execute arbitrary code on a Kubernetes Ingress Controller by injecting malicious directives into the path parameter of an Ingress resource. The issue arises from improper input validation within the Ingress Controller, allowing for the inclusion of arbitrary Nginx configuration snippets through crafted HTTP requests. Exploitation involves uploading a malicious configuration file and then including it in a subsequent Ingress rule to execute code within the Ingress controller&#x27;s context.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create an Ingress resource that includes an upload functionality, allowing for the client body to be written to a specific file on the filesystem using <code>client<em>body</em>in<em>file</em>only</code>.  Ensure proper <code>pathType</code> is specified (e.g., Prefix).</li>
+<li>Send an HTTP POST request to the created ingress endpoint with a malicious Nginx configuration that utilizes <code>set<em>by</em>lua_block</code> and executes shell commands via <code>io.popen()</code>. This configuration should read arbitrary files from the filesystem using the input as a command-line argument for <code>io.popen()</code> (e.g., <code>local rsfile = io.popen(&lt;COMMAND&gt;);</code>).  The output of that command is set into a header variable which is then forwarded in an HTTP response.</li>
+<li>Create another Ingress resource with rules to include previously uploaded malicious configuration using the <code>include</code> directive for Nginx and a wildcard expression, ensuring it loads this configuration.</li>
+<li>Send a final HTTP request to the second ingress endpoint containing the command in a header that will be executed by the included configuration (e.g., <code>curl http://&lt;TARGET<em>URL&gt; -H &quot;&lt;HEADER</em>NAME&gt;: &lt;COMMAND&gt;&quot;</code>, where <code>&lt;COMMAND&gt;</code> is something like <code>curl -F &#x27;file=@/var/run/secrets/kubernetes.io/serviceaccount/token&#x27;</code>).</li>
+<li>Observe and verify the execution of the arbitrary command, confirm that its output (e.g., a token or file content) appears in an HTTP response header.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> This vulnerability can lead to remote code execution on the Ingress Controller, enabling attackers to compromise the entire Kubernetes cluster by gaining access to sensitive credentials (like service account tokens), reading arbitrary files from the system, and potentially escalating privileges.  Compromise of the ingress controller could lead to data theft, unauthorized access to services within the cluster, or complete denial of service.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong></p>
+<ul>
+<li>Implement strict input validation for all user-supplied parameters in Ingress resources, including path annotations, filtering any malicious directives or commands.</li>
+<li>Enforce least privilege principles, restricting permissions for creating and modifying Ingress resources to authorized users only.</li>
+<li>Consider disabling unnecessary features like file uploads via <code>client<em>body</em>in<em>file</em>only</code>.</li>
+<li>Implement a Web Application Firewall (WAF) rule to detect and block malicious payload injection attempts.  Use tools that perform static code analysis of Nginx configurations before deployment.</li>
+</ul>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Protocol Field Injection via SOH Character in OAuth2 Username</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from inadequate validation of user-supplied data within the username field during OAuth2 authentication using curl&#x27;s SASL implementation. The inclusion of a Start Of Header (SOH, 0x01) character corrupts the message structure, potentially leading to protocol injection and misleading server logs.  This can facilitate obfuscation of malicious activity or compromise log integrity.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up an OAuth2 authentication endpoint using a server-side implementation (e.g., Python IMAP server). This endpoint accepts OAuth2 bearer tokens in the username field during authentication.</li>
+<li>Execute curl with the username set to include a SOH character followed by additional data: <code>curl -v --url &quot;&lt;OAUTH_ENDPOINT&gt;&quot; -u &quot;$(python3 -c &#x27;import sys; sys.stdout.buffer.write(b“user\x01host=evil.com”)&#x27;):&lt;TOKEN&gt;&quot; --oauth2-bearer &quot;&lt;TOKEN&gt;&quot;</code></li>
+<li>Observe the raw and decoded OAuth2 message received by the server. The expected payload structure should be analyzed to confirm that the injected data, following the SOH character, has been improperly parsed as a separate field (e.g., &quot;host=evil.com&quot; appearing in the protocol section).</li>
+<li>Examine any server-side logs for indications of connection attempts or authentication events referencing the injected hostname (&quot;evil.com&quot;).</li>
+<li>Use an example payload such as <code>user\x01host=evil.com</code> where <code>&lt;OAUTH_ENDPOINT&gt;</code> is the target URL and <code>&lt;TOKEN&gt;</code> represents a valid bearer token.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially inject protocol fields into OAuth2 messages, allowing them to manipulate server-side processing or mislead auditing logs. This could lead to obfuscation of malicious activity or misrepresentation of connection sources.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation for the username field within curl’s SASL implementation. Reject usernames containing special characters like SOH (0x01) or enforce a structured format to prevent protocol injection and ensure message integrity. Use only safe data encoding methods during message construction.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Unconditional Transmission of Legacy LAN Manager (LM) Hash in SMB Authentication</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The curl SMB client unconditionally transmits the legacy LAN Manager (LM) hash during SMB session setup, even when using a vulnerable server. Due to weaknesses in LM hashing and lack of client-side nonce mixing during challenge generation, attackers can passively capture this hash and recover the plaintext password offline using rainbow tables or brute force techniques.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Obtain a version of curl with SMB support compiled in.</li>
+<li>Build curl from source code at commit <code>1b35c9e1e3</code>. This represents an older, vulnerable implementation.</li>
+<li>Start a malicious SMB server that captures and logs incoming responses.</li>
+<li>Connect to the malicious SMB server using curl with a user account and password (e.g., <code>-u &lt;USER<em>ID&gt;:&lt;PASSWORD&gt;</code>). Use a simple password for testing purposes like <code>Password1</code>. The target URL should be formatted as <code>&lt;SMB</em>SERVER_URL&gt;/&lt;SHARE&gt;/&lt;FILE&gt;</code>.</li>
+<li>Examine the server’s log or capture to verify that the LM response is transmitted during the SMB session setup (SESSION<em>SETUP</em>ANDX message).  The server may display the captured LM hash and attempt password recovery using rainbow tables or brute-force tools.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can passively recover plaintext passwords from any user connecting with curl to an untrusted SMB server, leading to unauthorized access to data, file systems, and potential privilege escalation. The relatively small keyspace for the LM hash makes cracking attacks trivially feasible.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Disable or remove support for legacy authentication protocols like LM in both client and server implementations. Prioritize modern, secure authentication methods such as NTLMv2 or Kerberos with strong encryption. Employ nonce-based challenge generation to mitigate replay and passive capture attacks during session setup. Properly validate and sanitize all SMB protocol data and handle errors safely.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Unauthorized Access Control Bypass - Project Visibility Change</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A broken access control vulnerability allows users to modify project visibility settings, effectively bypassing subscription restrictions and gaining unauthorized access to higher-tier features. This occurs due to insufficient validation of user permissions within the API endpoint responsible for managing project visibility.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Intercept an outgoing HTTP request related to creating a project (e.g., POST request to <code>&lt;TARGET<em>API</em>ENDPOINT&gt;/workspaces/{YOUR-WORKSPACE-ID}/projects</code>).</li>
+<li>Modify the request body to change the &quot;visibility&quot; parameter to either &quot;Personal&quot; or &quot;Workspace&quot;.  The original request body contained something similar to: <code>{&quot;description&quot;:&quot;landing view&quot;,&quot;visibility&quot;:&quot;Personal&quot;,&quot;initial<em>message&quot;:{&quot;id&quot;:&quot;umsg</em>01k6qkw83ze07t9f7m9p3jabs9&quot;,&quot;message&quot;:&quot;landing view&quot;,&quot;files&quot;:[],&quot;optimisticImageUrls&quot;:[],&quot;chat<em>only&quot;:false,&quot;agent</em>mode<em>enabled&quot;:false,&quot;ai</em>message<em>id&quot;:&quot;aimsg</em>01k6qkw841e07t9f7ytpghd6bs&quot;}}</code>.</li>
+<li>Send the modified request.</li>
+<li>Verify that the project visibility is successfully changed to &quot;Personal&quot; or &quot;Workspace&quot; without requiring a corresponding subscription tier.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to premium features and resources, potential revenue loss for the service provider as users circumvent paid subscriptions, and possible data exposure depending on what’s associated with those restricted projects/visibility levels.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust server-side validation of user permissions before allowing modification of project visibility settings. Ensure that subscription tier checks are enforced consistently within the API endpoint to prevent unauthorized access to premium features. Employ proper authentication and authorization mechanisms to verify user identity and privileges when manipulating project attributes.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Arbitrary Code Execution via Scanner Bypass</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-03-10</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows arbitrary code execution on the server due to insufficient input validation and inadequate protection against dynamic code evaluation. User-supplied Python code is executed within a controlled namespace, but the scanner&#x27;s pattern-matching approach to blocking dangerous function calls can be easily bypassed using reflection or other techniques, leading to full system compromise.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Obtain access to an API endpoint accepting Python code as input. This may involve connecting to a tool via a client interface (e.g., through a browser) and accessing a specific feature for diagram generation.</li>
+<li>Inject the following payload into the code input field and execute: <code>getattr(os, &#x27;system&#x27;)(&#x27;echo PWNED &gt; /tmp/mcp<em>poc</em>proof.txt&#x27;)</code></li>
+<li>Verify that the injected command successfully executes by checking for the presence of the created file: <code>cat /tmp/mcp<em>poc</em>proof.txt</code>. The server should output “PWNED”. This demonstrates a bypass of the scanner&#x27;s attempt to block calls like <code>os.system</code>.</li>
+<li>Experiment with other bypass payloads, such as:</li>
+</ol>
+<ul>
+<li><code>open(&#x27;/etc/hostname&#x27;).read()</code> – to read arbitrary files.</li>
+<li><code>getattr(os, &#x27;popen&#x27;)(&#x27;whoami&#x27;).read()</code> – to execute commands and capture their output.</li>
+<li><code>getattr(os, &#x27;environ&#x27;)</code> - to access environment variables which may contain sensitive information such as credentials.</li>
+<li><code>urlretrieve(&#x27;https://example.com&#x27;, &#x27;/tmp/downloaded.html&#x27;)</code> — to download files from external sources.</li>
+<li><code>open(&#x27;/tmp/arbitrary_file&#x27;, &#x27;w&#x27;).write(&#x27;attacker content&#x27;)</code> – to write arbitrary files on the server.</li>
+</ul>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation of this vulnerability can lead to complete system compromise, allowing an attacker to exfiltrate sensitive data (credentials, configuration files), execute commands with elevated privileges, establish a persistent presence on the system and/or pivot into other systems within the infrastructure. It is particularly dangerous in agentic workflows where content may be incorporated without human review.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong></p>
+<ul>
+<li><strong>Avoid <code>exec()</code> or <code>eval()</code> entirely:</strong> If dynamic code execution is absolutely necessary, carefully sandbox and restrict the execution environment.  Use more robust techniques than simple pattern matching to limit available functions. Consider a safer alternative such as allowing only specific pre-defined calls, perhaps using an interpreter that limits built in modules.</li>
+<li><strong>Input Validation &amp; Sanitization:</strong> Implement strict input validation and sanitization on all user-supplied data passed to dynamic execution environments.</li>
+<li><strong>AST Analysis (Abstract Syntax Tree):</strong>  Use AST-based parsing and analysis for more robust security checks instead of string pattern matching.</li>
+<li><strong>Least Privilege Principle:</strong> Ensure the server process runs with minimal required privileges to reduce the potential impact of exploitation.</li>
+</ul>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Web App">
       <button type="button" class="card-toggle">
         <span class="card-title">
